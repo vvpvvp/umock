@@ -1,0 +1,18 @@
+{
+  "spm": {
+    "output": [
+      "index.html",
+      "index.js"
+    ],
+    "babel": true,
+    "uglify": {},
+    "autoprefixer": {},
+    "dest": "./build",
+    "dependencies": {
+      "util": "~0.10.3",
+      "moment": "~2.11.1",
+      "vue": "~0.10.4",
+      "jquery": "~2.1.4"
+    }
+  }
+}

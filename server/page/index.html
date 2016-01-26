@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mock Server</title>
+</head>
+
+<body>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Mock Server</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#">Setting</a></li>
+                    <li><a href="https://github.com/vvpvvp/UMock#readme">document</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1><span class="panel-heading">配置</span><button type="button" class="btn btn-primary" aria-label="Left Align"  data-toggle="modal" data-target="#editModal"  data-type="create">
+		  	<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+		</button></h1>
+        </div>
+        <div class="panel panel-default">
+            <!-- <div class="panel-heading">
+		    <h3 class="panel-title">配置</h3>
+		  </div> -->
+            <!-- Default panel contents -->
+            <div class="panel-heading">配置</div>
+            <!-- Table -->
+            <table class="table" id="mockList">
+                <tr>
+                    <th>URL</th>
+                    <th>Result</th>
+                    <th>Operate</th>
+                </tr>
+                <tr v-for="mockset in mocksets">
+                    <td width="20%"><a href="{{mockset.url}}" target="_blank"><code>{{mockset.url}}</code></a></td>
+                    <td width="65%"><pre><code>{{mockset.result}}</code></pre></td>
+                    <td>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{$index}} >
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" data-toggle="modal" data-target="#confirmModal" data-id={{$index}}>
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                        </button>
+                    </td>
+                </tr>
+                <tr v-if="mocksets.length===0" class="text-center"><td colspan="3">没有记录</td></tr>
+            </table>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted"><a href="https://github.com/vvpvvp/UMock#readme" target="_blank">Github</a></p>
+        </div>
+    </footer>
+
+    <!-- <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">新增信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">URL:</label>
+                            <input type="text" class="form-control" v-model="url">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Result:</label>
+                            <textarea class="form-control" rows="5" v-model="result"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="editButton" v-on:click="create">保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel">编辑信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="recipient-name" class="control-label">URL:</label>
+                            <input type="text" class="form-control" v-model="url">
+                        </div>
+                        <div class="form-group">
+                            <label for="message-text" class="control-label">Result:</label>
+                            <textarea class="form-control" rows="5" v-model="result"></textarea>
+                            <div id="jsoneditor"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="editButton" v-on:click="edit">保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bs-example-modal-sm" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        确定删除？
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"  v-on:click="delete">确定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="lib/plugins/vue.min.js"></script>
+    <script type="text/javascript" src="spm_modules/jquery/2.1.4/jquery.min.js"></script>
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="spm_modules/bootstrap/3.3.1/css/bootstrap.min.css">
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="spm_modules/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <!-- Custom styles for this template -->
+    <link href="index.css" rel="stylesheet">
+
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="lib/plugins/jsoneditor.min.css">
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="lib/plugins/jsoneditor.min.js"></script>
+
+    <script src="index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "bootstrap",
+  "description": "The most popular front-end framework for developing responsive, mobile first projects on the web.",
+  "version": "3.3.1",
+  "keywords": [
+    "css",
+    "less",
+    "mobile-first",
+    "responsive",
+    "front-end",
+    "framework",
+    "web"
+  ],
+  "homepage": "http://getbootstrap.com",
+  "author": "Twitter Inc.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/components/bootstrap.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "jquery": ">=1.9.1"
+  },
+  "main": "js/bootstrap.js",
+  "spm": {
+    "main": "js/bootstrap.js",
+    "dependencies": {
+      "jquery": "1.9.1"
+    }
+  },
+  "repo": "components/bootstrap"
+}
