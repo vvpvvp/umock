@@ -22,7 +22,7 @@ mockServer.returnFunc = function (req, res, next) {
     // next();
 }
 
-mockServer.initLocalServer = function (imitator) {
+mockServer.initLocalServer = function () {
     app.get('/server/list', (req, res, next) => {
         MockModel.find().exec((err, docs) => {
             res.send(R(docs));
