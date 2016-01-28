@@ -49,8 +49,7 @@ var main = {
         }
 
         if (!fs.existsSync(imitatorFile)) {
-            // console.warn('[WARN] Umock file not found!');
-            // imitatorFile = process.env[]
+            imitatorFile = path.resolve(process.env.NODE_PATH, "umock/umock.js");
         }
         global.imitatorFilePath = path.resolve(imitatorFile, '..');
         global.config = require(imitatorFile);
