@@ -2,8 +2,8 @@
 
 var http = require('http');
 var optimist = require('optimist');
-var app = require('../umock/app');
-var init = require('../umock/init');
+var app = require('../server/app');
+var init = require('../server/init');
 var port = optimist.argv.p;
 var cwd = process.cwd();
 var server;

@@ -124,7 +124,7 @@ imitator.file = function(file) {
 
 // 设置静态文件路径
 imitator.static = function(url, dir) {
-    app.use(url, express.static(parsePath(dir)));
+    app.use(url, express.static(dir));
 }
 
 imitator.jsonp = function(context, callbackName) {
@@ -140,9 +140,8 @@ imitator.init = function(argument) {
     });
 
     mockServer.initLocalServer(imitator);
-
-    imitator.static("/umock", "./server/page");
-
+    app.use("/umock",express.static(path.join(__dirname, "../page")));
+    const config = global.config;
     imitator.base({
         target: config.proxy,
         toProxy: true,
