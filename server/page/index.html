@@ -27,13 +27,13 @@
     <div class="container">
         <div class="page-header">
             <h1><span class="panel-heading">配置</span><button type="button" class="btn btn-primary" aria-label="Left Align"  data-toggle="modal" data-target="#editModal"  data-type="create">
-		  	<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-		</button></h1>
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+        </button></h1>
         </div>
         <div class="panel panel-default">
             <!-- <div class="panel-heading">
-		    <h3 class="panel-title">配置</h3>
-		  </div> -->
+            <h3 class="panel-title">配置</h3>
+          </div> -->
             <!-- Default panel contents -->
             <div class="panel-heading">配置</div>
             <!-- Table -->
@@ -43,19 +43,30 @@
                     <th>Result</th>
                     <th>Operate</th>
                 </tr>
-                <tr v-for="mockset in mocksets">
-                    <td width="20%"><a href="{{mockset.url}}" target="_blank"><code>{{mockset.url}}</code></a></td>
-                    <td width="65%"><pre><code>{{mockset.result}}</code></pre></td>
+                <tr v-for="mockset in mocksets" orderBy="active" v-bind:class="[mockset.active?'': 'active']">
+                    <td width="20%">
+                        <p>{{mockset.type}}：<a href="{{mockset.url}}" target="_blank"><code>{{mockset.url}}</code></a></p>
+                        <p class="text-info">{{mockset.desc}}</p>
+                    </td>
+                    <td width="60%"><pre><code>{{mockset.result}}</code></pre></td>
                     <td>
-                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{$index}} >
+                        <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{$index}}>
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
                         </button>
                         <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" data-toggle="modal" data-target="#confirmModal" data-id={{$index}}>
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                         </button>
+                        <button type="button" class="btn btn-link btn-sm" v-if="mockset.active" aria-label="Left Align" v-on:click="disactive" data-id={{$index}}>
+                            <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>关闭
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" v-else aria-label="Left Align" v-on:click="active" data-id={{$index}}>
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>开启
+                        </button>
                     </td>
                 </tr>
-                <tr v-if="mocksets.length===0" class="text-center"><td colspan="3">没有记录</td></tr>
+                <tr v-if="mocksets.length===0" class="text-center">
+                    <td colspan="3">没有记录</td>
+                </tr>
             </table>
         </div>
     </div>
@@ -64,7 +75,6 @@
             <p class="text-muted"><a href="https://github.com/vvpvvp/UMock#readme" target="_blank">Github</a></p>
         </div>
     </footer>
-
     <!-- <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -91,8 +101,6 @@
             </div>
         </div>
     </div> -->
-
-
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -101,17 +109,38 @@
                     <h4 class="modal-title" id="exampleModalLabel">编辑信息</h4>
                 </div>
                 <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <label for="recipient-name" class="control-label">URL:</label>
-                            <input type="text" class="form-control" v-model="url">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="recipient-name" class="control-label">URL:</label>
+                                <input type="text" class="form-control" v-model="url">
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="control-label">Type:</label>
+                                <select class="form-control" v-model="type">
+                                    <option>ALL</option>
+                                    <option>GET</option>
+                                    <option>POST</option>
+                                    <option>PATCH</option>
+                                    <option>DELETE</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="control-label">参数:</label>
+                                <textarea class="form-control" rows="5" v-model="param"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="control-label">描述:</label>
+                                <textarea class="form-control" rows="5" v-model="desc"></textarea>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="message-text" class="control-label">Result:</label>
-                            <textarea class="form-control" rows="5" v-model="result"></textarea>
-                            <div id="jsoneditor"></div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="message-text" class="control-label">Result:</label>
+                                <div id="jsoneditor"></div>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="editButton" v-on:click="edit">保存</button>
@@ -128,7 +157,7 @@
                         确定删除？
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary"  v-on:click="delete">确定</button>
+                        <button type="button" class="btn btn-primary" v-on:click="delete">确定</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                     </div>
                 </div>
@@ -143,12 +172,10 @@
     <script src="spm_modules/bootstrap/3.3.1/js/bootstrap.min.js"></script>
     <!-- Custom styles for this template -->
     <link href="index.css" rel="stylesheet">
-
     <!-- 新 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="lib/plugins/jsoneditor.min.css">
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="lib/plugins/jsoneditor.min.js"></script>
-
     <script src="index.js"></script>
 </body>
 

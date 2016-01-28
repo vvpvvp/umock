@@ -1,7 +1,7 @@
 'use strict';
 var mongoose = require('mongoose');
 var config = require("./config");
-var db = mongoose.createConnection(config['mongo']['uri']);
+var db = mongoose.createConnection(global.config['mongo']['uri']);
 // 链接错误
 db.on('error', function(error) {
     console.log(error);

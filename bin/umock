@@ -2,14 +2,15 @@
 
 var http = require('http');
 var optimist = require('optimist');
-var app = require('../imitator/app');
-var init = require('../imitator/init');
-var port = optimist.argv.p || 8888;
+var app = require('../umock/app');
+var init = require('../umock/init');
+var port = optimist.argv.p;
 var cwd = process.cwd();
 var server;
 
 init(app, optimist.argv, cwd);
-app.set('port', port);
+if(port)app.set('port', port);//命令行-p设置端口号
+port = app.get("port");
 server = http.createServer(app);
 server.listen(port);
 

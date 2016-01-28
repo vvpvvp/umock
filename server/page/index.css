@@ -43,6 +43,4 @@ code {
   height: 500px;
 }
 
-textarea.form-control {
-    display: none;
-}
+div#editModal .modal-dialog {width: 900px;}

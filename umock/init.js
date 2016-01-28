@@ -2,7 +2,7 @@
  * Created by an.han on 15/7/20.
  */
 //var Promise = require('es6-promise').Promise;
-var imitator = require('./imitator');
+var imitator = require('./umock');
 var path = require('path');
 var fs = require('fs');
 
@@ -24,8 +24,8 @@ var main = {
 
     customRoute: function () {
         var argv = this.argv;
-        var home = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'];
-        var defautImitatorFile = path.resolve(home, 'Imitatorfile.js');
+        var home = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'PWD'];
+        var defautImitatorFile = path.resolve(home, 'umock.js');
         var imitatorFile;
 
         if (argv.f) {
@@ -49,12 +49,16 @@ var main = {
         }
 
         if (!fs.existsSync(imitatorFile)) {
-            console.warn('[WARN] imitator file not found!');
+            // console.warn('[WARN] Umock file not found!');
+            // imitatorFile = process.env[]
         }
-        else {
-            global.imitatorFilePath = path.resolve(imitatorFile, '..');
-            require(imitatorFile)(imitator);
-        }
+        global.imitatorFilePath = path.resolve(imitatorFile, '..');
+        global.config = require(imitatorFile);
+
+
+        if(global.config.port)this.app.set('port', global.config.port);
+
+        this.imitator.init();
     },
 
     defaultRoute: function () {
