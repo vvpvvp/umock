@@ -49,7 +49,7 @@ var main = {
         }
 
         if (!fs.existsSync(imitatorFile)) {
-            imitatorFile = path.resolve(process.env.NODE_PATH, "umock/umock.js");
+            imitatorFile = "../umock.js";
         }
         global.imitatorFilePath = path.resolve(imitatorFile, '..');
         global.config = require(imitatorFile);

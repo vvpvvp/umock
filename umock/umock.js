@@ -144,7 +144,7 @@ imitator.init = function(argument) {
     imitator.static("/umock", "./server/page");
 
     imitator.base({
-        target: 'http://api.gongzuojihui.com',
+        target: config.proxy,
         toProxy: true,
         changeOrigin: true
     });
