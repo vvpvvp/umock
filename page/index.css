@@ -44,3 +44,8 @@ code {
 }
 
 div#editModal .modal-dialog {width: 900px;}
+
+table#mockList pre {
+    max-height: 83px;
+    overflow: overlay;
+}

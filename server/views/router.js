@@ -20,18 +20,36 @@ const defaultResult = {
         }
     };
 
-var mockSetList = {};
+var mockSetList = {},
+    mockRegExpList = [];
 
 let mockServer = {};
 
 mockServer.returnFunc = function(req, res, next) {
-    var url = decodeURI(req.baseUrl);
-    if (mockSetList[url] != undefined) {
-        res.send(JSON.parse(mockSetList[url].result));
-    } else {
+    let url = decodeURI(req.baseUrl),
+        typeList = mockSetList[req.method],
+        hasUrl = false;
+    if (url.indexOf("/api") == 0) {
+        if (typeList != undefined && typeList[url] != undefined) {
+            hasUrl = true;
+            res.send(JSON.parse(typeList[url].result));
+        } else if (mockRegExpList[req.method] != undefined) {
+            var RegExpList = mockRegExpList[req.method];
+            for(let n in RegExpList) {
+                if(url.indexOf(n)==0){
+                    RegExpList[n].forEach(function(element, index) {
+                        if (new RegExp(element.regexp).test(url)) {
+                            hasUrl = true;
+                            res.send(JSON.parse(element.result));
+                        }
+                    });
+                }
+            }
+        }
+    }
+    if (!hasUrl) {
         next();
     }
-    // next();
 }
 
 mockServer.initLocalServer = function() {
@@ -83,14 +101,17 @@ mockServer.initLocalServer = function() {
         });
     });
 
-    let getModel = (body)=>{
+    let getModel = (body) => {
         var data = {};
-        if(body.url!=undefined)data.url = body.url;
-        if(body.result!=undefined)data.result = body.result;
-        if(body.desc!=undefined)data.desc = body.desc;
-        if(body.active!=undefined)data.active = body.active;
-        if(body.type!=undefined)data.type = body.type;
-        if(body.param!=undefined)data.param = body.param;
+        if (body.url != undefined) {
+            data.url = body.url;
+            data.isreg = data.url.includes(":");
+        }
+        if (body.result != undefined) data.result = body.result;
+        if (body.desc != undefined) data.desc = body.desc;
+        if (body.active != undefined) data.active = body.active;
+        if (body.type != undefined) data.type = body.type;
+        if (body.param != undefined) data.param = body.param;
         data.modifyTime = new Date();
         return data;
     }
@@ -109,25 +130,39 @@ mockServer.initLocalServer = function() {
         });
     });
 
-    function toObject(list, idName, hasNum) {
-        hasNum = hasNum === undefined ? false : hasNum;
-        idName = idName === undefined ? "id" : idName;
+    function toObject(list) {
         var listO = {};
         list.forEach(function(n, i) {
-            listO[n[idName]] = n;
-            if (hasNum) {
-                listO[n[idName]].count = i;
-            }
+            if (listO[n.type] == undefined) listO[n.type] = {};
+            listO[n.type][n.url] = n;
+        });
+        return listO;
+    }
+
+    function toObjectList(list) {
+        var listO = {};
+        list.forEach(function(n, i) {
+            if (listO[n.type] == undefined) listO[n.type] = [];
+            if (listO[n.type][n.fromUrl] == undefined) listO[n.type][n.fromUrl] = [];
+            listO[n.type][n.fromUrl].push(n);
         });
         return listO;
     }
 
     function reInitList() {
         MockModel.find().exec((err, docs) => {
-            docs = docs.filter(function(obj){
-                return obj.active;
+            var regDocs = [];
+            docs = docs.filter(function(doc){
+                if (!doc.active) return doc.active;
+                if (doc.isreg) {
+                    doc.regexp = doc.url.replace(/:\w+/g, "\\w+");
+                    doc.fromUrl = doc.url.match(/^(\/\w+)+/)[0];
+                    regDocs.push(doc);
+                }
+                return true;
             });
-            mockSetList = toObject(docs, "url");
+            mockSetList = toObject(docs);
+            mockRegExpList = toObjectList(regDocs);
         });
     }
 

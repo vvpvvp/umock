@@ -4,6 +4,6 @@ const config = {
 		'uri': 'mongodb://hg014:20017/mock'
 	},
 	'port': 20111,
-	"proxy": 'http://api.gongzuojihui.com'
+	"proxy": ''
 };
 module.exports = config;

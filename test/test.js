@@ -16,15 +16,18 @@
 //         });
 
 
-var models = require('../server/schema/models');
-var m = new models.MockModel({url: "/json1", result: "{test:1}"});
-console.log("saving");
-m.save(function(error) {
-    if(error) {
-        console.log(error);
-    } else {
-        console.log('saved OK!');
-    }
-    // 关闭数据库链接
-    models.db.close();
-});
+// var models = require('../server/schema/models');
+// var m = new models.MockModel({url: "/json1", result: "{test:1}"});
+// console.log("saving");
+// m.save(function(error) {
+//     if(error) {
+//         console.log(error);
+//     } else {
+//         console.log('saved OK!');
+//     }
+//     // 关闭数据库链接
+//     models.db.close();
+// });
+
+
+console.log(new RegExp("/api/v1/job/\\w+").test("/api/v1/job/123"));

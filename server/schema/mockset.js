@@ -6,6 +6,7 @@ var MockSetSchema = new mongoose.Schema({
     desc: String,
     result: String,
     type: {type:String,default: "ALL"},
+    isreg: {type:Boolean,default:false},
     param: String,
     active: {type:Boolean,default: true},
     createTime: {type:Date,default: Date.now},
