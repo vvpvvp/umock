@@ -91,6 +91,10 @@
                                 <input type="text" class="form-control" v-model="url">
                             </div>
                             <div class="form-group">
+                                <label for="recipient-name" class="control-label">描述:</label>
+                                <input type="text" class="form-control" v-model="desc">
+                            </div>
+                            <div class="form-group">
                                 <label for="recipient-name" class="control-label">Type:</label>
                                 <select class="form-control" v-model="type">
                                     <option>GET</option>
@@ -104,8 +108,8 @@
                                 <textarea class="form-control" rows="5" v-model="param"></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="recipient-name" class="control-label">描述:</label>
-                                <textarea class="form-control" rows="5" v-model="desc"></textarea>
+                                <label for="recipient-name" class="control-label">返回格式:</label>
+                                <textarea class="form-control" rows="5" v-model="respParam"></textarea>
                             </div>
                         </div>
                         <div class="col-md-6">

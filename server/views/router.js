@@ -115,6 +115,8 @@ mockServer.initLocalServer = function() {
         if (body.active != undefined) data.active = body.active;
         if (body.type != undefined) data.type = body.type;
         if (body.param != undefined) data.param = body.param;
+        if (body.respParam != undefined) data.respParam = body.respParam;
+        
         data.modifyTime = new Date();
         return data;
     }

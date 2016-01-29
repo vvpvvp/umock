@@ -8,6 +8,7 @@ var MockSetSchema = new mongoose.Schema({
     type: {type:String,default: "GET"},
     isreg: {type:Boolean,default:false},
     param: String,
+    respParam:String,
     active: {type:Boolean,default: true},
     createTime: {type:Date,default: Date.now},
     modifyTime: {type:Date,default: Date.now}
