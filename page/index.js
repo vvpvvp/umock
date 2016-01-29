@@ -62,20 +62,18 @@ $(function() {
 			edit: function(event) {
 				var vm = this;
 				this.result = JSON.stringify(editor.get());
-				if (valid(this) === false) return false;
+				var param = {};
+				model(param,vm);
+				
+				if (valid(param) === false) return false;
 				if (this.editType == "create") {
-					$.post("/umock", {
-							url: this.url,
-							result: this.result,
-							desc: this.desc
-						})
+					$.post("/umock", param)
 						.done(function(result) {
 							if (result.result == "ok") {
 								v_list.mocksets.push(result.content);
-								emptyEdit();
 								editModal.modal("hide");
 							} else {
-								alert("可能存在重复URL");
+								alert("出错！");
 							}
 						})
 				} else {
@@ -85,10 +83,9 @@ $(function() {
 						.done(function(result) {
 							if (result.result == "ok") {
 								model(v_list.mocksets[vm.num], param);
-								emptyEdit();
 								editModal.modal("hide");
 							} else {
-								alert("可能存在重复URL");
+								alert("出错！");
 							}
 						})
 				}
@@ -97,7 +94,7 @@ $(function() {
 	});
 
 	function valid(param) {
-		if (param.url === "" || param.result === "") {
+		if (param.url === "" || param.result === ""|| param.type === "") {
 			alert("参数不全");
 			return false;
 		} else if (param.url.indexOf("\/") !== 0) {
@@ -146,6 +143,9 @@ $(function() {
 			editor.set(JSON.parse(v_edit.result));
 			v_edit.editType = "edit";
 		}
+	}).on("hide.bs.modal",function() {
+		emptyEdit();
+
 	});
 
 	var v_delete = new Vue({

@@ -36,13 +36,16 @@ mockServer.returnFunc = function(req, res, next) {
         } else if (mockRegExpList[req.method] != undefined) {
             var RegExpList = mockRegExpList[req.method];
             for(let n in RegExpList) {
-                if(url.indexOf(n)==0){
-                    RegExpList[n].forEach(function(element, index) {
-                        if (new RegExp(element.regexp).test(url)) {
-                            hasUrl = true;
-                            res.send(JSON.parse(element.result));
-                        }
-                    });
+                if(url.indexOf(n)!=0){
+                    continue;
+                }
+                for(var j = 0, length2 = RegExpList[n].length; j < length2; j++){
+                    let element = RegExpList[n][j];
+                    if (new RegExp(element.regexp).test(url)) {
+                        hasUrl = true;
+                        res.send(JSON.parse(element.result));
+                        break;
+                    }
                 }
             }
         }
@@ -155,7 +158,7 @@ mockServer.initLocalServer = function() {
             docs = docs.filter(function(doc){
                 if (!doc.active) return doc.active;
                 if (doc.isreg) {
-                    doc.regexp = doc.url.replace(/:\w+/g, "\\w+");
+                    doc.regexp = "^"+doc.url.replace(/:\w+/g, "\\w+")+"$";
                     doc.fromUrl = doc.url.match(/^(\/\w+)+/)[0];
                     regDocs.push(doc);
                 }

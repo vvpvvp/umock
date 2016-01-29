@@ -5,7 +5,7 @@ var MockSetSchema = new mongoose.Schema({
     url: String,
     desc: String,
     result: String,
-    type: {type:String,default: "ALL"},
+    type: {type:String,default: "GET"},
     isreg: {type:Boolean,default:false},
     param: String,
     active: {type:Boolean,default: true},
