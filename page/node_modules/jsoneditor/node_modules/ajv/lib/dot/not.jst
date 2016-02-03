@@ -1,0 +1,33 @@
+{{# def.definitions }}
+{{# def.errors }}
+{{# def.setupKeyword }}
+{{# def.setupNextLevel }}
+
+{{? {{# def.nonEmptySchema:$schema }} }}
+  {{
+    $it.schema = $schema;
+    $it.schemaPath = $schemaPath;
+    $it.errSchemaPath = $errSchemaPath;
+  }}
+
+  var {{=$errs}} = errors;
+
+  {{# def.setCompositeRule }}
+
+  {{ $it.createErrors = false; }}
+  {{= it.validate($it) }}
+  {{ $it.createErrors = true; }}
+
+  {{# def.resetCompositeRule }}
+
+  if (valid{{=$it.level}}) {
+    {{# def.error:'not' }}
+  } else {
+    {{# def.resetErrors }}
+  {{? it.opts.allErrors }} } {{?}}
+{{??}}
+  {{# def.addError:'not' }}
+  {{? $breakOnError}}
+    if (false) {
+  {{?}}
+{{?}}

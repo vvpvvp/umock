@@ -1,3 +1,11 @@
+import "bootstrap";
+import "bootstrap/dist/css/bootstrap.css";
+import "./index.css";
+import "./lib/plugins/jsoneditor.min.css";
+import JSONEditor from "jsoneditor";
+import "./project"
+import "./edit"
+
 $(function() {
 
 	var v_projects = new Vue({
