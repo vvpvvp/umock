@@ -1,18 +1,27 @@
 $(function() {
-	var editModal = $('#editModal');
 
-	function toObject(list, idName, hasNum) {
-		hasNum = hasNum === undefined ? false : hasNum;
-		idName = idName === undefined ? "id" : idName;
-		var listO = {};
-		list.forEach(function(n, i) {
-			listO[n[idName]] = n;
-			if (hasNum) {
-				listO[n[idName]].count = i;
+	var v_projects = new Vue({
+		el: '#projects',
+		data: {
+			projectStart:"/api/",
+			projects: [],
+			now:0
+		},
+		computed: {
+		    // 一个计算属性的 getter
+		    nowProject: function () {
+		      // `this` 指向 vm 实例
+		      return this.projects[this.now];
+		    }
+		 },
+		methods: {
+			openList: function(index){
+				this.now = index;
+				var content = this.projects[index];
+				getList(content._id);
 			}
-		});
-		return listO;
-	}
+		}
+	});
 
 	/* body... */
 	var v_list = new Vue({
@@ -22,10 +31,6 @@ $(function() {
 			mocksets: []
 		},
 		computed: {
-			mocksetObjects: function() {
-				// `this` 指向 vm 实例
-				return toObject(this.mocksets, "_id", true);
-			}
 		},
 		methods: {
 			active: function(event) {
@@ -33,6 +38,10 @@ $(function() {
 			},
 			disactive: function(event) {
 				changeStatus(event, false);
+			},
+			togglePane:function(event) {
+				if($(event.target).hasClass("mocksetHeader"))
+					$(event.target).next().slideToggle();
 			}
 		}
 	});
@@ -48,30 +57,45 @@ $(function() {
 		content.active = active;
 	}
 
-	getList();
+	// getList();
 
+	getProjectList();
+	
+
+	function getProjectList(id) {
+		$.get("/umock/project/list")
+			.done(function(result) {
+				if (result.result == "ok") {
+					v_projects.projects = result.content;
+					v_projects.openList(0);
+				}
+			})
+	}
+
+	function getList(id) {
+		$.get("/umock/list/"+id)
+			.done(function(result) {
+				if (result.result == "ok") {
+					v_list.mocksets = result.content;
+				}
+			})
+	}
+
+
+	var editModal = $('#editModal');
 	var v_edit = new Vue({
 		el: '#editModal',
-		data: {
-			num: 0,
-			_id: "",
-			url: "",
-			result: "",
-			param: "",
-			respParam: "",
-			type: "",
-			desc: "",
-			active: true
-		},
+		data: getEmptyObject(),
 		methods: {
 			edit: function(event) {
 				var vm = this;
 				Vue.nextTick(function() {
-					vm.result = JSON.stringify(editor.get());
+					vm.result = JSON.stringify(editor.get(), null, 2);
 					var param = {};
 					model(param, vm);
 					if (valid(param) === false) return false;
 					if (vm.editType == "create") {
+						param.menuId = v_projects.nowProject._id;
 						$.post("/umock", param)
 							.done(function(result) {
 								if (result.result == "ok") {
@@ -110,24 +134,31 @@ $(function() {
 		} else if (param.url.indexOf("/umock") != -1) {
 			alert("url不能以/umock开头，与现在的url冲突");
 			return false;
-		}else if(param.url.indexOf(v_list.projectStart)!=0){
-			alert("url必须以/api为开头！");
+		}else if(param.url.indexOf(v_projects.nowProject.beginPath)!=0){
+			alert("url必须以"+v_projects.nowProject.beginPath+"为开头！");
 			return false;
 		}
 		return true;
 	}
 
 	function emptyEdit() {
-		v_edit.num = 0;
-		v_edit._id = "";
-		v_edit.url = "";
-		v_edit.desc = "";
-		v_edit.result = "";
-		v_edit.respParam = "";
-		v_edit.param = "";
-		v_edit.type = "";
-		v_edit.active = true;
+		$.extend(v_edit,getEmptyObject ());
 		editor.set({});
+	}
+
+	function getEmptyObject () {
+		return {
+			num:0,
+			_id:"",
+			url:"",
+			desc:"",
+			result:"",
+			respParam:"",
+			dataHandler:"",
+			param:"",
+			type:"",
+			active:true
+		}
 	}
 
 	function model(toO, fromO) {
@@ -136,6 +167,7 @@ $(function() {
 		toO.result = fromO.result;
 		toO.desc = fromO.desc;
 		toO.type = fromO.type;
+		toO.dataHandler = fromO.dataHandler;
 		toO.param = fromO.param;
 		toO.respParam = fromO.respParam;
 		if (fromO.active != undefined) toO.active = fromO.active;
@@ -182,8 +214,6 @@ $(function() {
 		}
 	});
 
-
-
 	$("#confirmModal").on('shown.bs.modal', function(event) {
 		var button = $(event.relatedTarget);
 		var num = button.data('id');
@@ -191,15 +221,6 @@ $(function() {
 		var content = v_list.mocksets[num];
 		v_delete._id = content._id;
 	});
-
-	function getList() {
-		$.get("/umock/list")
-			.done(function(result) {
-				if (result.result == "ok") {
-					v_list.mocksets = result.content;
-				}
-			})
-	}
 
 	var container = document.getElementById('jsoneditor');
 
@@ -215,4 +236,6 @@ $(function() {
 	};
 
 	var editor = new JSONEditor(container, options, {});
+
+	
 })

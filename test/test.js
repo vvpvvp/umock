@@ -25,9 +25,31 @@
 //     } else {
 //         console.log('saved OK!');
 //     }
-//     // 关闭数据库链接
+//     // 关闭数据库链接fromObj[0]
 //     models.db.close();
 // });
 
+var util = require('../server/util');
+var a = {
+    "a": 1,
+    "b": [{
+        "b1": 2,
+        "b2": 3
+    },{
+        "b1": 2,
+        "b2": 3
+    },{
+        "b1": 2,
+        "b2": 3
+    }]
+};
 
-console.log(new RegExp("/api/v1/job/\\w+").test("/api/v1/job/123"));
+util.extendResultData(a,{
+	"a": 2,
+    "b": [{
+        "b2": 5,
+        "b3": 5
+    }]
+});
+
+console.log(a);

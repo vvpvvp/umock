@@ -2,6 +2,8 @@
 var mongoose = require('mongoose');
 var app = global.app;
 var mock = require('../schema/mockset');
+var project = require('../schema/project');
+var util = require('../util');
 
 
 const defaultResult = {
@@ -25,31 +27,60 @@ var mockSetList = {},
 
 let mockServer = {};
 
+function overflyData (res,data) {
+    var _write = res.write;
+    let body = [];
+    res.write  = function (buf) {
+        body.push(buf);
+    };
+    var _end = res.end;
+    res.end  = function () {
+        var re = JSON.parse(body.join(""));
+        // Object.assign(re, data);
+        //深度覆盖
+        util.extendResultData(re,data);
+        _write.call(res,new Buffer(JSON.stringify(re)));
+        _end.call(res);
+    };
+}
+
 mockServer.returnFunc = function(req, res, next) {
+
     let url = decodeURI(req.baseUrl),
         typeList = mockSetList[req.method],
         hasUrl = false;
     if (url.indexOf("/api") == 0) {
         if (typeList != undefined && typeList[url] != undefined) {
-            hasUrl = true;
-            res.send(JSON.parse(typeList[url].result));
+            let result = JSON.parse(typeList[url].result);
+            if (typeList[url].dataHandler == "over") {
+                hasUrl = true;
+                res.send(result);
+            } else {
+                overflyData(res,result);
+            }
         } else if (mockRegExpList[req.method] != undefined) {
             var RegExpList = mockRegExpList[req.method];
-            for(let n in RegExpList) {
-                if(url.indexOf(n)!=0){
+            for (let n in RegExpList) {
+                if (url.indexOf(n) != 0) {
                     continue;
                 }
-                for(var j = 0, length2 = RegExpList[n].length; j < length2; j++){
+                for (var j = 0, length2 = RegExpList[n].length; j < length2; j++) {
                     let element = RegExpList[n][j];
                     if (new RegExp(element.regexp).test(url)) {
-                        hasUrl = true;
-                        res.send(JSON.parse(element.result));
+                        let result = JSON.parse(element.result);
+                        if (element.dataHandler == "over") {
+                            hasUrl = true;
+                            res.send(result);
+                        } else {
+                            overflyData(res,result);
+                        }
                         break;
                     }
                 }
             }
         }
     }
+
     if (!hasUrl) {
         next();
     }
@@ -65,9 +96,86 @@ mockServer.initLocalServer = function() {
     });
 
     let MockModel = db.model('mockSet', mock.MockSetSchema);
+    let ProjectModel =  db.model('projectSet', project.ProjectSchema);
 
-    app.get('/umock/list', (req, res, next) => {
-        MockModel.find().exec((err, docs) => {
+
+    app.get('/umock/project/list', (req, res, next) => {
+        ProjectModel.find().exec((err, docs) => {
+            res.send(R(docs));
+        });
+    });
+
+    app.post('/umock/project', (req, res, next) => {
+        let query = getProjectModel(req.body);
+        var mongooseEntity = new ProjectModel(query);
+        mongooseEntity.save(function(error, data) {
+            if (error) {
+                console.error(error);
+                res.send(defaultError("保存失败"));
+            } else {
+                reInitProjects();
+                res.send(R(data));
+            }
+        });
+    });
+
+    app.post('/umock/project/:id', (req, res, next) => {
+        var conditions = {
+            _id: req.params.id
+        };
+        var update = {
+            $set: getProjectModel(req.body)
+        };
+        ProjectModel.update(conditions, update, function(error, data) {
+            if (error) {
+                res.send(defaultError("保存失败"));
+            } else {
+                reInitProjects();
+                res.send(R(data));
+            }
+        });
+    });
+
+    app.delete('/umock/project/:id', (req, res, next) => {
+        var conditions = {
+            _id: req.params.id
+        };
+        ProjectModel.remove(conditions, function(error) {
+            if (error) {
+                res.send(defaultError("删除失败"));
+            } else {
+                reInitProjects();
+                res.send(defaultResult);
+            }
+        });
+    });
+
+    let getProjectModel = (body) => {
+        var data = {};
+        if (body.name != undefined) data.name = body.name;
+        if (body.desc != undefined) data.desc = body.desc;
+
+        if (body.beginPath != undefined) data.beginPath = body.beginPath;
+        if (body.proxy != undefined) data.proxy = body.proxy;
+        data.modifyTime = new Date();
+        return data;
+    }
+
+    function reInitProjects() {
+        ProjectModel.find().exec((err, docs) => {
+            var listO = {};
+            docs.forEach((n, i)=>{
+                if (listO[n.beginPath] == undefined) listO[n.beginPath] = {};
+                listO[n.beginPath] = n.proxy;
+            });
+            mockServer.projects = listO;
+        });
+    }
+    reInitProjects();
+
+
+    app.get('/umock/list/:id', (req, res, next) => {
+        MockModel.find({"menuId":req.params.id}).exec((err, docs) => {
             res.send(R(docs));
         });
     });
@@ -104,23 +212,6 @@ mockServer.initLocalServer = function() {
         });
     });
 
-    let getModel = (body) => {
-        var data = {};
-        if (body.url != undefined) {
-            data.url = body.url;
-            data.isreg = data.url.includes(":");
-        }
-        if (body.result != undefined) data.result = body.result;
-        if (body.desc != undefined) data.desc = body.desc;
-        if (body.active != undefined) data.active = body.active;
-        if (body.type != undefined) data.type = body.type;
-        if (body.param != undefined) data.param = body.param;
-        if (body.respParam != undefined) data.respParam = body.respParam;
-        
-        data.modifyTime = new Date();
-        return data;
-    }
-
     app.delete('/umock/:id', (req, res, next) => {
         var conditions = {
             _id: req.params.id
@@ -135,6 +226,24 @@ mockServer.initLocalServer = function() {
         });
     });
 
+    let getModel = (body) => {
+        var data = {};
+        if (body.url != undefined) {
+            data.url = body.url;
+            data.isreg = data.url.includes(":");
+        }
+        if (body.result != undefined) data.result = body.result;
+        if (body.desc != undefined) data.desc = body.desc;
+        if (body.active != undefined) data.active = body.active;
+        if (body.type != undefined) data.type = body.type;
+        if (body.param != undefined) data.param = body.param;
+        if (body.respParam != undefined) data.respParam = body.respParam;
+        if (body.dataHandler != undefined) data.dataHandler = body.dataHandler;
+        if (body.menuId != undefined) data.menuId = body.menuId;
+
+        data.modifyTime = new Date();
+        return data;
+    }
     function toObject(list) {
         var listO = {};
         list.forEach(function(n, i) {
@@ -157,10 +266,10 @@ mockServer.initLocalServer = function() {
     function reInitList() {
         MockModel.find().exec((err, docs) => {
             var regDocs = [];
-            docs = docs.filter(function(doc){
+            docs = docs.filter(function(doc) {
                 if (!doc.active) return doc.active;
                 if (doc.isreg) {
-                    doc.regexp = "^"+doc.url.replace(/:\w+/g, "\\w+")+"$";
+                    doc.regexp = "^" + doc.url.replace(/:\w+/g, "\\w+") + "$";
                     doc.fromUrl = doc.url.match(/^(\/\w+)+/)[0];
                     regDocs.push(doc);
                 }

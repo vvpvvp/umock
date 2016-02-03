@@ -1,7 +1,7 @@
 /**
  * Created by an.han on 15/7/20.
  */
-
+'use strict';
 var express = require('express');
 var fs = require('fs');
 var path = require('path');
@@ -12,14 +12,11 @@ var proxy = httpProxy.createProxyServer();
 var app = global.app;
 
 // log proxy data
-proxy.on('open', function(proxySocket) {
-    proxySocket.on('data', function(chunk) {
-        console.log(chunk.toString());
-    });
-});
-proxy.on('proxyRes', function(proxyRes, req, res) {
-    console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
-});
+proxy.on('open', function(proxySocket) {});
+
+proxy.on('proxyRes', function(proxyRes, req, res) {});
+
+
 
 
 // 根据参数个数获取配置
@@ -35,7 +32,7 @@ function getOption(arg) {
         timeout: 0
     };
     if (len === 0) {
-        return imitator;
+        return umock;
     } else if (len === 1) {
         var newOption = arg[0];
         if (util.isObject(newOption)) {
@@ -56,16 +53,16 @@ function getOption(arg) {
     return option;
 }
 
-// 把基于 Imitatorfile 的相对绝对转成绝对路径
+// 把基于 umockfile 的相对绝对转成绝对路径
 function parsePath(value) {
-    return path.resolve(global.imitatorFilePath, value);
+    return path.resolve(global.umockFilePath, value);
 }
 
 
 /**
  * 数据模拟函数
  */
-function imitator() {
+function umock() {
     var option = getOption(arguments);
 
     if (!option.url || !option.result) {
@@ -109,46 +106,45 @@ function imitator() {
 }
 
 // 规则之外的请求转发
-imitator.base = function(config) {
-    process.nextTick(function() {
-        app.use(function(req, res) {
-            proxy.web(req, res, config);
-        });
-    });
-}
+umock.base = function() {}
 
 // 读取文件内容
-imitator.file = function(file) {
+umock.file = function(file) {
     return fs.readFileSync(parsePath(file));
 }
 
 // 设置静态文件路径
-imitator.static = function(url, dir) {
+umock.static = function(url, dir) {
     app.use(url, express.static(dir));
 }
 
-imitator.jsonp = function(context, callbackName) {
-    callbackName = callbackName || 'callback';
-    context = typeof context === 'string' ? context : JSON.stringify(context);
-    return callbackName + '(' + context + ')';
-};
+umock.init = function(argument) {
 
-imitator.init = function(argument) {
-    imitator({
+    umock({
         url: '*', // 匹配的url
         result: mockServer.returnFunc // 返回的内容
     });
 
-    mockServer.initLocalServer(imitator);
-    app.use("/umock",express.static(path.join(__dirname, "../page")));
+    mockServer.initLocalServer(umock);
+    app.use("/umock", express.static(path.join(__dirname, "../page")));
     const config = global.config;
-    imitator.base({
-        target: config.proxy,
-        toProxy: true,
-        changeOrigin: true
+
+    process.nextTick(function() {
+        app.use(function(req, res, next) {
+            let beginPath = req.url.match(/\/\w+/);
+            if (mockServer.projects[beginPath[0]]) {
+                proxy.web(req, res, {
+                    target: mockServer.projects[beginPath[0]],
+                    toProxy: true,
+                    changeOrigin: true
+                });
+            } else {
+                next();
+            }
+        });
     });
 
 };
 
 
-module.exports = imitator;
+module.exports = umock;
