@@ -126,7 +126,7 @@ umock.init = function(argument) {
     });
 
     mockServer.initLocalServer(umock);
-    app.use("/umock", express.static(path.join(__dirname, "../page")));
+    app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
     const config = global.config;
 
     process.nextTick(function() {
