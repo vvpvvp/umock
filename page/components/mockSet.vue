@@ -7,7 +7,7 @@
                     <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{$index}}>
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
                     </button>
-                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#confirmModal" data-id={{$index}}>
+                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" v-on:click="delete" data-id={{$index}}>
                         <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                     </button>
                     <button type="button" class="btn btn-primary btn-xs" v-if="mockset.active" aria-label="Left Align" v-on:click="disactive" data-id={{$index}}>
@@ -30,17 +30,20 @@
             </div>
         </div>
     </div>
+    <mock-edit :mocksets="mocksets"  :now-project="nowProject"></mock-edit>
 </template>
 <script>
-function changeStatus(event, active) {
+import mockEdit from './mockEdit.vue'
+function changeStatus(vm,event, active) {
     var button = $(event.target);
     var num = button.data('id');
-    var content = v_list.mocksets[num];
-    $.post("/umock/" + content._id, {
+    var content = vm.mocksets[num];
+    $.post("/umock/mockset/" + content._id, {
         _id: content._id,
         active: active
+    }).done(()=>{
+        content.active = active;
     });
-    content.active = active;
 }
 
 export default {
@@ -51,24 +54,46 @@ export default {
             mocksets: []
         };
     },
+    components: {
+        mockEdit
+    },
+    ready(){
+        
+    },
     methods: {
         active(event) {
-            changeStatus(event, true);
+            changeStatus(this,event, true);
         },
         disactive(event) {
-            changeStatus(event, false);
+            changeStatus(this,event, false);
         },
         togglePane(event) {
             if ($(event.target).hasClass("mocksetHeader"))
                 $(event.target).next().slideToggle();
         },
-        init() {
+        getList(){
             var M = this;
             $.get("/umock/list/" + M.nowProject._id)
                 .done(function(result) {
                     if (result.result == "ok") {
                         M.mocksets = result.content;
                     }
+                });
+        },
+        delete(){
+            var vm = this;
+            if(!confirm("确定删除"))return;
+            var button = $(event.target);
+            var num = button.data('id');
+            var content = vm.mocksets[num];
+            $.ajax({
+                    url: "/umock/mockset/" + content._id,
+                    type: "delete"
+                })
+                .done((result)=>{
+                    if (result.result == "ok") {
+                         vm.mocksets.splice(vm.num, 1);
+                     }
                 });
         }
     }

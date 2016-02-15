@@ -180,7 +180,7 @@ mockServer.initLocalServer = function() {
         });
     });
 
-    app.post('/umock', (req, res, next) => {
+    app.post('/umock/mockset', (req, res, next) => {
         let query = getModel(req.body);
         var mongooseEntity = new MockModel(query);
         mongooseEntity.save(function(error, data) {
@@ -195,7 +195,7 @@ mockServer.initLocalServer = function() {
         });
     });
 
-    app.post('/umock/:id', (req, res, next) => {
+    app.post('/umock/mockset/:id', (req, res, next) => {
         var conditions = {
             _id: req.params.id
         };
@@ -212,7 +212,7 @@ mockServer.initLocalServer = function() {
         });
     });
 
-    app.delete('/umock/:id', (req, res, next) => {
+    app.delete('/umock/mockset/:id', (req, res, next) => {
         var conditions = {
             _id: req.params.id
         };

@@ -12,9 +12,7 @@
     "port": 9008,
     "webpack": {
       "output": {
-        "*.html": {},
-        "./page1/*.html": {},
-        "index.css": {}
+        "*.html": {}
       },
       "commonTrunk": {
         "common": [
