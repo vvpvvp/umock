@@ -29,7 +29,7 @@
       },
       "devServer": {
         "proxy": {
-          "*": "http://localhost:8000"
+          "/umock/*": "http://localhost:8000"
         }
       }
     }

@@ -8,8 +8,8 @@ var port = optimist.argv.p||8000;
 var cwd = process.cwd();
 var server;
 
-init(app, optimist.argv, cwd);
 if(port)app.set('port', port);//命令行-p设置端口号
+init(app, optimist.argv, cwd);
 port = app.get("port");
 server = http.createServer(app);
 server.listen(port);
