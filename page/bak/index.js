@@ -1,22 +1,8 @@
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
-// import "./index1.css";
+// import "./index.css";
 import "./lib/plugins/jsoneditor.min.css";
 import JSONEditor from "jsoneditor";
-
-import Vue from 'vue'
-import App from './App.vue'
-
-var index = new Vue({
-    el: '#container',
-    components: {
-        App
-    }
-});
-index.$refs.app.init();
-/* eslint-disable no-new */
-
-
 // import "./project"
 // import "./edit"
 
@@ -82,7 +68,7 @@ index.$refs.app.init();
 // 	// getList();
 
 // 	getProjectList();
-
+	
 
 // 	function getProjectList(id) {
 // 		$.get("/umock/project/list")
@@ -257,7 +243,7 @@ index.$refs.app.init();
 // 		}
 // 	};
 
-// var editor = new JSONEditor(container, options, {});
+	// var editor = new JSONEditor(container, options, {});
 
-
+	
 // })

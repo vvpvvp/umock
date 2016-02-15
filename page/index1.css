@@ -1,0 +1,146 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {/* Margin bottom by footer height */
+  margin-bottom: 60px;
+  overflow-y: scroll;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+.pointer{
+  cursor: pointer;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+body > .container {
+  padding: 60px 15px 0;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+code {
+  /* font-size: 80%; */
+}
+
+
+#jsoneditor {
+  height: 565px;
+}
+
+div#editModal .modal-dialog {width: 900px;}
+
+.operator {
+    float: right;
+}
+
+.mocksetHeader {
+    clear: both;
+    padding: 1px 10px;
+    line-height: 30px;
+    border: 1px solid #c3d9ec;
+    margin: -1px;
+    border-radius: inherit;
+}
+
+.mockDiv.active{
+    background-color: #F8E8EC !important;
+    border: 1px solid #F4ADAD;
+}
+.mockDiv {margin: 10px 10px 0px;/* background-color: #D3DCE3; *//* border: 1px solid #357BB7; */background-color: #e7f0f7;     border: 1px solid #c3d9ec;border-radius: 5px;}
+
+.mocksetContent {
+    display: none;
+    padding: 10px;
+    /* background: #FFF; */
+}
+
+div#mockList {
+    padding-bottom: 10px;
+}
+
+.mocksetContent h4 {
+    color: #0f6ab4;
+    font-size: 110%;
+    font-weight: normal;
+    font-family: 'Droid Sans', sans-serif;
+}
+
+span.mockType {
+    color: #337AB7;
+    /* font-weight: bold; */
+    display: inline-block;
+    /* padding: 12px; */
+    width: 53px;
+    margin-left: -10px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 0 10px 0 0;
+}
+
+.POST span.mockType {
+    color: green;
+}
+
+.mockDiv.POST,.mockDiv.POST .mocksetHeader {
+    border: 1px solid #C5E0C5;
+}
+
+.mockDiv.POST {
+    background-color: #F2FAF3;
+}
+
+.newProject {
+    font-size: 120%;
+    float: right;
+    color: #6AA4D5;
+    cursor: pointer;
+    background: #EEE;
+    display: inline-block;
+    padding: 0 20px;
+    line-height: 50px;
+}
+
+.newProject:hover {
+    color: #337AB7;
+}
+
+.newProject .glyphicon-plus:before {
+    vertical-align: middle;
+}
+
+.mockDiv.active .mocksetHeader {
+    border: 1px solid #F4ADAD;
+}
+
+.mocksetHeader code {
+    /* font-size: 100%; */
+    margin-right: 10px;
+}
+
+div#projects .glyphicon-edit {
+    display: none;
+}
+
+div#projects .active .glyphicon-edit {
+    display: initial;
+}

@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Mock Server</title>
+    <link rel="stylesheet" type="text/css" href="index1.css">
 </head>
 
 <body>
@@ -24,58 +25,9 @@
         </div>
         </div>
     </nav>
-    <div class="container">
-        <div class="page-header" id="projects">
-            <ul class="nav nav-tabs">
-                <template v-for="project in projects">
-                  <li role="presentation" v-on:click="openList($index)" v-bind:class="{'active':now==$index}">
-                    <a href="#">{{project.name}}&nbsp;&nbsp;<!-- <span class="glyphicon glyphicon-edit"  data-toggle="modal" data-target="#projectModal" data-id={{$index}} data-type="edit" aria-hidden="true"></span> --></a>
-                  </li>
-                </template>
-            </ul>
-        </div>
 
-        <div class="panel panel-default">
-            <!-- <div class="panel-heading">
-            <h3 class="panel-title">配置</h3>
-          </div> -->
-            <!-- Default panel contents -->
-            <div class="panel-heading">配置
-            <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" data-toggle="modal" data-target="#editModal"  data-type="create">
-                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-                            </button></div>
-            <div id="mockList">
-                <div v-for="mockset in mocksets" orderBy="active" v-bind:class="{'active':mockset.active,'opened':mockset.opened,'mockDiv':true,'POST':mockset.type=='POST','GET':mockset.type=='GET'}">
-                    <div class="mocksetHeader" v-on:click.self="togglePane">
-                        <span><span class="mockType">{{mockset.type}}</span><a href="{{mockset.url}}" target="_blank"><code>{{mockset.url}}</code></a><span class="text-info">{{mockset.desc}}</span></span>
-                        <div class="operator">
-                            <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{$index}}>
-                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
-                            </button>
-                            <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#confirmModal" data-id={{$index}}>
-                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-                            </button>
-                            <button type="button" class="btn btn-primary btn-xs" v-if="mockset.active" aria-label="Left Align" v-on:click="disactive" data-id={{$index}}>
-                                <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>拦截中
-                            </button>
-                            <button type="button" class="btn btn-link btn-xs" v-else aria-label="Left Align" v-on:click="active" data-id={{$index}}>
-                                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>已关闭
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mocksetContent">
-                        <h4>Parameters</h4>
-                        <p>{{mockset.param}}</p>
-                        <h4>Response</h4>
-                        <p>{{mockset.respParam}}</p>
-                        <div>
-                            <h4>Result</h4>
-                            <pre><code class="json">{{mockset.result}}</code></pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="container" id="container">
+        <App  v-ref:app></App>
     </div>
 
     <footer class="footer">

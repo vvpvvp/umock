@@ -49,7 +49,7 @@ module.exports = config;
 ##备注
 端口号默认为8000，-p命令设置优先级最大，其次是在配置文件中设置
 
-BASE:  
+##BASE:  
 * [JQuery](http://jquery.com/)
 * [Bootstrap](http://v3.bootcss.com/)
 * [Vue](http://cn.vuejs.org/)
