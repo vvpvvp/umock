@@ -49,7 +49,13 @@ mockServer.returnFunc = function(req, res, next) {
     let url = decodeURI(req.baseUrl),
         typeList = mockSetList[req.method],
         hasUrl = false;
-    if (url.indexOf("/api") == 0) {
+        var author = res.get("author");
+        // console.log();
+        author = "dasheng";
+        if(author){
+            url = "/" + author + url;
+        }
+    // if (url.indexOf("/api") == 0) {
         if (typeList != undefined && typeList[url] != undefined) {
             let result = JSON.parse(typeList[url].result);
             if (typeList[url].dataHandler == "over") {
@@ -79,7 +85,7 @@ mockServer.returnFunc = function(req, res, next) {
                 }
             }
         }
-    }
+    // }
 
     if (!hasUrl) {
         next();

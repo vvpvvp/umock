@@ -1,6 +1,7 @@
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
-import "./index.css";
+// import "./index.css";
+// import "./lib/plugins/jsoneditor.min.css";
 import Vue from 'vue'
 import App from './App.vue'
 
@@ -15,7 +16,7 @@ let loadCss = function(){
         document.getElementsByTagName("head")[0].appendChild(link);
     }
 };
-// loadCss("index.css");
+loadCss("index.css");
 loadCss("lib/plugins/jsoneditor.min.css");
 
 

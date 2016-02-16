@@ -27,9 +27,10 @@
       },
       "devServer": {
         "proxy": {
-          "/umock/*": "http://localhost:8000"
+          "/umock/?*": "http://localhost:8000"
         }
-      }
+      },
+      "copy":["/lib/*","index.css"]
     }
   },
   "dependencies": {
