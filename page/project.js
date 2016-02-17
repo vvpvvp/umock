@@ -48,7 +48,7 @@ var index = new Vue({
                 .done(function(result) {
                     if (result.result == "ok"){
                         vm.nowProject = result.content[0];
-                        window.document.title = "Mock-"+vm.nowProject.name;
+                        window.document.title = vm.nowProject.name;
                         Vue.nextTick(()=>{
                             vm.$refs.set.getList();
                         });
