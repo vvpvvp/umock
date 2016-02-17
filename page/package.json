@@ -10,7 +10,7 @@
   "description": "",
   "kil": {
     "port": 9008,
-    "copy":["lib/*"],
+    "copy":["lib/*","images/*"],
     "webpack": {
       "output": {
         "*.html": {}
