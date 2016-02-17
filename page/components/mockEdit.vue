@@ -18,6 +18,13 @@
                                 <input type="text" class="form-control" v-model="desc">
                             </div>
                             <div class="form-group">
+                                <label for="recipient-name" class="control-label">目录:</label>
+                                <input type="text" class="form-control" list="menu_list" v-model="menuId">
+                                <datalist id="menu_list">
+                                    <option v-for="menu in menus" value="{{menu}}"></option>
+                                </datalist>
+                            </div>
+                            <div class="form-group">
                                 <label for="recipient-name" class="control-label">Type:</label>
                             </div>
                             <div class="form-group">
@@ -73,7 +80,7 @@
 <script>
 import JSONEditor from "jsoneditor";
 
-function valid(vm,param) {
+function valid(vm, param) {
     if (param.url === "" || param.result === "" || param.type === "") {
         alert("参数不全");
         return false;
@@ -90,9 +97,9 @@ function valid(vm,param) {
     return true;
 }
 
-function emptyEdit(v_edit) {
-    $.extend(v_edit, getEmptyObject());
-    v_edit.editor.set({});
+function emptyEdit(vm) {
+    $.extend(vm, getEmptyObject());
+    vm.editor.set({});
 }
 
 function getEmptyObject() {
@@ -101,6 +108,7 @@ function getEmptyObject() {
         _id: "",
         url: "",
         desc: "",
+        menuId: "",
         result: "",
         respParam: "",
         dataHandler: "",
@@ -116,6 +124,7 @@ function model(toO, fromO) {
     toO.result = fromO.result;
     toO.desc = fromO.desc;
     toO.type = fromO.type;
+    toO.menuId = fromO.menuId;
     toO.dataHandler = fromO.dataHandler;
     toO.param = fromO.param;
     toO.respParam = fromO.respParam;
@@ -123,29 +132,28 @@ function model(toO, fromO) {
 }
 
 export default {
-    props: ['mocksets',"nowProject"],
+    props: ['mocksets', "nowProject", "menus"],
     data() {
         return getEmptyObject();
     },
     ready() {
-        var v_edit = this;
-        var editModal = $(v_edit.$el);
+        var vm = this;
+        var editModal = $(vm.$el);
         editModal.on('shown.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var type = button.data('type');
             if (type == "create") {
-                v_edit.editType = "create";
+                vm.editType = "create";
             } else {
                 var num = button.data('id');
-                var content = v_edit.mocksets[num];
-                v_edit.num = num;
-                model(v_edit, content);
-                // v_edit.result = content.result;
-                v_edit.editor.set(JSON.parse(v_edit.result));
-                v_edit.editType = "edit";
+                var mockset = vm.getById(num);
+                vm.mockset = mockset;
+                model(vm, mockset);
+                vm.editor.set(JSON.parse(vm.result));
+                vm.editType = "edit";
             }
         }).on("hide.bs.modal", function() {
-            emptyEdit(v_edit);
+            emptyEdit(vm);
         });
 
         var container = document.getElementById('jsoneditor');
@@ -161,7 +169,7 @@ export default {
             }
         };
 
-        v_edit.editor = new JSONEditor(container, options, {});
+        vm.editor = new JSONEditor(container, options, {});
     },
     methods: {
         edit: function(event) {
@@ -170,14 +178,16 @@ export default {
                 vm.result = JSON.stringify(vm.editor.get(), null, 2);
                 var param = {};
                 model(param, vm);
-                if (valid(vm,param) === false) return false;
+                if (valid(vm, param) === false) return false;
                 if (vm.editType == "create") {
-                    param.menuId = vm.nowProject._id;
+                    param.projectId = vm.nowProject._id;
+                    // param.menuId = vm.nowProject._id;
                     $.post("/umock/mockset", param)
                         .done(function(result) {
                             if (result.result == "ok") {
                                 vm.mocksets.push(result.content);
                                 $(vm.$el).modal("hide");
+                                vm.$dispatch("reInitMenu");
                             } else {
                                 alert("出错！");
                             }
@@ -188,8 +198,9 @@ export default {
                     $.post("/umock/mockset/" + param._id, param)
                         .done(function(result) {
                             if (result.result == "ok") {
-                                model(vm.mocksets[vm.num], param);
+                                model(vm.mockset, param);
                                 $(vm.$el).modal("hide");
+                                vm.$dispatch("reInitMenu");
                             } else {
                                 alert("出错！");
                             }
@@ -197,6 +208,12 @@ export default {
                 }
 
             });
+        },
+        getById(_id) {
+            let vm = this;
+            return vm.mocksets.filter((item) => {
+                return item._id == _id;
+            })[0];
         }
     }
 }

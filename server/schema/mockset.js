@@ -11,6 +11,7 @@ var MockSetSchema = new mongoose.Schema({
     param: String,
     respParam:String,
     menuId:String,
+    projectId:String,
     active: {type:Boolean,default: true},
     createTime: {type:Date,default: Date.now},
     modifyTime: {type:Date,default: Date.now}

@@ -6,6 +6,7 @@ var ProjectSchema = new mongoose.Schema({
     desc:"",
     beginPath:"",
     proxy:"",
+    isPublic:{type:Number,default:1},
     createTime: {type:Date,default: Date.now},
     modifyTime: {type:Date,default: Date.now}
 });

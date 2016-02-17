@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mock Server</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">{{nowProject.name}}-{{["个人测试","公共项目"][nowProject.isPublic]}}&nbsp;<span class="label label-success">{{nowProject.beginPath}}</span></a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="https://github.com/vvpvvp/UMock#readme" target="_blank">文档</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="container">
+        <mock-menu v-ref:menu :now-project="nowProject"></mock-menu>
+        <mock-set v-ref:set :now-project="nowProject"></mock-set>
+        <mock-test v-ref:test :now-project="nowProject"></mock-test>
+    </div>
+</body>
+
+</html>

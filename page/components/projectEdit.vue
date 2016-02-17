@@ -16,6 +16,17 @@
                         <input type="text" class="form-control" v-model="desc">
                     </div>
                     <div class="form-group">
+                        <label for="recipient-name" class="control-label">种类:</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="radio-inline">
+                            <input type="radio" name="type" v-model="isPublic" value=1> 公共项目
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="type" v-model="isPublic" value=0> 个人测试
+                        </label>
+                    </div>
+                    <div class="form-group">
                         <label for="recipient-name" class="control-label">前缀(每个项目用不同前缀区分):</label>
                         <input type="text" class="form-control" v-model="beginPath">
                     </div>
@@ -58,6 +69,7 @@ function getEmptyObject() {
         name: "",
         desc: "",
         beginPath: "",
+        isPublic:true,
         proxy: "",
         editing: false
     }
@@ -67,12 +79,13 @@ function model(toO, fromO) {
     toO._id = fromO._id;
     toO.name = fromO.name;
     toO.beginPath = fromO.beginPath;
+    toO.isPublic = fromO.isPublic;
     toO.desc = fromO.desc;
     toO.proxy = fromO.proxy;
 }
 
 export default {
-    props: ['nowProject'],
+    props: ['projects'],
     data() {
         return getEmptyObject();
     },
@@ -85,8 +98,10 @@ export default {
             if (type == "create") {
                 v_project.editing = false;
             } else {
+                var num = button.data('id');
                 v_project.editing = true;
-                model(v_project, v_project.nowProject);
+                v_project.num = num;
+                model(v_project, v_project.projects[num]);
             }
         }).on("hide.bs.modal", function() {
             emptyEdit(v_project);
@@ -103,18 +118,18 @@ export default {
                     $.post("/umock/project", param)
                         .done(function(result) {
                             if (result.result == "ok") {
-                                window.location.reload();
+                                vm.projects.push(result.content);
+                                $(vm.$el).modal("hide");
                             } else {
                                 alert("出错！");
                             }
                         })
                 } else {
-                    var param = {};
-                    model(param, vm);
                     $.post("/umock/project/" + param._id, param)
                         .done(function(result) {
                             if (result.result == "ok") {
-                                window.location.reload();
+                                model(vm.projects[vm.num], param);
+                                $(vm.$el).modal("hide");
                             } else {
                                 alert("出错！");
                             }

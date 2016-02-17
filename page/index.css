@@ -39,7 +39,6 @@ body > .container {
 }
 
 code {
-  /* font-size: 80%; */
 }
 
 
@@ -66,7 +65,7 @@ div#editModal .modal-dialog {width: 900px;}
     background-color: #F8E8EC !important;
     border: 1px solid #F4ADAD;
 }
-.mockDiv {margin: 10px 10px 0px;/* background-color: #D3DCE3; *//* border: 1px solid #357BB7; */background-color: #e7f0f7;     border: 1px solid #c3d9ec;border-radius: 5px;}
+.mockDiv {margin: 10px 10px;background-color: #e7f0f7;     border: 1px solid #c3d9ec;border-radius: 5px;}
 
 .mocksetContent {
     display: none;
@@ -112,12 +111,12 @@ span.mockType {
 .newProject {
     font-size: 120%;
     float: right;
-    color: #6AA4D5;
+    color: #5996CA;
     cursor: pointer;
-    background: #EEE;
+    /* background: #EEE; */
     display: inline-block;
     padding: 0 20px;
-    line-height: 50px;
+    line-height: 40px;
 }
 
 .newProject:hover {
@@ -143,4 +142,101 @@ div#projects .glyphicon-edit {
 
 div#projects .active .glyphicon-edit {
     display: initial;
+}
+
+div#container {
+    position: absolute;
+    top: 51px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+div#mockMenu {
+    position: absolute;
+    padding: 20px;
+    left: 0;
+    width: 200px;
+    bottom: 0;
+    top: 0;
+    border-right: 1px solid #eee;
+}
+
+div#mockList {
+    position: absolute;
+    left: 200px;
+    padding: 30px;
+    top: 0;
+    right: 500px;
+    bottom: 0;
+    overflow-y: auto;
+    /* border-right: 1px solid #eee; */
+}
+
+div#mockTest {
+    position: absolute;
+    top: 1px;
+    padding: 20px;
+    right:0;
+    width: 500px;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 3;
+    background-color: #FFF;
+    border-left: 1px solid #eee;
+    transition: width 0.5s;
+}
+
+.list-group-item.active a, .list-group-item.active:hover a, .list-group-item.active:focus a{
+  color:#FFF;
+}
+
+div#mockTest form {
+    padding: 20px;
+}
+
+div#mockTest.expand{
+    width: 70%;
+}
+
+div#headersJson {
+    height: 200px;
+}
+
+div#mockTest.expand .form {
+    width: 40%;
+    float: left;
+    padding: 0px 10px 0 0px;
+}
+
+div#mockTest.expand div#testResult {
+    width: 59%;
+    position: absolute;
+    right: 0;
+    bottom: 10px;
+    top: 0;
+    overflow-y: auto;
+}
+
+button.btn.btn-default.btn-xs {}
+
+div#testResult {
+    margin-top: 20px;
+}
+
+div#mockTest.expand button.expand::after {
+    content: "hide";
+}
+
+div#mockTest button.expand::after {
+    content: "show";
+}
+
+div#testTopButton {
+    position: fixed;
+    z-index: 4;
+}
+
+.alert.alert-gray {
+    border-color: #CBCBCB;
 }

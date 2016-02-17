@@ -12,9 +12,28 @@ var proxy = httpProxy.createProxyServer();
 var app = global.app;
 
 // log proxy data
-proxy.on('open', function(proxySocket) {});
+proxy.on('open', function(proxySocket) {
+    console.log("open")
+});
 
-proxy.on('proxyRes', function(proxyRes, req, res) {});
+proxy.on('proxyReq', function(proxyReq, req, res, options) {
+    // proxyReq.setHeader("transfer-encoding","chunked");
+    // proxyReq.setHeader("content-length","");
+});
+
+proxy.on('proxyRes', function(proxyRes, req, res) {
+    // console.log("proxyRes");
+    // console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
+});
+
+
+proxy.on('error', function() {
+    // res.writeHead(500, {
+    //     'content-Type': 'application/json; charset=utf-8'
+    // });
+
+    // res.end('{"msg":"error"}');
+});
 
 
 
@@ -120,21 +139,27 @@ umock.static = function(url, dir) {
 
 umock.init = function(argument) {
 
+    app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
+
     umock({
         url: '*', // 匹配的url
         result: mockServer.returnFunc // 返回的内容
     });
 
     mockServer.initLocalServer(umock);
-    app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
-    const config = global.config;
 
     process.nextTick(function() {
         app.use(function(req, res, next) {
-            let beginPath = req.url.match(/\/\w+/);
-            if (mockServer.projects[beginPath[0]]) {
+            var author = req.headers.author;
+            let beginPath = req.url.match(/\/\w+/)[0];
+            //如果有author的header，做特殊处理。
+            if(author){
+                beginPath = "/" + author;
+                delete req.headers.author;
+            }
+            if (mockServer.projects[beginPath]) {
                 proxy.web(req, res, {
-                    target: mockServer.projects[beginPath[0]],
+                    target: mockServer.projects[beginPath],
                     toProxy: true,
                     changeOrigin: true
                 });

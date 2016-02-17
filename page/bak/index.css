@@ -17,6 +17,10 @@ body {/* Margin bottom by footer height */
   background-color: #f5f5f5;
 }
 
+.pointer{
+  cursor: pointer;
+}
+
 
 /* Custom page CSS
 -------------------------------------------------- */
@@ -108,7 +112,7 @@ span.mockType {
 .newProject {
     font-size: 120%;
     float: right;
-    color: #6AA4D5;
+    color: #5996CA;
     cursor: pointer;
     background: #EEE;
     display: inline-block;
@@ -131,4 +135,12 @@ span.mockType {
 .mocksetHeader code {
     /* font-size: 100%; */
     margin-right: 10px;
+}
+
+div#projects .glyphicon-edit {
+    display: none;
+}
+
+div#projects .active .glyphicon-edit {
+    display: initial;
 }

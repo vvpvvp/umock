@@ -5,7 +5,6 @@ var mock = require('../schema/mockset');
 var project = require('../schema/project');
 var util = require('../util');
 
-
 const defaultResult = {
         result: "ok"
     },
@@ -27,19 +26,21 @@ var mockSetList = {},
 
 let mockServer = {};
 
-function overflyData (res,data) {
+function overflyData (req,res,data) {
     var _write = res.write;
-    let body = [];
+    let body = [],isError = false;
     res.write  = function (buf) {
         body.push(buf);
     };
     var _end = res.end;
     res.end  = function () {
-        var re = JSON.parse(body.join(""));
-        // Object.assign(re, data);
-        //深度覆盖
-        util.extendResultData(re,data);
-        _write.call(res,new Buffer(JSON.stringify(re)));
+        if(res.statusCode==200){
+            var re = JSON.parse(body.join(""));
+            //深度覆盖
+            util.extendResultData(re,data);
+            console.log("rewrite");
+            _write.call(res,JSON.stringify(re));
+        }
         _end.call(res);
     };
 }
@@ -49,20 +50,19 @@ mockServer.returnFunc = function(req, res, next) {
     let url = decodeURI(req.baseUrl),
         typeList = mockSetList[req.method],
         hasUrl = false;
-        var author = res.get("author");
-        // console.log();
-        author = "dasheng";
+        //如果有author的header，做特殊处理。
+        var author = req.headers.author;
         if(author){
             url = "/" + author + url;
         }
-    // if (url.indexOf("/api") == 0) {
         if (typeList != undefined && typeList[url] != undefined) {
             let result = JSON.parse(typeList[url].result);
             if (typeList[url].dataHandler == "over") {
                 hasUrl = true;
-                res.send(result);
+                res.json(result);
+                // res.end();
             } else {
-                overflyData(res,result);
+                overflyData(req,res,result);
             }
         } else if (mockRegExpList[req.method] != undefined) {
             var RegExpList = mockRegExpList[req.method];
@@ -76,16 +76,17 @@ mockServer.returnFunc = function(req, res, next) {
                         let result = JSON.parse(element.result);
                         if (element.dataHandler == "over") {
                             hasUrl = true;
-                            res.send(result);
+                            // res.write(JSON.stringify(result));
+                            // res.end();
+                            res.json(result);
                         } else {
-                            overflyData(res,result);
+                            overflyData(req,res,result);
                         }
                         break;
                     }
                 }
             }
         }
-    // }
 
     if (!hasUrl) {
         next();
@@ -107,6 +108,12 @@ mockServer.initLocalServer = function() {
 
     app.get('/umock/project/list', (req, res, next) => {
         ProjectModel.find().exec((err, docs) => {
+            res.send(R(docs));
+        });
+    });
+
+    app.get('/umock/project/:id', (req, res, next) => {
+        ProjectModel.find({"_id":req.params.id}).exec((err, docs) => {
             res.send(R(docs));
         });
     });
@@ -160,7 +167,7 @@ mockServer.initLocalServer = function() {
         var data = {};
         if (body.name != undefined) data.name = body.name;
         if (body.desc != undefined) data.desc = body.desc;
-
+        if (body.isPublic != undefined) data.isPublic = body.isPublic;
         if (body.beginPath != undefined) data.beginPath = body.beginPath;
         if (body.proxy != undefined) data.proxy = body.proxy;
         data.modifyTime = new Date();
@@ -181,7 +188,7 @@ mockServer.initLocalServer = function() {
 
 
     app.get('/umock/list/:id', (req, res, next) => {
-        MockModel.find({"menuId":req.params.id}).exec((err, docs) => {
+        MockModel.find({"projectId":req.params.id}).exec((err, docs) => {
             res.send(R(docs));
         });
     });
@@ -246,6 +253,7 @@ mockServer.initLocalServer = function() {
         if (body.respParam != undefined) data.respParam = body.respParam;
         if (body.dataHandler != undefined) data.dataHandler = body.dataHandler;
         if (body.menuId != undefined) data.menuId = body.menuId;
+        if (body.projectId != undefined) data.projectId = body.projectId;
 
         data.modifyTime = new Date();
         return data;
