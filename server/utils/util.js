@@ -18,8 +18,8 @@ module.exports = {
         return toString.call(value) === '[object Function]';
     },
 
-    isNotAOF:function (value) {
-        return !(this.isFunction(value)||this.isArray(value)||this.isObject(value));
+    isNotAOF: function(value) {
+        return !(this.isFunction(value) || this.isArray(value) || this.isObject(value));
     },
 
     each: function(val, callback) {
@@ -35,39 +35,59 @@ module.exports = {
     extendResultData: function(toObject, fromObj) {
         var utils = this;
         if (utils.isObject(fromObj)) {
-            if(!utils.isObject(toObject)){
+            if (!utils.isObject(toObject)) {
                 toObject = fromObj;
-            }else{
+            } else {
                 for (var key in fromObj) {
-                    if(toObject[key]==undefined||utils.isNotAOF(toObject[key])){
+                    if (toObject[key] == undefined || utils.isNotAOF(toObject[key])) {
                         toObject[key] = fromObj[key];
-                    }else{
+                    } else {
                         this.extendResultData(toObject[key], fromObj[key]);
                     }
                 }
             }
-        }else if (utils.isArray(fromObj)) {
-            if(!utils.isArray(toObject)){
+        } else if (utils.isArray(fromObj)) {
+            if (!utils.isArray(toObject)) {
                 toObject = fromObj;
-            }else if(fromObj.length==1){
-                toObject.forEach((n,i)=>{
-                    if(utils.isNotAOF(toObject[i])){
+            } else if (fromObj.length == 1) {
+                toObject.forEach((n, i) => {
+                    if (utils.isNotAOF(toObject[i])) {
                         toObject[i] = fromObj[0];
-                    }else{
+                    } else {
                         this.extendResultData(toObject[i], fromObj[0]);
                     }
                 });
-            }else{
-                fromObj.forEach((n,i)=>{
-                    if(toObject.length<=i||utils.isNotAOF(toObject[i])){
+            } else {
+                fromObj.forEach((n, i) => {
+                    if (toObject.length <= i || utils.isNotAOF(toObject[i])) {
                         toObject[i] = n;
-                    }else{
+                    } else {
                         this.extendResultData(toObject[i], n);
                     }
                 });
             }
-        }else if(utils.isNotAOF(toObject)){
+        } else if (utils.isNotAOF(toObject)) {
             toObject = fromObj;
         }
+    },
+    cloneObj(oldObj) { //复制对象方法
+        if (typeof(oldObj) != 'object') return oldObj;
+        if (oldObj == null) return oldObj;
+        var newObj = new Object();
+        for (var i in oldObj)
+            newObj[i] = cloneObj(oldObj[i]);
+        return newObj;
+    },
+    extend() { //扩展对象
+        var utils = this;
+        var args = arguments;
+        if (args.length < 2) return;
+        var temp = utils.cloneObj(args[0]); //调用复制对象方法
+        for (var n = 1; n < args.length; n++) {
+            for (var i in args[n]) {
+                temp[i] = args[n][i];
+            }
+        }
+        return temp;
     }
 }

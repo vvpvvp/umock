@@ -69,7 +69,7 @@ function getEmptyObject() {
         name: "",
         desc: "",
         beginPath: "",
-        isPublic:true,
+        isPublic:"1",
         proxy: "",
         editing: false
     }

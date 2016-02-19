@@ -31,6 +31,7 @@
     "mongoose": "^4.3.7",
     "morgan": "~1.6.1",
     "optimist": "^0.6.1",
+    "pouchdb": "^5.2.1",
     "serve-favicon": "~2.3.0"
   },
   "bugs": {

@@ -17,7 +17,7 @@
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                         </button>
                         <button type="button" class="btn btn-primary btn-xs" v-if="mockset.active" aria-label="Left Align" v-on:click="disactive(mockset)">
-                            <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>拦截中
+                            <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>{{mockset.dataHandler=="over"?"覆盖":"拦截"}}中
                         </button>
                         <button type="button" class="btn btn-link btn-xs" v-else aria-label="Left Align" v-on:click="active(mockset)">
                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>已关闭

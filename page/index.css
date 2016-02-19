@@ -59,6 +59,7 @@ div#editModal .modal-dialog {width: 900px;}
     border: 1px solid #c3d9ec;
     margin: -1px;
     border-radius: inherit;
+    overflow: hidden;
 }
 
 .mockDiv.active{
@@ -89,7 +90,7 @@ span.mockType {
     /* font-weight: bold; */
     display: inline-block;
     /* padding: 12px; */
-    width: 53px;
+    width: 73px;
     margin-left: -10px;
     border-radius: 5px;
     text-align: center;
@@ -169,7 +170,7 @@ div#mockList {
     top: 0;
     right: 500px;
     bottom: 0;
-    overflow-y: auto;
+    overflow-y: scroll;
     /* border-right: 1px solid #eee; */
 }
 
@@ -239,4 +240,9 @@ div#testTopButton {
 
 .alert.alert-gray {
     border-color: #CBCBCB;
+}
+
+pre {
+    background-color: rgba(254, 254, 254, 0.55);
+    border: 1px solid #F4F4F4;
 }
