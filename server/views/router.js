@@ -45,7 +45,7 @@ mockServer.returnFunc = function(req, res, next) {
             if (typeList[url].dataHandler == "over") {
                 hasUrl = true;
                 res.json(result);
-                // res.end();
+                res.end();
             } else {
                 overflyData(req,res,result);
             }
@@ -63,8 +63,8 @@ mockServer.returnFunc = function(req, res, next) {
                             if (element.dataHandler == "over") {
                                 hasUrl = true;
                                 // res.write(JSON.stringify(result));
-                                // res.end();
                                 res.json(result);
+                                res.end();
                             } else {
                                 overflyData(req,res,result);
                             }
