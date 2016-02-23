@@ -144,7 +144,13 @@ export default {
                 ajaxParam.contentType = "application/json;charset=UTF-8";
             }
             if(vm.param){
-                ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+$.param(vm.param);
+                var param = vm.param;
+                try{
+                    console.log(JSON.parse(param));
+                    param = $.param(JSON.parse(param));
+                }catch(e){}
+                console.log(param);
+                ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+param;
             }
             $.ajax(ajaxParam);
         }
