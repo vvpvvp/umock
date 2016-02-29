@@ -7,8 +7,8 @@
                 </button>
             </div>
             <div v-for="mockset in mocksets | filterBy filterMenu in 'menuId'" track-by="_id" v-bind:class="{'active':mockset.active,'opened':mockset.opened,'mockDiv':true,'POST':mockset.type=='POST','GET':mockset.type=='GET'}">
-                <div class="mocksetHeader" v-on:click.self="togglePane">
-                    <span><span class="mockType">{{mockset.type}}</span><a href="javascript:;" v-on:click="testMock(mockset)"><code>{{mockset.url}}</code></a><span class="text-info">{{mockset.desc}}</span></span>
+                <div class="mocksetHeader" v-on:click="togglePane">
+                    <span class="mockType">{{mockset.type}}</span><a href="javascript:;" v-on:click.stop="testMock(mockset)"><code>{{mockset.url}}</code></a><span class="text-info">{{mockset.desc}}</span>
                     <div class="operator">
                         <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{mockset._id}}>
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
@@ -16,10 +16,10 @@
                         <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" v-on:click="delete(mockset)">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                         </button>
-                        <button type="button" class="btn btn-primary btn-xs" v-if="mockset.active" aria-label="Left Align" v-on:click="disactive(mockset)">
+                        <button type="button" class="btn btn-primary btn-xs" v-if="mockset.active" aria-label="Left Align" v-on:click.stop="disactive(mockset)">
                             <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>{{mockset.dataHandler=="over"?"覆盖":"拦截"}}中
                         </button>
-                        <button type="button" class="btn btn-link btn-xs" v-else aria-label="Left Align" v-on:click="active(mockset)">
+                        <button type="button" class="btn btn-link btn-xs" v-else aria-label="Left Align" v-on:click.stop="active(mockset)">
                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>已关闭
                         </button>
                     </div>
@@ -87,8 +87,11 @@ export default {
             changeStatus(mockset, false);
         },
         togglePane(event) {
-            if ($(event.target).hasClass("mocksetHeader"))
-                $(event.target).next().slideToggle();
+            var bar = $(event.target);
+            if (bar.hasClass("mocksetHeader"))
+                bar.next().slideToggle();
+            else if(bar.parent().hasClass("mocksetHeader"))
+                bar.parent().next().slideToggle();
         },
         getList() {
             var M = this;
