@@ -8,6 +8,9 @@ var path = require('path');
 var util = require('./utils/util');
 var httpProxy = require('http-proxy');
 var mockServer = require('./views/router');
+
+var connect = require('connect');
+var bodyParser = require('body-parser');
 var proxy = httpProxy.createProxyServer();
 var app = global.app;
 
@@ -17,8 +20,10 @@ proxy.on('open', function(proxySocket) {
 });
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
-    // proxyReq.setHeader("transfer-encoding","chunked");
-    // proxyReq.setHeader("content-length","");
+    if(req.method=="POST"&&req.body){
+        proxyReq.write(req.body);
+        proxyReq.end();
+    }
 });
 
 proxy.on('proxyRes', function(proxyRes, req, res) {
@@ -27,12 +32,8 @@ proxy.on('proxyRes', function(proxyRes, req, res) {
 });
 
 
-proxy.on('error', function() {
-    // res.writeHead(500, {
-    //     'content-Type': 'application/json; charset=utf-8'
-    // });
-
-    // res.end('{"msg":"error"}');
+proxy.on('error', function(e, req, res) {
+    // console.log(arguments);
 });
 
 
@@ -137,6 +138,22 @@ umock.static = function(url, dir) {
     app.use(url, express.static(dir));
 }
 
+
+var restreamer = function() {
+    return function(req, res, next) { //restreame
+        req.removeAllListeners('data');
+        req.removeAllListeners('end');
+        next();
+        process.nextTick(function() {
+            console.log(1);
+            if (req.body) {
+                req.emit('data', JSON.stringify(req.body));
+            }
+            req.emit('end');
+        })
+    }
+}
+
 umock.init = function(argument) {
 
     app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
@@ -148,20 +165,62 @@ umock.init = function(argument) {
 
     mockServer.initLocalServer(umock);
 
+    // app.use(bodyParser.urlencoded({extended: false, type: 'application/x-www-form-urlencoded'}));
+    // app.use(restreamer());
+
     process.nextTick(function() {
+        // app.use(bodyParser.json()) //json
+        //     .use(restreamer()) //restreame
+        //     .use(function(req, res) {
+        //         // modify body here,
+        //         // eg: req.body = {a: 1}.
+        //         console.log('proxy body:',req.body);
+        //         var author = req.headers.author;
+        //         let beginPath = req.url.match(/\/\w+/)[0];
+        //         //如果有author的header，做特殊处理。
+        //         if (author) {
+        //             beginPath = "/" + author;
+        //             delete req.headers.author;
+        //         }
+        //         if (mockServer.projects[beginPath]) {
+        //             // console.log(req.body);
+        //             // var buffer = JSON.stringify(req.body);
+        //             proxy.web(req, res, {
+        //                 target: mockServer.projects[beginPath],
+        //                 toProxy: true,
+        //                 changeOrigin: true
+        //             });
+        //         } else {
+        //             next();
+        //         }
+        //     });
         app.use(function(req, res, next) {
+
             var author = req.headers.author;
             let beginPath = req.url.match(/\/\w+/)[0];
             //如果有author的header，做特殊处理。
-            if(author){
+            if (author) {
                 beginPath = "/" + author;
                 delete req.headers.author;
             }
             if (mockServer.projects[beginPath]) {
+                // console.log(req.body);
+                // var buffer = JSON.stringify(req.body);
+                // console.log(req.body);
+                var headers = {};
+                if(req.method=="POST"&&req.body){
+                    var data = JSON.stringify(req.body);
+                    req.body = data;
+                    headers = {  
+                        "Content-Type": 'application/json',  
+                        "Content-Length": data.length
+                    }
+                }
                 proxy.web(req, res, {
                     target: mockServer.projects[beginPath],
                     toProxy: true,
-                    changeOrigin: true
+                    changeOrigin: true, 
+                    headers:headers
                 });
             } else {
                 next();
