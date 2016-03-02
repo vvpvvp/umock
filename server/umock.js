@@ -9,8 +9,6 @@ var util = require('./utils/util');
 var httpProxy = require('http-proxy');
 var mockServer = require('./views/router');
 
-var connect = require('connect');
-var bodyParser = require('body-parser');
 var proxy = httpProxy.createProxyServer();
 var app = global.app;
 
@@ -165,35 +163,7 @@ umock.init = function(argument) {
 
     mockServer.initLocalServer(umock);
 
-    // app.use(bodyParser.urlencoded({extended: false, type: 'application/x-www-form-urlencoded'}));
-    // app.use(restreamer());
-
     process.nextTick(function() {
-        // app.use(bodyParser.json()) //json
-        //     .use(restreamer()) //restreame
-        //     .use(function(req, res) {
-        //         // modify body here,
-        //         // eg: req.body = {a: 1}.
-        //         console.log('proxy body:',req.body);
-        //         var author = req.headers.author;
-        //         let beginPath = req.url.match(/\/\w+/)[0];
-        //         //如果有author的header，做特殊处理。
-        //         if (author) {
-        //             beginPath = "/" + author;
-        //             delete req.headers.author;
-        //         }
-        //         if (mockServer.projects[beginPath]) {
-        //             // console.log(req.body);
-        //             // var buffer = JSON.stringify(req.body);
-        //             proxy.web(req, res, {
-        //                 target: mockServer.projects[beginPath],
-        //                 toProxy: true,
-        //                 changeOrigin: true
-        //             });
-        //         } else {
-        //             next();
-        //         }
-        //     });
         app.use(function(req, res, next) {
 
             var author = req.headers.author;
@@ -204,9 +174,6 @@ umock.init = function(argument) {
                 delete req.headers.author;
             }
             if (mockServer.projects[beginPath]) {
-                // console.log(req.body);
-                // var buffer = JSON.stringify(req.body);
-                // console.log(req.body);
                 var headers = {};
                 if(req.method=="POST"&&req.body){
                     var data = JSON.stringify(req.body);
