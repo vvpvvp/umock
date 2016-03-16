@@ -7,11 +7,11 @@
         <!-- <ul class="list-group"> -->
             <!-- <li v-for="project in projects" role="presentation" v-bind:class="{ 'list-group-item': true, 'active': project.isPublic=='1'}">
                 <a href="project.html?id={{project._id}}"><h4>{{project.name}}</a>&nbsp;&nbsp;<span class="pointer glyphicon glyphicon-edit"  data-toggle="modal" data-target="#projectModal" data-id={{$index}} data-type="edit" aria-hidden="true"></span></h4>
-                <p class="list-group-item-text">{{project.beginPath}} （{{["HEAD前缀","URL前缀"][project.isPublic]}}）</p>
+                <p class="list-group-item-text">{{project.beginPath}} （{{["HEAD参数","URL前缀"][project.isPublic]}}）</p>
                 <p class="list-group-item-text">{{project.desc}}</p>
             </li> -->
             <div v-for="project in projects"  v-bind:class="{ 'alert': true, 'alert-success': project.isPublic=='1', 'alert-gray': project.isPublic!='1'}" role="alert">
-              <h4><span class="label {{['label-primary','label-success'][project.isPublic]}}">{{project.beginPath}}</span>&nbsp;&nbsp;<a href="project.html?id={{project._id}}" class="alert-link">{{project.name}}-{{["HEAD前缀","URL前缀"][project.isPublic]}}</a>&nbsp;&nbsp;<span class="pointer glyphicon glyphicon-edit"  data-toggle="modal" data-target="#projectModal" data-id={{$index}} data-type="edit" aria-hidden="true"></span></h4></a>
+              <h4><span class="label {{['label-primary','label-success'][project.isPublic]}}">{{project.beginPath}}</span>&nbsp;&nbsp;<a href="project.html?id={{project._id}}" class="alert-link">{{project.name}}-{{["HEAD参数","URL前缀"][project.isPublic]}}</a>&nbsp;&nbsp;<span class="pointer glyphicon glyphicon-edit"  data-toggle="modal" data-target="#projectModal" data-id={{$index}} data-type="edit" aria-hidden="true"></span></h4></a>
                 <p>{{project.desc}}</p>
             </div>
         <!-- </ul> -->

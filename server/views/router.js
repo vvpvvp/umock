@@ -57,9 +57,7 @@ mockServer.returnFunc = function(req, res, next) {
         beginPath = author;
         delete req.headers.author;
     }
-    console.log(beginPath);
     var server = mockServer.projects[beginPath];
-    console.log(server);
 
     if (server) {
         req.proxy = server.proxy;

@@ -154,7 +154,6 @@ umock.init = function(argument) {
             if (req.proxy) {
                 var headers = {};
                 if((req.method=="POST"||req.method=="PATCH")&&req.body){
-                    console.log(bodyParser.json());
                     var data = JSON.stringify(req.body);
                     req.body = data;
                     // headers = {  

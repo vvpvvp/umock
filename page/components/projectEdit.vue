@@ -23,11 +23,11 @@
                             <input type="radio" name="type" v-model="isPublic" value=1> URL前缀
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="type" v-model="isPublic" value=0> HEAD前缀
+                            <input type="radio" name="type" v-model="isPublic" value=0> HEAD参数
                         </label>
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="control-label">前缀(每个项目用不同前缀区分):</label>
+                        <label for="recipient-name" class="control-label">前缀区分/设定HEAD的author参数:</label>
                         <input type="text" class="form-control" v-model="beginPath">
                     </div>
                     <div class="form-group">
