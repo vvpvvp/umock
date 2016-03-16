@@ -6,12 +6,12 @@
     <title>Mock Server</title>
     <link rel="shortcut icon" href="images/icon.ico" type="image/x-icon"/>
     <link rel="icon" href="images/icon.ico" type="image/x-icon"/>
-<link href="common.a922ece0fb9e5a369be7.css" rel="stylesheet"></head>
+<link href="common.813ca4db49ec5db5e293.css" rel="stylesheet"></head>
 
 <body>
     <nav class="navbar navbar-default">
             <div class="navbar-header">
-                <a class="navbar-brand" href="index.html">{{nowProject.name}}-{{["个人测试","公共项目"][nowProject.isPublic]}}&nbsp;<span class="label label-success">{{nowProject.beginPath}}</span></a>
+                <a class="navbar-brand" href="index.html">{{nowProject.name}}-{{["HEAD前缀","URL前缀"][nowProject.isPublic]}}&nbsp;<span class="label label-success">{{nowProject.beginPath}}</span></a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -25,6 +25,6 @@
         <mock-set v-ref:set :now-project="nowProject"></mock-set>
         <mock-test v-ref:test :now-project="nowProject"></mock-test>
     </div>
-<script src="common.a922ece0fb9e5a369be7.js"></script><script src="project.a922ece0fb9e5a369be7.js"></script></body>
+<script src="common.813ca4db49ec5db5e293.js"></script><script src="project.813ca4db49ec5db5e293.js"></script></body>
 
 </html>

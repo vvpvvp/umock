@@ -83,12 +83,14 @@ var view = function(mockServer, db) {
 
         reInitProjects = function() {
             ProjectModel.find().exec((err, docs) => {
-                var listO = {};
+                var listO = {},listId = {};
                 docs.forEach((n, i) => {
-                    if (listO[n.beginPath] == undefined) listO[n.beginPath] = {};
-                    listO[n.beginPath] = n.proxy;
+                    // if (listO[n.beginPath] == undefined) listO[n.beginPath] = {};
+                    listO[n.beginPath] = n;
+                    listId[n._id] = n;
                 });
                 mockServer.projects = listO;
+                mockServer.projectIds = listId;
             });
         };
     } else {

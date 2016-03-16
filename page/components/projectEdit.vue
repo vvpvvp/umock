@@ -20,10 +20,10 @@
                     </div>
                     <div class="form-group">
                         <label class="radio-inline">
-                            <input type="radio" name="type" v-model="isPublic" value=1> 公共项目
+                            <input type="radio" name="type" v-model="isPublic" value=1> URL前缀
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="type" v-model="isPublic" value=0> 个人测试
+                            <input type="radio" name="type" v-model="isPublic" value=0> HEAD前缀
                         </label>
                     </div>
                     <div class="form-group">
@@ -49,7 +49,7 @@ function valid(param) {
     if (param.name === "" || param.beginPath === "" || param.proxy === "") {
         alert("参数不全");
         return false;
-    } else if (param.beginPath.indexOf("\/") !== 0) {
+    } else if (param.beginPath.isPublic==1&&param.beginPath.indexOf("\/") !== 0) {
         alert("url必须以/开头");
         return false;
     } else if (param.beginPath.indexOf("/umock") != -1) {

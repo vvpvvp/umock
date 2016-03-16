@@ -50,11 +50,11 @@ function getEmptyObject() {
 
 function model(toO, fromO) {
     toO._id = fromO._id;
-    if(toO.nowProject.isPublic!="1"){
-        toO.url = fromO.url.substring(toO.nowProject.beginPath.length);
-    }else{
+    // if(toO.nowProject.isPublic!="1"){
+    //     toO.url = fromO.url.substring(toO.nowProject.beginPath.length);
+    // }else{
         toO.url = fromO.url;
-    }
+    // }
     
     toO.result = "";
     toO.desc = fromO.desc;
@@ -169,7 +169,7 @@ export default {
                         alert("header格式错误");
                         return false;
                     }
-                    var author = vm.nowProject.beginPath.substring(1);
+                    var author = vm.nowProject.beginPath;
                     if(headers.author!=author){
                         headers.author=author;
                         vm.headerEditor.set(headers);

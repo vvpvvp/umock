@@ -10,6 +10,26 @@ var mocksetView = function(mockServer, db) {
 
     if (db) {
 
+        function toObject(list) {
+            var listO = {};
+            list.forEach(function(n, i) {
+                var pid = n.projectId;
+                if (listO[pid] == undefined) listO[pid] = {};
+                listO[pid][n.url] = n;
+            });
+            return listO;
+        }
+
+        function toObjectList(list) {
+            var listO = {};
+            list.forEach(function(n, i) {
+                var pid = n.projectId;
+                if (listO[pid] == undefined) listO[pid] = [];
+                listO[pid].push(n);
+            });
+            return listO;
+        }
+
         reInitList = function() {
             MockModel.find().exec((err, docs) => {
                 var regDocs = [];
@@ -183,25 +203,6 @@ var mocksetView = function(mockServer, db) {
 
         data.modifyTime = new Date();
         return data;
-    }
-
-    function toObject(list) {
-        var listO = {};
-        list.forEach(function(n, i) {
-            if (listO[n.type] == undefined) listO[n.type] = {};
-            listO[n.type][n.url] = n;
-        });
-        return listO;
-    }
-
-    function toObjectList(list) {
-        var listO = {};
-        list.forEach(function(n, i) {
-            if (listO[n.type] == undefined) listO[n.type] = [];
-            if (listO[n.type][n.fromUrl] == undefined) listO[n.type][n.fromUrl] = [];
-            listO[n.type][n.fromUrl].push(n);
-        });
-        return listO;
     }
 
     reInitList();

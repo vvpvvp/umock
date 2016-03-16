@@ -90,7 +90,7 @@ function valid(vm, param) {
     } else if (param.url.indexOf("/umock") != -1) {
         alert("url不能以/umock开头，与现在的url冲突");
         return false;
-    } else if (param.url.indexOf(vm.nowProject.beginPath) != 0) {
+    } else if (vm.nowProject.isPublic=="1"&&param.url.indexOf(vm.nowProject.beginPath) != 0) {
         alert("url必须以" + vm.nowProject.beginPath + "为开头！");
         return false;
     }
@@ -152,7 +152,7 @@ export default {
                 vm.editor.set(JSON.parse(vm.result));
                 vm.editType = "edit";
             }
-        }).on("hide.bs.modal", function() {
+        }).on("hide.bs.modal", function(){
             emptyEdit(vm);
         });
 

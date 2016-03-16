@@ -8,6 +8,7 @@ var path = require('path');
 var util = require('./utils/util');
 var httpProxy = require('http-proxy');
 var mockServer = require('./views/router');
+var bodyParser = require('body-parser');
 
 var proxy = httpProxy.createProxyServer();
 var app = global.app;
@@ -18,8 +19,8 @@ proxy.on('open', function(proxySocket) {
 });
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
-    if(req.method=="POST"&&req.body){
-        proxyReq.write(req.body);
+    if((req.method=="POST"||req.method=="PATCH")&&req.body){
+        proxyReq.write(req.body+"\n");
         proxyReq.end();
     }
 });
@@ -136,22 +137,6 @@ umock.static = function(url, dir) {
     app.use(url, express.static(dir));
 }
 
-
-var restreamer = function() {
-    return function(req, res, next) { //restreame
-        req.removeAllListeners('data');
-        req.removeAllListeners('end');
-        next();
-        process.nextTick(function() {
-            console.log(1);
-            if (req.body) {
-                req.emit('data', JSON.stringify(req.body));
-            }
-            req.emit('end');
-        })
-    }
-}
-
 umock.init = function(argument) {
 
     app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
@@ -166,25 +151,19 @@ umock.init = function(argument) {
     process.nextTick(function() {
         app.use(function(req, res, next) {
 
-            var author = req.headers.author;
-            let beginPath = req.url.match(/\/\w+/)[0];
-            //如果有author的header，做特殊处理。
-            if (author) {
-                beginPath = "/" + author;
-                delete req.headers.author;
-            }
-            if (mockServer.projects[beginPath]) {
+            if (req.proxy) {
                 var headers = {};
-                if(req.method=="POST"&&req.body){
+                if((req.method=="POST"||req.method=="PATCH")&&req.body){
+                    console.log(bodyParser.json());
                     var data = JSON.stringify(req.body);
                     req.body = data;
-                    headers = {  
-                        "Content-Type": 'application/json',  
-                        "Content-Length": data.length
-                    }
+                    // headers = {  
+                    //     "Content-Type": 'application/json;charset=UTF-8',  
+                    //     "Content-Length": data.length
+                    // }
                 }
                 proxy.web(req, res, {
-                    target: mockServer.projects[beginPath],
+                    target: req.proxy,
                     toProxy: true,
                     changeOrigin: true, 
                     headers:headers
