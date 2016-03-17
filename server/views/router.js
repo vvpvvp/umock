@@ -50,7 +50,7 @@ mockServer.returnFunc = function(req, res, next) {
     let url = decodeURI(req.baseUrl),
         hasUrl = false;
 
-    let beginPath = url.match(/\/\w+/)[0];
+    let beginPath = (url.match(/\/\w+/)||[""])[0];
 
     var author = req.headers.author;
     if (author) {
