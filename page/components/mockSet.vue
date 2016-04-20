@@ -1,5 +1,18 @@
 <template>
-    <div id="mockList">
+<nav class="navbar navbar-default">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">{{nowProject.name}}-{{["HEAD参数","URL前缀"][nowProject.isPublic]}}&nbsp;<span class="label label-success">{{nowProject.beginPath}}</span></a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="https://github.com/vvpvvp/UMock#readme" target="_blank">文档</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="container">
+        <mock-menu v-ref:menu :now-project="nowProject"></mock-menu>
+        <div id="mockList">
         <div class="panel panel-default">
             <div class="panel-heading">配置
                 <button type="button" class="btn btn-default btn-sm" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-type="create">
@@ -35,12 +48,16 @@
                     </div>
                 </div>
             </div>
-            <mock-edit :mocksets="mocksets" :now-project="nowProject" :menus = "menus"></mock-edit>
+            <mock-edit :mocksets="mocksets" :now-project="nowProject" :menus ="menus"></mock-edit>
         </div>
+    </div>
+        <mock-test v-ref:test :now-project="nowProject"></mock-test>
     </div>
 </template>
 <script>
-import mockEdit from './mockEdit.vue'
+import mockEdit from './mockEdit.vue';
+import mockTest from './mockTest.vue';
+import mockMenu from './mockMenu.vue';
 
 function changeStatus(mockset, active) {
     var content = mockset;
@@ -62,14 +79,14 @@ function initMenu(M){
             return item.menuId;
         })
     )];
-    M.$dispatch("menuInit",M.menus);
+    M.$broadcast("menuInit",M.menus);
 }
 
 export default {
-    props: ['nowProject'],
     data() {
         return {
-            // nowProject:{},
+            id:0,
+            nowProject:{},
             // projectStart:"/api/",
             mocksets: [],
             filterMenu:"",
@@ -77,7 +94,24 @@ export default {
         };
     },
     components: {
-        mockEdit
+        mockEdit,
+        mockTest,
+        mockMenu
+    },
+    ready(){
+        var vm = this;
+        var id = this.$route.params.id;
+        this.id = id;
+        $.get("/umock/project/" +id)
+            .done(function(result) {
+                if (result.result == "ok"){
+                    vm.nowProject = result.content[0];
+                    window.document.title = vm.nowProject.name;
+                    Vue.nextTick(()=>{
+                        vm.getList();
+                    });
+                }
+            });
     },
     methods: {
         active(mockset) {
@@ -118,7 +152,7 @@ export default {
                 });
         },
         testMock(mockset){
-            this.$dispatch('testMock', mockset);
+            this.$broadcast('testMock', mockset);
         },
         deleteById(_id){
             let vm = this;
@@ -136,7 +170,11 @@ export default {
         },
         reInitMenu(){
             initMenu(this);
+        },
+        testMock: function (mockset) {
+            this.$refs.test.$emit("testMock",mockset);
         }
     }
+
 }
 </script>
