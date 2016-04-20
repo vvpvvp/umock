@@ -41,9 +41,12 @@ body > .container {
 code {
 }
 
-
 #jsoneditor {
   height: 565px;
+}
+
+#param-jsoneditor {
+  height: 191px;
 }
 
 div#editModal .modal-dialog {width: 900px;}
@@ -201,8 +204,17 @@ div#mockTest.expand{
 }
 
 div#headersJson {
-    height: 200px;
+    height: 165px;
 }
+
+div#paramJson {
+    height: 80px;
+}
+
+div#postParamJson {
+    height: 112px;
+}
+
 
 div#mockTest.expand .form {
     width: 40%;
@@ -222,7 +234,7 @@ div#mockTest.expand div#testResult {
 button.btn.btn-default.btn-xs {}
 
 div#testResult {
-    margin-top: 20px;
+    height: 200px;
 }
 
 div#mockTest.expand button.expand::after {

@@ -10,13 +10,15 @@
                 </div>
                 <div class="form-group">
                     <label for="recipient-name" class="control-label">参数:</label>
-                    <input type="text" class="form-control" v-model="param">
+                    <!-- <input type="text" class="form-control" v-model="param"> -->
+                    <div id="paramJson"></div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" v-show="isPost">
                     <label for="recipient-name" class="control-label">POST参数:</label>
-                    <textarea class="form-control" rows="5" v-model="postParam"></textarea>
+                    <!-- <textarea class="form-control" rows="5" v-model="postParam"></textarea> -->
+                    <div id="postParamJson"></div>
                 </div>
-                <div class="form-group">
+                <div class="form-group"> 
                     <label for="recipient-name" class="control-label">Header:</label>
                     <div id="headersJson"></div>
                 </div>
@@ -76,8 +78,17 @@ export default {
         var vm = this;
         var container = document.getElementById('testResult');
 
+
+
         var options = {
-            mode: 'view'
+            mode: 'code',
+            modes: ['code', 'form', 'text', 'tree', 'view'], // allowed modes
+            onError: function(err) {
+                alert(err.toString());
+            },
+            onModeChange: function(newMode, oldMode) {
+                console.log('Mode switched from', oldMode, 'to', newMode);
+            }
         };
 
         this.editor = new JSONEditor(container, options, {});
@@ -99,6 +110,14 @@ export default {
             "author":""
         };
         this.headerEditor = new JSONEditor(document.getElementById("headersJson"), options2, j);
+        this.paramEditor = new JSONEditor(document.getElementById("paramJson"), options2);
+        this.postParamEditor = new JSONEditor(document.getElementById("postParamJson"), options2);
+        
+    },
+    computed: {
+        isPost () {
+            return this.type != 'GET'
+        } 
     },
     methods: {
         expand: function(event) {

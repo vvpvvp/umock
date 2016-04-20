@@ -54,11 +54,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">参数:</label>
-                                <textarea class="form-control" rows="5" v-model="param"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="recipient-name" class="control-label">返回格式:</label>
-                                <textarea class="form-control" rows="5" v-model="respParam"></textarea>
+                                <div id="param-jsoneditor"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -111,7 +107,7 @@ function getEmptyObject() {
         menuId: "",
         result: "",
         respParam: "",
-        dataHandler: "",
+        dataHandler: "over",
         param: "",
         type: "",
         active: true
@@ -157,6 +153,7 @@ export default {
         });
 
         var container = document.getElementById('jsoneditor');
+        var paramContainer = document.getElementById('param-jsoneditor');
 
         var options = {
             mode: 'code',
@@ -170,12 +167,16 @@ export default {
         };
 
         vm.editor = new JSONEditor(container, options, {});
+        vm.paramEditor = new JSONEditor(paramContainer, options, {});
     },
     methods: {
         edit: function(event) {
             var vm = this;
+
             Vue.nextTick(function() {
+
                 vm.result = JSON.stringify(vm.editor.get(), null, 2);
+                vm.param = JSON.stringify(vm.paramEditor.get(), null, 2)
                 var param = {};
                 model(param, vm);
                 if (valid(vm, param) === false) return false;
