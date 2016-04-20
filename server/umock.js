@@ -139,6 +139,8 @@ umock.static = function(url, dir) {
 
 umock.init = function(argument) {
 
+    app.get("/",function(req, res){res.redirect('/umock')});
+
     app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
 
     umock({
