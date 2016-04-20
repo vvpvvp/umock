@@ -94,8 +94,9 @@ class VueRouter {
         let vueRouter = this;
 
         vueRouter.dealRoutes({ routes });
-        vueRouter.router = Router(vueRouter.routerParam).configure(vueRouter.options);
-
+        let router = vueRouter.router = Router().configure(vueRouter.options);
+        router.param('name', /([\u4e00-\u9fa5\w]+)/);
+        router.mount(vueRouter.routerParam);
         Vue.mixin({
             created: function() {
                 if (this.$parent) {
@@ -227,6 +228,18 @@ class VueRouter {
         }
     }
 
+    initParam(params,argu){
+        let vueRouter = this;
+        let urlParam = {};
+        for (let i = params.length - 1; i >= 0; i--) {
+            if (argu.length > i) urlParam[params[i]] = argu[i];
+        }
+        let _url = vueRouter._getNowPath();
+        vueRouter.vue.$route.params = urlParam;
+        vueRouter.vue.$route.url = _url;
+        vueRouter.vue.$route.query = getQueryStringArgs(_url);
+    }
+
     dealRoutes({ routes, parent_url = "", parent_ids = [] }) {
         let vueRouter = this;
         let count = 0;
@@ -240,9 +253,17 @@ class VueRouter {
 
             let routeSet = vueRouter.routerParam[url] = {};
             routeSet.url = url;
+
+            let params = getParam(url);
+            if (route.name) vueRouter.routerNames[route.name] = {
+                url: url,
+                params: params
+            };
+
             if (Utils.isFunction(route)) {
                 let list = [...parent_ids];
                 routeSet.on = function() {
+                    vueRouter.initParam(params,arguments);
                     vueRouter.nowRoute = routeSet;
                     vueRouter.removeComponents = false;
                     vueRouter.changeComponents({ list, vm: vueRouter.vue });
@@ -253,6 +274,7 @@ class VueRouter {
             } else if (Utils.isObject(route)) {
 
                 let routeSet_on = function() {
+                    vueRouter.initParam(params,arguments);
                     vueRouter.nowRoute = routeSet;
                     vueRouter.delayOn = () => {
                         if (Utils.isFunction(route.on)) {
@@ -277,24 +299,8 @@ class VueRouter {
                     vueRouter.components[_id] = route.component;
 
                     let list = [_id, ...parent_ids];
-
-                    let params = getParam(url);
-                    if (route.name) vueRouter.routerNames[route.name] = {
-                        url: url,
-                        params: params
-                    };
                     routeSet.on = function() {
                         routeSet_on(...arguments);
-                        let routeObject = {};
-                        let urlParam = {},
-                            queryParam = {};
-                        for (let i = params.length - 1; i >= 0; i--) {
-                            if (arguments.length > i) urlParam[params[i]] = arguments[i];
-                        }
-                        let _url = vueRouter._getNowPath();
-                        vueRouter.$route.params = urlParam;
-                        vueRouter.$route.url = _url;
-                        vueRouter.$route.query = getQueryStringArgs(_url);
 
                         // vueRouter.vue.$route=vueRouter.$route;
                         if (Utils.isEqual(vueRouter.vue.$route, vueRouter.$route)) {

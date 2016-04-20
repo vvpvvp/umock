@@ -1,7 +1,7 @@
 <template>
 <nav class="navbar navbar-default">
             <div class="navbar-header">
-                <a class="navbar-brand" href="index.html">{{nowProject.name}}-{{["HEAD参数","URL前缀"][nowProject.isPublic]}}&nbsp;<span class="label label-success">{{nowProject.beginPath}}</span></a>
+                <a class="navbar-brand" href="/#/">{{nowProject.name}}-{{["HEAD参数","URL前缀"][nowProject.isPublic]}}&nbsp;<span class="label label-success">{{nowProject.beginPath}}</span></a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -26,7 +26,7 @@
                         <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{mockset._id}}>
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
                         </button>
-                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" v-on:click="delete(mockset)">
+                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" v-on:click="deleteMockset(mockset)">
                             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
                         </button>
                         <button type="button" class="btn btn-primary btn-xs" v-if="mockset.active" aria-label="Left Align" v-on:click.stop="disactive(mockset)">
@@ -137,7 +137,7 @@ export default {
                     }
                 });
         },
-        delete(mockset) {
+        deleteMockset(mockset) {
             var vm = this;
             if (!confirm("确定删除")) return;
             $.ajax({

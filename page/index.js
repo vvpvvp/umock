@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Vue from 'vue'
 import project from './components/project.vue';
 import mockSet from './components/mockSet.vue';
-import Router from 'vue-router-tiny';
+import Router from './lib/plugins/router/vue-router';
 
 
 
@@ -24,10 +24,6 @@ if(WEBPACK_DEBUG){
 }
 loadCss("lib/plugins/jsoneditor.min.css");
 
-var index = new Vue({
-    el: 'body'
-});
-
 Vue.use(Router);
 
 var routes = {
@@ -38,9 +34,8 @@ var routes = {
         name: 'mockSet',
         component: mockSet,
         subRoutes:{
-            "/(\\w+)":function(menu){
-                console.log(menu);
-                this.vue.$broadcast("changeMenuBy",menu);
+            "/:name":function(id,name){
+                this.vue.$broadcast("changeMenuBy",name);
             }
         }
     }
