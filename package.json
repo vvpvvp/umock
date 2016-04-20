@@ -1,6 +1,6 @@
 {
   "name": "umock",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "服务器端的Mock",
   "bin": {
     "umock": "bin/umock"
@@ -15,7 +15,8 @@
   },
   "keywords": [
     "mock",
-    "server"
+    "server",
+    "mock server"
   ],
   "author": "alias",
   "license": "The MIT License",
