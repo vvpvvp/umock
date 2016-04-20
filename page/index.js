@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Vue from 'vue'
 import project from './components/project.vue';
 import mockSet from './components/mockSet.vue';
-import Router from './lib/plugins/router/vue-router';
+import Router from 'vue-router-tiny';
 
 
 
@@ -34,8 +34,8 @@ var routes = {
         name: 'mockSet',
         component: mockSet,
         subRoutes:{
-            "/:name":function(id,name){
-                this.vue.$broadcast("changeMenuBy",name);
+            "/:name":function(params){
+                this.vue.$broadcast("changeMenuBy",params.name);
             }
         }
     }

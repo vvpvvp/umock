@@ -19,7 +19,7 @@ export default {
         };
     },
     ready() {
-        this.nowMenu = this.$route.params.menu;
+        this.nowMenu = this.$route.params.menu||"all";
     },
     methods: {
         changeMenu: function(menu) {
