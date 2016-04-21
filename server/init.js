@@ -44,14 +44,13 @@ var main = {
             imitatorFile = defautImitatorFile;
         }
 
-        if (!fs.existsSync(imitatorFile)) {
-            imitatorFile = "../umock.js";
-        }
         global.imitatorFilePath = path.resolve(__dirname);
-        global.config = require(imitatorFile);
-
-
-        if (global.config.port) this.app.set('port', global.config.port);
+        if (fs.existsSync(imitatorFile)) {
+            global.config = require(imitatorFile);
+            if (global.config.port) this.app.set('port', global.config.port);
+        } else {
+            global.config = {};
+        }
 
         this.imitator.init();
     },
