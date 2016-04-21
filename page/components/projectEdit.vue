@@ -143,7 +143,7 @@ export default {
             if(!confirm("确定删除"))return;
             $.ajax({
                     url: "/umock/project/" + vm._id,
-                    type: "delete"
+                    type: "DELETE"
                 })
                 .done(function(result) {
                     if (result.result == "ok") {

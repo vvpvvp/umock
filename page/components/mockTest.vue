@@ -158,7 +158,6 @@ export default {
                     console.log(JSON.parse(param));
                     param = $.param(JSON.parse(param));
                 }catch(e){}
-                console.log(param);
                 ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+param;
             }
             $.ajax(ajaxParam);

@@ -19,8 +19,8 @@ proxy.on('open', function(proxySocket) {
 });
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
-    if((req.method=="POST"||req.method=="PATCH")&&req.body){
-        proxyReq.write(req.body+"\n");
+    if ((req.method == "POST" || req.method == "PATCH") && req.body) {
+        proxyReq.write(req.body + "\n");
         proxyReq.end();
     }
 });
@@ -34,7 +34,6 @@ proxy.on('proxyRes', function(proxyRes, req, res) {
 proxy.on('error', function(e, req, res) {
     // console.log(arguments);
 });
-
 
 
 
@@ -90,7 +89,6 @@ function umock() {
 
     app.use(option.url, function(req, res, next) {
         setTimeout(function() {
-
             // set header
             res.set(option.headers);
 
@@ -139,7 +137,9 @@ umock.static = function(url, dir) {
 
 umock.init = function(argument) {
 
-    app.get("/",function(req, res){res.redirect('/umock')});
+    app.get("/", function(req, res) {
+        res.redirect('/umock')
+    });
 
     app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
 
@@ -155,7 +155,7 @@ umock.init = function(argument) {
 
             if (req.proxy) {
                 var headers = {};
-                if((req.method=="POST"||req.method=="PATCH")&&req.body){
+                if ((req.method == "POST" || req.method == "PATCH") && req.body) {
                     var data = JSON.stringify(req.body);
                     req.body = data;
                     // headers = {  
@@ -166,8 +166,8 @@ umock.init = function(argument) {
                 proxy.web(req, res, {
                     target: req.proxy,
                     toProxy: true,
-                    changeOrigin: true, 
-                    headers:headers
+                    changeOrigin: true,
+                    headers: headers
                 });
             } else {
                 next();

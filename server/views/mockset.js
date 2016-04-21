@@ -3,32 +3,34 @@ var app = global.app;
 var mock = require('../schema/mockset');
 var Result = require("../utils/result");
 var Util = require("../utils/util");
+var PouchDB = require("pouchdb");
 
 var mocksetView = function(mockServer, db) {
     var reInitList = function() {};
 
 
+
+    function toObject(list) {
+        var listO = {};
+        list.forEach(function(n, i) {
+            var pid = n.projectId;
+            if (listO[pid] == undefined) listO[pid] = {};
+            listO[pid][n.url] = n;
+        });
+        return listO;
+    }
+
+    function toObjectList(list) {
+        var listO = {};
+        list.forEach(function(n, i) {
+            var pid = n.projectId;
+            if (listO[pid] == undefined) listO[pid] = [];
+            listO[pid].push(n);
+        });
+        return listO;
+    }
+
     if (db) {
-
-        function toObject(list) {
-            var listO = {};
-            list.forEach(function(n, i) {
-                var pid = n.projectId;
-                if (listO[pid] == undefined) listO[pid] = {};
-                listO[pid][n.url] = n;
-            });
-            return listO;
-        }
-
-        function toObjectList(list) {
-            var listO = {};
-            list.forEach(function(n, i) {
-                var pid = n.projectId;
-                if (listO[pid] == undefined) listO[pid] = [];
-                listO[pid].push(n);
-            });
-            return listO;
-        }
 
         reInitList = function() {
             MockModel.find().exec((err, docs) => {
@@ -105,85 +107,96 @@ var mocksetView = function(mockServer, db) {
 
 
     } else {
-        // var db = new PouchDB("mocksets");
+        var db = new PouchDB("mocksets");
 
-        // app.get('/umock/list/:id', (req, res, next) => {
+        app.get('/umock/list/:id', (req, res, next) => {
 
-        //     db.query(function(doc, emit) {
-        //       if (doc.projectId === req.params.id) {
-        //         emit(doc);
-        //       }
-        //     }).then(function (result) {
-        //       res.send(Result.R(result));
-        //     }).catch(function (err) {
-        //       console.log(err);
-        //     });
+            db.query(function(doc, emit) {
+                if (doc.projectId === req.params.id) {
+                    emit(doc);
+                }
+            }).then(function(result) {
+                let mockSets = [];
+                if (result.total_rows > 0) {
+                    mockSets = result.rows.map(function(item) {
+                        return item.key;
+                    });
+                }
+                res.send(Result.R(mockSets));
+            }).catch(function(err) {
+                console.log(err);
+            });
+        });
 
+        app.post('/umock/mockset', (req, res, next) => {
+            let query = getModel(req.body);
+            db.post(query).then(function(response) {
+                reInitList();
+                res.send(Result.R(Util.extend(query, formatResp(response))));
+            }).catch(function(err) {
+                console.log(err);
+            });
+        });
 
-        // });
+        app.post('/umock/mockset/:id', (req, res, next) => {
 
-        // app.post('/umock/mockset', (req, res, next) => {
-        //     let query = getModel(req.body);
-        //     db.post(query).then(function(response) {
-        //         reInitList();
-        //         res.send(Result.R(Util.extend(query, response)));
-        //     }).catch(function(err) {
-        //         console.log(err);
-        //     });
-        // });
+            db.get(req.params.id).then(function(doc) {
+                var newData = Util.extend(getModel(req.body), {
+                    _id: doc._id,
+                    _rev: doc._rev
+                });
+                return db.put(newData);
+            }).then(function(response) {
+                reInitList();
+                res.send(Result.R(response));
+            }).catch(function(err) {
+                console.log(err);
+            });
 
-        // app.post('/umock/mockset/:id', (req, res, next) => {
+        });
 
-        //     db.get(req.params.id).then(function(doc) {
-        //         var newData = Util.extend(getModel(req.body), {
-        //             _id: doc._id,
-        //             _rev: doc._rev
-        //         });
-        //         return db.put(newData);
-        //     }).then(function(response) {
-        //         reInitList();
-        //         res.send(Result.R(response));
-        //     }).catch(function(err) {
-        //         console.log(err);
-        //     });
+        app.delete('/umock/mockset/:id', (req, res, next) => {
+            db.get(req.params.id).then(function(doc) {
+                return db.remove(doc);
+            }).then(function(result) {
+                reInitList();
+                res.send(Result.defaultResult);
+            }).catch(function(err) {
+                res.send(Result.defaultError("删除失败"));
+            });
+        });
 
-        // });
-
-        // app.delete('/umock/mockset/:id', (req, res, next) => {
-        //     db.get(req.params.id).then(function(doc) {
-        //         return db.remove(doc);
-        //     }).then(function(result) {
-        //         reInitList();
-        //         res.send(Result.defaultResult);
-        //     }).catch(function(err) {
-        //         res.send(Result.defaultError("删除失败"));
-        //     });
-        // });
-
-        // reInitList = () {
-        //     db.allDocs({
-        //         include_docs: true
-        //     }).then(function(doc) {
-        //         var regDocs = [];
-        //         docs = docs.filter(function(doc) {
-        //             if (!doc.active) return doc.active;
-        //             if (doc.isreg) {
-        //                 doc.regexp = "^" + doc.url.replace(/:\w+/g, "\\w+") + "$";
-        //                 doc.fromUrl = doc.url.match(/^(\/\w+)+/)[0];
-        //                 regDocs.push(doc);
-        //             }
-        //             return true;
-        //         });
-        //         mockServer.mockSetList = toObject(docs);
-        //         mockServer.mockRegExpList = toObjectList(regDocs);
-        //     }).catch(function(err) {
-        //         console.log(err);
-        //     });
-
-        // }
+        reInitList = function() {
+            db.allDocs({
+                include_docs: true
+            }).then(function(docs) {
+                var regDocs = [];
+                docs = docs.rows.map(function(item) {
+                    return item.doc;
+                }).filter(function(doc) {
+                    if (!doc.active) return doc.active;
+                    if (doc.isreg) {
+                        doc.regexp = "^" + doc.url.replace(/:\w+/g, "\\w+") + "$";
+                        doc.fromUrl = doc.url.match(/^(\/\w+)+/)[0];
+                        regDocs.push(doc);
+                    }
+                    return true;
+                });
+                mockServer.mockSetList = toObject(docs);
+                mockServer.mockRegExpList = toObjectList(regDocs);
+            }).catch(function(err) {
+                console.log(err);
+            });
+        }
 
     }
 
+    let formatResp = (resp) => {
+        var data = resp;
+        if (data.id != undefined) data._id = data.id;
+        if (data.rev != undefined) data._rev = data.rev;
+        return data;
+    };
 
     let getModel = (body) => {
         var data = {};

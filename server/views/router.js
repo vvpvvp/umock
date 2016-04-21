@@ -33,7 +33,7 @@ function overflyData(req, res, data) {
     };
 }
 
-function handlerResult(req, res,element) {
+function handlerResult(req, res, element) {
     let result = JSON.parse(element.result);
     if (element.dataHandler == "over") {
         res.json(result);
@@ -50,7 +50,7 @@ mockServer.returnFunc = function(req, res, next) {
     let url = decodeURI(req.baseUrl),
         hasUrl = false;
 
-    let beginPath = (url.match(/\/\w+/)||[""])[0];
+    let beginPath = (url.match(/\/\w+/) || [""])[0];
 
     var author = req.headers.author;
     if (author) {
@@ -63,18 +63,17 @@ mockServer.returnFunc = function(req, res, next) {
         req.proxy = server.proxy;
         var serverMockList = mockServer.mockSetList[server._id];
         if (serverMockList != undefined && serverMockList[url] != undefined) {
-            hasUrl = handlerResult(req, res,serverMockList[url]);
+            hasUrl = handlerResult(req, res, serverMockList[url]);
         } else {
             if (mockServer.mockRegExpList[server._id] != undefined) {
                 var RegExpList = mockServer.mockRegExpList[server._id];
                 for (var j = 0; j < RegExpList.length; j++) {
                     let element = RegExpList[j];
                     if (new RegExp(element.regexp).test(url)) {
-                        hasUrl = handlerResult(req, res,element);
+                        hasUrl = handlerResult(req, res, element);
                         break;
                     }
                 }
-
             }
         }
     }

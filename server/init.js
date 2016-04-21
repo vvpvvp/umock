@@ -8,7 +8,7 @@ var fs = require('fs');
 
 var main = {
 
-    init: function (app, argv, cwd) {
+    init: function(app, argv, cwd) {
         this.app = app;
         this.argv = argv;
         this.cwd = cwd;
@@ -18,11 +18,11 @@ var main = {
         this.defaultRoute();
     },
 
-    extend: function () {
+    extend: function() {
         this.imitator.server = app;
     },
 
-    customRoute: function () {
+    customRoute: function() {
         var argv = this.argv;
         var home = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'PWD'];
         var defautImitatorFile = path.resolve(home, 'umock.js');
@@ -31,20 +31,16 @@ var main = {
         if (argv.f) {
             if (process.platform === 'win32') {
                 imitatorFile = path.resolve(this.cwd, this.argv.f);
-            }
-            else {
+            } else {
                 if (argv.f[0] === '/') {
                     imitatorFile = argv.f;
-                }
-                else if(argv.f[0] === '~') {
+                } else if (argv.f[0] === '~') {
                     imitatorFile = path.resolve(home, argv.f.replace(/^~\//, ''));
-                }
-                else {
+                } else {
                     imitatorFile = path.resolve(this.cwd, this.argv.f);
                 }
             }
-        }
-        else {
+        } else {
             imitatorFile = defautImitatorFile;
         }
 
@@ -55,20 +51,20 @@ var main = {
         global.config = require(imitatorFile);
 
 
-        if(global.config.port)this.app.set('port', global.config.port);
+        if (global.config.port) this.app.set('port', global.config.port);
 
         this.imitator.init();
     },
 
-    defaultRoute: function () {
+    defaultRoute: function() {
         var app = this.app;
-        setTimeout(function () {
-            app.use(function (req, res, next) {
+        setTimeout(function() {
+            app.use(function(req, res, next) {
                 var err = new Error('Not Found');
                 err.status = 404;
                 next(err);
             });
-            app.use(function (err, req, res, next) {
+            app.use(function(err, req, res, next) {
                 res.json({
                     status: err.status || 500,
                     message: err.message,
