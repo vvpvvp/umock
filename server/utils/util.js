@@ -75,7 +75,7 @@ module.exports = {
         if (oldObj == null) return oldObj;
         var newObj = new Object();
         for (var i in oldObj)
-            newObj[i] = cloneObj(oldObj[i]);
+            newObj[i] = this.cloneObj(oldObj[i]);
         return newObj;
     },
     extend() { //扩展对象

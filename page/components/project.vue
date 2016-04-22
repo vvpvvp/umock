@@ -46,12 +46,11 @@ export default {
     methods: {
         init(){
             var P = this;
-            $.get("/umock/project/list")
-                .done(function(result) {
-                    if (result.result == "ok") {
-                        P.projects = result.content;
-                    }
-                })
+            $.get("/umock/project/list").done(function(result) {
+                if (result.result == "ok") {
+                    P.projects = result.content;
+                }
+            })
         }
     },
     ready(){

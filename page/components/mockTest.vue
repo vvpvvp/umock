@@ -77,18 +77,8 @@ export default {
     ready() {
         var vm = this;
         var container = document.getElementById('testResult');
-
-
-
         var options = {
-            mode: 'code',
-            modes: ['code', 'form', 'text', 'tree', 'view'], // allowed modes
-            onError: function(err) {
-                alert(err.toString());
-            },
-            onModeChange: function(newMode, oldMode) {
-                console.log('Mode switched from', oldMode, 'to', newMode);
-            }
+            mode: 'view'
         };
 
         this.editor = new JSONEditor(container, options, {});
@@ -168,7 +158,6 @@ export default {
                     console.log(JSON.parse(param));
                     param = $.param(JSON.parse(param));
                 }catch(e){}
-                console.log(param);
                 ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+param;
             }
             $.ajax(ajaxParam);
