@@ -196,6 +196,7 @@ export default {
                 } else {
                     var param = {};
                     model(param, vm);
+                    param.projectId = vm.nowProject._id;
                     $.post("/umock/mockset/" + param._id, param)
                         .done(function(result) {
                             if (result.result == "ok") {
