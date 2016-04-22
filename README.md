@@ -36,9 +36,21 @@ umock -p 9000
 ##备注
 端口号默认为8000，-p命令优先级更大
 
+##界面
+**不同后台项目列表**
+![项目列表](screen/project.png)
+**编辑项目信息**
+![编辑项目信息](screen/projectedit.png)
+**项目中配置的url列表**
+![项目中配置的url列表](screen/mockset.png)
+**配置url**
+![配置url](screen/mocksetedit.png)
+
 ##Dependencies:  
 * [JQuery](http://jquery.com/)
 * [Bootstrap](http://v3.bootcss.com/)
 * [Vue](http://cn.vuejs.org/)
 * [Mongo](https://www.mongodb.org/)
 * [Pouchdb](https://pouchdb.com/)
+
+
