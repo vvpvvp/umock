@@ -20,6 +20,7 @@ git clone https://github.com/vvpvvp/umock.git
 ```
 启动
 ```
+npm install
 npm run start
 ```
 ##访问
