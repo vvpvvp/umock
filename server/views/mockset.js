@@ -109,6 +109,10 @@ var mocksetView = function(mockServer, db) {
     } else {
         var db = new PouchDB("mocksets");
 
+        // db.destroy().then(function(resp) {
+        //     db = PouchDB("mocksets");
+        // });
+
         app.get('/umock/list/:id', (req, res, next) => {
 
             db.query(function(doc, emit) {
@@ -139,7 +143,6 @@ var mocksetView = function(mockServer, db) {
         });
 
         app.post('/umock/mockset/:id', (req, res, next) => {
-
             db.get(req.params.id).then(function(doc) {
                 var newData = Util.extend(getModel(req.body), {
                     _id: doc._id,
