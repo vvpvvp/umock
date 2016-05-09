@@ -148,16 +148,25 @@ export default {
                 }
                 ajaxParam.headers = headers;
             }
-            if(vm.postParam){
-                ajaxParam.data = vm.postParam;
+
+            if(vm.postParamEditor.getText() != '') {
+                try{
+                    ajaxParam.data = vm.postParamEditor.getText();
+                }catch(e){
+                    alert("postParam格式错误");
+                    return false;
+                }
                 ajaxParam.contentType = "application/json;charset=UTF-8";
             }
-            if(vm.param){
-                var param = vm.param;
+            if(vm.paramEditor.getText() != '') {
+                var param = vm.paramEditor.getText();
                 try{
                     console.log(JSON.parse(param));
                     param = $.param(JSON.parse(param));
-                }catch(e){}
+                }catch(e){
+                    alert("param格式错误");
+                    return false;
+                }
                 ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+param;
             }
             $.ajax(ajaxParam);
