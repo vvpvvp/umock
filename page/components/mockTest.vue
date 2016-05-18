@@ -148,25 +148,26 @@ export default {
                 }
                 ajaxParam.headers = headers;
             }
-            if(vm.postParam){
-                ajaxParam.data = vm.postParam;
+
+            if(vm.postParamEditor.getText() != ''&&vm.postParamEditor.getText() != "{}") {
+                try{
+                    ajaxParam.data = vm.postParamEditor.getText();
+                }catch(e){
+                    alert("postParam格式错误");
+                    return false;
+                }
                 ajaxParam.contentType = "application/json;charset=UTF-8";
-                if(vm.param){
-                    var param = vm.param;
-                    try{
-                        // console.log(JSON.parse(param));
-                        param = $.param(JSON.parse(param));
-                    }catch(e){}
+                if(vm.paramEditor.getText() != ''){
+                    var param = vm.paramEditor.get();
+                        param = $.param(param);
                     ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+param;
                 }
             }else{
-                if(vm.param){
-                    var param = vm.param;
-                    try{
-                        // console.log(JSON.parse(param));
-                        param = JSON.parse(param);
-                    }catch(e){}
+                if(vm.paramEditor.getText() != ''){
+                    var param = vm.paramEditor.get();
                     ajaxParam.data = param;
+                    ajaxParam.processData = true;
+
                 }
             }
             $.ajax(ajaxParam);
@@ -192,7 +193,6 @@ export default {
                         vm.headerEditor.set(headers);
                     }
                 }
-                console.log(vm.param);
                 vm.paramEditor.setText(vm.param);
             }
         }
