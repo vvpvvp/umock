@@ -46,7 +46,7 @@ function handlerResult(req, res, element) {
 }
 
 mockServer.returnFunc = function(req, res, next) {
-
+    console.log("comein");
     let url = decodeURI(req.baseUrl),
         hasUrl = false;
 
@@ -58,7 +58,6 @@ mockServer.returnFunc = function(req, res, next) {
         delete req.headers.author;
     }
     var server = mockServer.projects[beginPath];
-
     if (server) {
         req.proxy = server.proxy;
         var serverMockList = mockServer.mockSetList[server._id];

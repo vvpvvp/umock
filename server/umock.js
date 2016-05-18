@@ -19,6 +19,7 @@ proxy.on('open', function(proxySocket) {
 });
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
+    console.log("proxyReq")
     if ((req.method == "POST" || req.method == "PATCH") && req.body) {
         proxyReq.write(req.body + "\n");
         proxyReq.end();
@@ -26,10 +27,15 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
 });
 
 proxy.on('proxyRes', function(proxyRes, req, res) {
+    console.log("proxyRes");
     // console.log("proxyRes");
     // console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
 });
 
+
+proxy.on('end', function(proxyRes, req, res) {
+    console.log("close");
+});
 
 proxy.on('error', function(e, req, res) {
     // console.log(arguments);

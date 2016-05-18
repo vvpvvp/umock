@@ -229,6 +229,7 @@ div#mockTest.expand div#testResult {
     bottom: 10px;
     top: 0;
     overflow-y: auto;
+    height: auto;
 }
 
 button.btn.btn-default.btn-xs {}

@@ -151,14 +151,23 @@ export default {
             if(vm.postParam){
                 ajaxParam.data = vm.postParam;
                 ajaxParam.contentType = "application/json;charset=UTF-8";
-            }
-            if(vm.param){
-                var param = vm.param;
-                try{
-                    console.log(JSON.parse(param));
-                    param = $.param(JSON.parse(param));
-                }catch(e){}
-                ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+param;
+                if(vm.param){
+                    var param = vm.param;
+                    try{
+                        // console.log(JSON.parse(param));
+                        param = $.param(JSON.parse(param));
+                    }catch(e){}
+                    ajaxParam.url = vm.url+("?".indexOf(vm.url)==-1?"?":"&")+param;
+                }
+            }else{
+                if(vm.param){
+                    var param = vm.param;
+                    try{
+                        // console.log(JSON.parse(param));
+                        param = JSON.parse(param);
+                    }catch(e){}
+                    ajaxParam.data = param;
+                }
             }
             $.ajax(ajaxParam);
         }
@@ -183,6 +192,8 @@ export default {
                         vm.headerEditor.set(headers);
                     }
                 }
+                console.log(vm.param);
+                vm.paramEditor.setText(vm.param);
             }
         }
     }

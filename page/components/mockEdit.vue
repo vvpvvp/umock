@@ -146,6 +146,7 @@ export default {
                 vm.mockset = mockset;
                 model(vm, mockset);
                 vm.editor.set(JSON.parse(vm.result));
+                if(vm.param)vm.paramEditor.set(JSON.parse(vm.param));
                 vm.editType = "edit";
             }
         }).on("hide.bs.modal", function(){
