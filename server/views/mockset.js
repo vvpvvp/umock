@@ -3,7 +3,8 @@ var app = global.app;
 var mock = require('../schema/mockset');
 var Result = require("../utils/result");
 var Util = require("../utils/util");
-var PouchDB = require("pouchdb");
+var PouchDB = null;
+// require("pouchdb");
 
 var mocksetView = function(mockServer, db) {
     var reInitList = function() {};
