@@ -164,9 +164,11 @@ umock.init = function(argument) {
                 if ((req.method == "POST" || req.method == "PATCH") && req.body) {
                     var data = JSON.stringify(req.body);
                     req.body = data;
-                    headers = {  
-                        "Content-Type": 'application/json;charset=UTF-8',  
-                        "Content-Length": data.length
+                    if(req.headers['content-length']){
+                        headers = {  
+                            "Content-Type": 'application/json;charset=UTF-8',  
+                            "Content-Length": data.length
+                        }
                     }
                 }
                 proxy.web(req, res, {
