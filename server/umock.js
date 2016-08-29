@@ -21,7 +21,7 @@ proxy.on('open', function(proxySocket) {
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
     console.log("proxyReq")
     if ((req.method == "POST" || req.method == "PATCH") && req.body) {
-        proxyReq.write(req.body + "\n");
+        proxyReq.write(req.body);
         proxyReq.end();
     }
 });
@@ -164,10 +164,10 @@ umock.init = function(argument) {
                 if ((req.method == "POST" || req.method == "PATCH") && req.body) {
                     var data = JSON.stringify(req.body);
                     req.body = data;
-                    // headers = {  
-                    //     "Content-Type": 'application/json;charset=UTF-8',  
-                    //     "Content-Length": data.length
-                    // }
+                    headers = {  
+                        "Content-Type": 'application/json;charset=UTF-8',  
+                        "Content-Length": data.length
+                    }
                 }
                 proxy.web(req, res, {
                     target: req.proxy,
