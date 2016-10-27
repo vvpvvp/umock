@@ -20,7 +20,7 @@ proxy.on('open', function(proxySocket) {
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
     console.log("proxyReq")
-    if ((req.method == "POST" || req.method == "PATCH") && req.body) {
+    if ((req.method == "POST" || req.method == "PATCH") && req.headers['content-type'].indexOf("application/json")===0) {
         proxyReq.write(req.body);
         proxyReq.end();
     }
@@ -162,15 +162,43 @@ umock.init = function(argument) {
             if (req.proxy) {
                 var headers = {};
                 if ((req.method == "POST" || req.method == "PATCH") && req.body) {
-                    var data = JSON.stringify(req.body);
-                    req.body = data;
-                    if(req.headers['connection']=='keep-alive'){
-                        headers = {  
-                            "Content-Type": 'application/json;charset=UTF-8',
-                            "Content-Length": data.length
+                    if(req.headers['content-type'].indexOf("application/json")===0){
+                        var data = JSON.stringify(req.body);
+                        // console.log(req.body);
+                        req.body = data;
+                        if(req.headers['connection']=='keep-alive'){
+                            headers = {  
+                                "Content-Type": req.headers['content-type'],
+                                "Content-Length": data.length
+                            }
                         }
                     }
+                    // else if(req.headers['content-type'].indexOf("application/x-www-form-urlencoded")===0){
+                    //     var data = JSON.stringify(req.body);
+                    //     console.log(data.length);
+                    //     req.body = data;
+                    //     headers = {  
+                    //         "Content-Type": req.headers['content-type'],
+                    //         "Content-Length": data.length
+                    //     }
+                    // }
                 }
+                console.log(headers);
+                // if ((req.method == "POST" || req.method == "PATCH") && req.headers['content-type'].indexOf("application/json")===0) {
+                //     var data = JSON.stringify(req.body);
+                //     req.body = data;
+                //     if(req.headers['connection']=='keep-alive'){
+                //         headers = {  
+                //             "Content-Type": req.headers['content-type'],
+                //             "Content-Length": data.length
+                //         }
+                //     }
+                // }else if(req.headers['content-type'].indexOf("application/x-www-form-urlencoded")===0){
+                //     headers = {  
+                //         "Content-Type": 'application/x-www-form-urlencoded;charset=UTF-8',
+                //         "Content-Length": data.length
+                //     }
+                // }
                 proxy.web(req, res, {
                     target: req.proxy,
                     toProxy: true,

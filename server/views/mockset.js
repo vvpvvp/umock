@@ -3,7 +3,7 @@ var app = global.app;
 var mock = require('../schema/mockset');
 var Result = require("../utils/result");
 var Util = require("../utils/util");
-var PouchDB = null;
+var PouchDB = require("pouchdb");
 // require("pouchdb");
 
 var mocksetView = function(mockServer, db) {
