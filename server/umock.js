@@ -164,9 +164,9 @@ umock.init = function(argument) {
                 if ((req.method == "POST" || req.method == "PATCH") && req.body) {
                     var data = JSON.stringify(req.body);
                     req.body = data;
-                    if(req.headers['content-length']){
+                    if(req.headers['connection']=='keep-alive'){
                         headers = {  
-                            "Content-Type": 'application/json;charset=UTF-8',  
+                            "Content-Type": 'application/json;charset=UTF-8',
                             "Content-Length": data.length
                         }
                     }
