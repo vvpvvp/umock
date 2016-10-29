@@ -14,15 +14,15 @@
                                 <input type="text" class="form-control" v-model="url">
                             </div>
                             <div class="form-group">
-                                <label for="recipient-name" class="control-label">描述:</label>
-                                <input type="text" class="form-control" v-model="desc">
-                            </div>
-                            <div class="form-group">
-                                <label for="recipient-name" class="control-label">目录:</label>
+                                <label for="recipient-name" class="control-label">模块:</label>
                                 <input type="text" class="form-control" list="menu_list" v-model="menuId">
                                 <datalist id="menu_list">
                                     <option v-for="menu in menus" value="{{menu}}"></option>
                                 </datalist>
+                            </div>
+                            <div class="form-group">
+                                <label for="recipient-name" class="control-label">描述:</label>
+                                <input type="text" class="form-control" v-model="desc">
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">Type:</label>
