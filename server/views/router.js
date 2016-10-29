@@ -1,5 +1,7 @@
 'use strict';
 var mongoose = require('mongoose');
+var pouchdb = require("pouchdb");
+var mysql = require("mysql");
 var app = global.app;
 var util = require('../utils/util');
 var mocksetView = require("./mockset");
@@ -85,19 +87,26 @@ mockServer.returnFunc = function(req, res, next) {
 mockServer.initLocalServer = function() {
 
     const config = global.config;
+    let db = null;
     if (config['mongo']) {
-        let db = mongoose.createConnection(config['mongo']['uri']);
+        db = mongoose.createConnection(config['mongo']['uri']);
         // 链接错误
         db.on('error', function(error) {
             console.log(error);
         });
-
-        mocksetView(mockServer, db);
-        projectView(mockServer, db);
-    } else {
-        mocksetView(mockServer);
-        projectView(mockServer);
+    } else if(config['pouchdb']){
+        db = new PouchDB("mocksets");
+    }else if(config['mysql']){
+        console.log(config.mysql);
+        db = new mysql.createPool(config.mysql);
+        
     }
+    if(db==null){
+        throw Error("无数据库配置");
+    }
+    mocksetView(mockServer, db);
+    projectView(mockServer, db);
+
 }
 
 module.exports = mockServer;

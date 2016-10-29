@@ -49,7 +49,7 @@ code {
   height: 191px;
 }
 
-div#editModal .modal-dialog {width: 900px;}
+div#editModal .modal-dialog {width: 90%;}
 
 .operator {
     float: right;

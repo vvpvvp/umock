@@ -3,8 +3,6 @@ var app = global.app;
 var mock = require('../schema/mockset');
 var Result = require("../utils/result");
 var Util = require("../utils/util");
-var PouchDB = require("pouchdb");
-// require("pouchdb");
 
 var mocksetView = function(mockServer, db) {
     var reInitList = function() {};
@@ -31,7 +29,10 @@ var mocksetView = function(mockServer, db) {
         return listO;
     }
 
-    if (db) {
+
+    const config = global.config;
+
+    if (config['mongo']) {
 
         reInitList = function() {
             MockModel.find().exec((err, docs) => {
@@ -107,8 +108,7 @@ var mocksetView = function(mockServer, db) {
         });
 
 
-    } else {
-        var db = new PouchDB("mocksets");
+    } else if(config['pouchdb']){
 
         // db.destroy().then(function(resp) {
         //     db = PouchDB("mocksets");
@@ -193,6 +193,89 @@ var mocksetView = function(mockServer, db) {
             });
         }
 
+    }else{
+
+        let getOne = function(id,res){
+            db.query(`SELECT * from mockset where id = ${id}`, function(err, rows, fields) {
+                if (err){
+                    console.log(err);
+                    res.send(Result.defaultError("失败"));
+                    return;
+                }
+                res.send(Result.R(rows[0]));
+            });
+        }
+
+        reInitList = function() {
+            db.query(`select * from mockset`, function(err, docs, fields) {
+                if (err){
+                  console.log(err);
+                  return;
+                }
+                var regDocs = [];
+                docs = docs.filter(function(doc) {
+                    if (!doc.active) return doc.active;
+                    if (doc.isreg) {
+                        doc.regexp = "^" + doc.url.replace(/:\w+/g, "\\w+") + "$";
+                        doc.fromUrl = doc.url.match(/^(\/\w+)+/)[0];
+                        regDocs.push(doc);
+                    }
+                    return true;
+                });
+                mockServer.mockSetList = toObject(docs);
+                mockServer.mockRegExpList = toObjectList(regDocs);
+            });
+        };
+
+        app.get('/umock/list/:id', (req, res, next) => {
+            db.query(`SELECT * from mockset where projectId = ${req.params.id}`, function(err, rows, fields) {
+              if (err){
+                console.log(err);
+                res.send(Result.defaultError("失败"));
+                return;
+              }
+              res.send(Result.R(rows));
+            });
+        });
+
+        app.post('/umock/mockset', (req, res, next) => {
+            let query = getModel(req.body);
+            console.log(query);
+            db.query(`INSERT INTO mockset SET ?`,query, function(err, rows, fields) {
+              if (err) {
+                    console.error(err);
+                    res.send(Result.defaultError("保存失败"));
+                } else {
+                    reInitList();
+                    getOne(rows.insertId,res);
+                }
+            });
+        });
+
+        app.post('/umock/mockset/:id', (req, res, next) => {
+            let query = getModel(req.body);
+            db.query(`update mockset SET ? where id = ${req.params.id}`,query, function(err, rows, fields) {
+              if (err) {
+                    console.error(err);
+                    res.send(Result.defaultError("更新失败"));
+                } else {
+                    reInitList();
+                    res.send(Result.R(rows));
+                }
+            });
+        });
+
+        app.delete('/umock/mockset/:id', (req, res, next) => {
+            db.query(`delete from mockset where id = ${req.params.id}`, function(err, rows, fields) {
+              if (err) {
+                    console.error(err);
+                    res.send(Result.defaultError("删除失败"));
+                } else {
+                    reInitList();
+                    res.send(Result.R(rows));
+                }
+            });
+        });
     }
 
     let formatResp = (resp) => {
@@ -209,7 +292,7 @@ var mocksetView = function(mockServer, db) {
             data.isreg = data.url.includes(":");
         }
         if (body.result != undefined) data.result = body.result;
-        if (body.desc != undefined) data.desc = body.desc;
+        if (body.description != undefined) data.description = body.description;
         if (body.active != undefined) data.active = body.active;
         if (body.type != undefined) data.type = body.type;
         if (body.param != undefined) data.param = body.param;

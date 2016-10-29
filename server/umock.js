@@ -8,7 +8,6 @@ var path = require('path');
 var util = require('./utils/util');
 var httpProxy = require('http-proxy');
 var mockServer = require('./views/router');
-var bodyParser = require('body-parser');
 
 var proxy = httpProxy.createProxyServer();
 var app = global.app;
@@ -206,6 +205,7 @@ umock.init = function(argument) {
                     headers: headers
                 });
             } else {
+                // urlencoded(req, res, next);
                 next();
             }
         });

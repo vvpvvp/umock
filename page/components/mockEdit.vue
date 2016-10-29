@@ -11,34 +11,34 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">URL:</label>
-                                <input type="text" class="form-control" v-model="url">
+                                <input type="text" class="form-control" v-model="mock.url">
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">模块:</label>
-                                <input type="text" class="form-control" list="menu_list" v-model="menuId">
+                                <input type="text" class="form-control" list="menu_list" v-model="mock.menuId">
                                 <datalist id="menu_list">
-                                    <option v-for="menu in menus" value="{{menu}}"></option>
+                                    <option v-for="menu in menus" value="{{mock.menu}}"></option>
                                 </datalist>
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">描述:</label>
-                                <input type="text" class="form-control" v-model="desc">
+                                <input type="text" class="form-control" v-model="mock.description">
                             </div>
                             <div class="form-group">
                                 <label for="recipient-name" class="control-label">Type:</label>
                             </div>
                             <div class="form-group">
                                 <label class="radio-inline">
-                                    <input type="radio" name="type" v-model="type" value="GET"> GET
+                                    <input type="radio" name="type" v-model="mock.type" value="GET"> GET
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="type" v-model="type" value="POST"> POST
+                                    <input type="radio" name="type" v-model="mock.type" value="POST"> POST
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="type" v-model="type" value="PATCH"> PATCH
+                                    <input type="radio" name="type" v-model="mock.type" value="PATCH"> PATCH
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="type" v-model="type" value="DELETE"> DELETE
+                                    <input type="radio" name="type" v-model="mock.type" value="DELETE"> DELETE
                                 </label>
                             </div>
                             <div class="form-group">
@@ -46,10 +46,10 @@
                             </div>
                             <div class="form-group">
                                 <label class="radio-inline">
-                                    <input type="radio" name="dataHandler" v-model="dataHandler" value="over"> 完全覆盖
+                                    <input type="radio" name="dataHandler" v-model="mock.dataHandler" value="over"> 完全覆盖
                                 </label>
                                 <label class="radio-inline">
-                                    <input type="radio" name="dataHandler" v-model="dataHandler" value="overlying"> 数据叠加
+                                    <input type="radio" name="dataHandler" v-model="mock.dataHandler" value="overlying"> 数据叠加
                                 </label>
                             </div>
                             <div class="form-group">
@@ -75,9 +75,12 @@
 </template>
 <script>
 import JSONEditor from "jsoneditor";
+import Mock from "../js/Mock"
+
+import ajax from "../js/ajax";
 
 function valid(vm, param) {
-    if (param.url === "" || param.result === "" || param.type === "") {
+    if (param.url == null || param.url === "" || param.result === "" || param.type === "") {
         alert("参数不全");
         return false;
     } else if (param.url.indexOf("\/") !== 0) {
@@ -94,63 +97,42 @@ function valid(vm, param) {
 }
 
 function emptyEdit(vm) {
-    $.extend(vm, getEmptyObject());
+    vm.mock = Mock.parse({});
     vm.editor.set({});
 }
 
 function getEmptyObject() {
-    return {
-        num: 0,
-        _id: "",
-        url: "",
-        desc: "",
-        menuId: "",
-        result: "",
-        respParam: "",
-        dataHandler: "over",
-        param: "",
-        type: "",
-        active: true
-    }
-}
-
-function model(toO, fromO) {
-    toO._id = fromO._id;
-    toO.url = fromO.url;
-    toO.result = fromO.result;
-    toO.desc = fromO.desc;
-    toO.type = fromO.type;
-    toO.menuId = fromO.menuId;
-    toO.dataHandler = fromO.dataHandler;
-    toO.param = fromO.param;
-    toO.respParam = fromO.respParam;
-    if (fromO.active != undefined) toO.active = fromO.active;
+    return Mock.parse({});
 }
 
 export default {
     props: ['mocksets', "nowProject", "menus"],
     data() {
-        return getEmptyObject();
+        return {
+            editType:"create",
+            mock:Mock.parse({})
+        }
     },
     ready() {
-        var vm = this;
-        var editModal = $(vm.$el);
+        var that = this;
+        var editModal = $(that.$el);
         editModal.on('shown.bs.modal', function(event) {
             var button = $(event.relatedTarget);
             var type = button.data('type');
             if (type == "create") {
-                vm.editType = "create";
+                that.editType = "create";
             } else {
                 var num = button.data('id');
-                var mockset = vm.getById(num);
-                vm.mockset = mockset;
-                model(vm, mockset);
-                vm.editor.set(JSON.parse(vm.result));
-                if(vm.param)vm.paramEditor.set(JSON.parse(vm.param));
-                vm.editType = "edit";
+                var mockset = that.getById(num);
+                that.mockset = mockset;
+                that.mock = Mock.parse(mockset);
+                let mock = that.mock;
+                that.editor.set(JSON.parse(mock.result));
+                if(mock.param)that.paramEditor.set(JSON.parse(mock.param));
+                that.editType = "edit";
             }
         }).on("hide.bs.modal", function(){
-            emptyEdit(vm);
+            emptyEdit(that);
         });
 
         var container = document.getElementById('jsoneditor');
@@ -167,8 +149,8 @@ export default {
             }
         };
 
-        vm.editor = new JSONEditor(container, options, {});
-        vm.paramEditor = new JSONEditor(paramContainer, options, {});
+        that.editor = new JSONEditor(container, options, {});
+        that.paramEditor = new JSONEditor(paramContainer, options, {});
     },
     methods: {
         edit: function(event) {
@@ -176,15 +158,14 @@ export default {
 
             Vue.nextTick(function() {
 
-                vm.result = JSON.stringify(vm.editor.get(), null, 2);
-                vm.param = JSON.stringify(vm.paramEditor.get(), null, 2)
-                var param = {};
-                model(param, vm);
+                var param = vm.mock;
+                param.result = JSON.stringify(vm.editor.get(), null, 2);
+                param.param = JSON.stringify(vm.paramEditor.get(), null, 2)
                 if (valid(vm, param) === false) return false;
                 if (vm.editType == "create") {
-                    param.projectId = vm.nowProject._id;
-                    // param.menuId = vm.nowProject._id;
-                    $.post("/umock/mockset", param)
+                    param.projectId = vm.nowProject.id;
+                    // param.menuId = vm.nowProject.id;
+                    ajax.postJson("/umock/mockset", param)
                         .done(function(result) {
                             if (result.result == "ok") {
                                 vm.mocksets.push(result.content);
@@ -195,13 +176,10 @@ export default {
                             }
                         })
                 } else {
-                    var param = {};
-                    model(param, vm);
-                    param.projectId = vm.nowProject._id;
-                    $.post("/umock/mockset/" + param._id, param)
+                    param.projectId = vm.nowProject.id;
+                    ajax.postJson("/umock/mockset/" + param.id, Mock.dispose(param))
                         .done(function(result) {
                             if (result.result == "ok") {
-                                model(vm.mockset, param);
                                 $(vm.$el).modal("hide");
                                 vm.$dispatch("reInitMenu");
                             } else {
@@ -212,10 +190,10 @@ export default {
 
             });
         },
-        getById(_id) {
+        getById(id) {
             let vm = this;
             return vm.mocksets.filter((item) => {
-                return item._id == _id;
+                return item.id == id;
             })[0];
         }
     }

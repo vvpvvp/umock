@@ -19,11 +19,11 @@
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                 </button>
             </div>
-            <div v-for="mockset in mocksets | filterBy filterMenu in 'menuId'" track-by="_id" v-bind:class="{'active':mockset.active,'opened':mockset.opened,'mockDiv':true,'POST':mockset.type=='POST','GET':mockset.type=='GET'}">
+            <div v-for="mockset in mocksets | filterBy filterMenu in 'menuId'" track-by="id" v-bind:class="{'active':mockset.active,'opened':mockset.opened,'mockDiv':true,'POST':mockset.type=='POST','GET':mockset.type=='GET'}">
                 <div class="mocksetHeader" v-on:click="togglePane">
                     <span class="mockType">{{mockset.type}}</span><a href="javascript:;" v-on:click.stop="testMock(mockset)"><code>{{mockset.url}}</code></a><span class="text-info">{{mockset.desc}}</span>
                     <div class="operator">
-                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{mockset._id}}>
+                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{mockset.id}}>
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
                         </button>
                         <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" v-on:click="deleteMockset(mockset)">
@@ -61,8 +61,8 @@ import mockMenu from './mockMenu.vue';
 
 function changeStatus(mockset, active) {
     var content = mockset;
-    $.post("/umock/mockset/" + content._id, {
-        _id: content._id,
+    $.post("/umock/mockset/" + content.id, {
+        id: content.id,
         active: active
     }).done(() => {
         content.active = active;
@@ -105,7 +105,7 @@ export default {
         $.get("/umock/project/" +id)
             .done(function(result) {
                 if (result.result == "ok"){
-                    vm.nowProject = result.content[0];
+                    vm.nowProject = result.content;
                     window.document.title = vm.nowProject.name;
                     Vue.nextTick(()=>{
                         vm.getList();
@@ -129,7 +129,7 @@ export default {
         },
         getList() {
             var M = this;
-            $.get("/umock/list/" + M.nowProject._id)
+            $.get("/umock/list/" + M.nowProject.id)
                 .done(function(result) {
                     if (result.result == "ok") {
                         M.mocksets = result.content;
@@ -141,12 +141,12 @@ export default {
             var vm = this;
             if (!confirm("确定删除")) return;
             $.ajax({
-                    url: "/umock/mockset/" + mockset._id,
+                    url: "/umock/mockset/" + mockset.id,
                     type: "delete"
                 })
                 .done((result) => {
                     if (result.result == "ok") {
-                        vm.deleteById(mockset._id);
+                        vm.deleteById(mockset.id);
                         initMenu(vm);
                     }
                 });
@@ -154,10 +154,10 @@ export default {
         testMock(mockset){
             this.$broadcast('testMock', mockset);
         },
-        deleteById(_id){
+        deleteById(id){
             let vm = this;
             vm.mocksets.forEach((n,i)=>{
-                if(n._id == _id){
+                if(n.id == id){
                     vm.mocksets.splice(i, 1);
                     return false;
                 }

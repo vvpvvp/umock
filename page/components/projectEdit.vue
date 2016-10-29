@@ -13,7 +13,7 @@
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="control-label">描述:</label>
-                        <input type="text" class="form-control" v-model="desc">
+                        <input type="text" class="form-control" v-model="description">
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="control-label">种类:</label>
@@ -45,6 +45,9 @@
     </div>
 </template>
 <script>
+
+import ajax from "../js/ajax";
+
 function valid(param) {
     if (param.name === "" || param.beginPath === "" || param.proxy === "") {
         alert("参数不全");
@@ -65,9 +68,9 @@ function emptyEdit(v_project) {
 
 function getEmptyObject() {
     return {
-        _id: "",
+        id: "",
         name: "",
-        desc: "",
+        description: "",
         beginPath: "",
         isPublic:"1",
         proxy: "",
@@ -76,11 +79,11 @@ function getEmptyObject() {
 }
 
 function model(toO, fromO) {
-    toO._id = fromO._id;
+    toO.id = fromO.id;
     toO.name = fromO.name;
     toO.beginPath = fromO.beginPath;
     toO.isPublic = fromO.isPublic;
-    toO.desc = fromO.desc;
+    toO.description = fromO.description;
     toO.proxy = fromO.proxy;
 }
 
@@ -115,7 +118,7 @@ export default {
                 model(param, vm);
                 if (valid(param) === false) return false;
                 if (!vm.editing) {
-                    $.post("/umock/project", param)
+                    ajax.postJson("/umock/project", param)
                         .done(function(result) {
                             if (result.result == "ok") {
                                 vm.projects.push(result.content);
@@ -125,7 +128,7 @@ export default {
                             }
                         })
                 } else {
-                    $.post("/umock/project/" + param._id, param)
+                    ajax.postJson("/umock/project/" + param.id, param)
                         .done(function(result) {
                             if (result.result == "ok") {
                                 model(vm.projects[vm.num], param);
@@ -142,7 +145,7 @@ export default {
             var vm = this;
             if(!confirm("确定删除"))return;
             $.ajax({
-                    url: "/umock/project/" + vm._id,
+                    url: "/umock/project/" + vm.id,
                     type: "DELETE"
                 })
                 .done(function(result) {

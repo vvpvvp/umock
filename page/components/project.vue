@@ -24,7 +24,7 @@
         </div>
         <div class="">
             <div v-for="project in projects"  v-bind:class="{ 'alert': true, 'alert-success': project.isPublic=='1', 'alert-gray': project.isPublic!='1'}" role="alert">
-              <h4><span class="label {{['label-primary','label-success'][project.isPublic]}}">{{project.beginPath}}</span>&nbsp;&nbsp;<a  v-link="{name:'mockSet',params:{id:project._id}}" class="alert-link">{{project.name}}-{{["HEAD参数","URL前缀"][project.isPublic]}}</a>&nbsp;&nbsp;<span class="pointer glyphicon glyphicon-edit"  data-toggle="modal" data-target="#projectModal" data-id={{$index}} data-type="edit" aria-hidden="true"></span></h4></a>
+              <h4><span class="label {{['label-primary','label-success'][project.isPublic]}}">{{project.beginPath}}</span>&nbsp;&nbsp;<a  v-link="{name:'mockSet',params:{id:project.id}}" class="alert-link">{{project.name}}-{{["HEAD参数","URL前缀"][project.isPublic]}}</a>&nbsp;&nbsp;<span class="pointer glyphicon glyphicon-edit"  data-toggle="modal" data-target="#projectModal" data-id={{$index}} data-type="edit" aria-hidden="true"></span></h4></a>
                 <p>{{project.desc}}</p>
             </div>
         </div>

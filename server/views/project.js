@@ -3,14 +3,15 @@ var app = global.app;
 var project = require('../schema/project');
 var Result = require("../utils/result");
 var Util = require("../utils/util");
-
-var PouchDB = require("pouchdb");
+var urlencoded = require('body-parser').urlencoded({limit: '50mb', extended: true});
 
 var view = function(mockServer, db) {
 
 
+    const config = global.config;
     var reInitProjects = function() {};
-    if (db) {
+
+    if (config['mongo']) {
 
         let ProjectModel = db.model('projectSet', project.ProjectSchema);
 
@@ -86,13 +87,7 @@ var view = function(mockServer, db) {
                 mockServer.projectIds = listId;
             });
         };
-    } else {
-
-        var db = new PouchDB("projects");
-
-        // db.destroy().then(function(resp) {
-        //     db = PouchDB("projects");
-        // });
+    } else if(config['pouchdb']){
 
         app.get('/umock/project/list', (req, res, next) => {
             db.allDocs({
@@ -171,6 +166,97 @@ var view = function(mockServer, db) {
                 mockServer.projectIds = listId;
             });
         };
+    }else{
+
+        let getOne = function(id,res){
+            db.query(`SELECT * from project where id = ${id}`, function(err, rows, fields) {
+                if (err){
+                    console.log(err);
+                    res.send(Result.defaultError("失败"));
+                    return;
+                }
+                res.send(Result.R(rows[0]));
+            });
+        }
+        
+        app.get('/umock/project/list', (req, res, next) => {
+ 
+            db.query('SELECT * from project', function(err, rows, fields) {
+              if (err){
+                console.log(err);
+                res.send(Result.defaultError("失败"));
+                return;
+              }
+              res.send(Result.R(rows));
+            });
+        });
+
+        app.get('/umock/project/:id', (req, res, next) => {
+            db.query(`SELECT * from project where id = ${req.params.id}`, function(err, rows, fields) {
+              if (err){
+                console.log(err);
+                res.send(Result.defaultError("失败"));
+                return;
+              }
+              res.send(Result.R(rows.length==0?null:rows[0]));
+            });
+        });
+
+        app.post('/umock/project', (req, res, next) => {
+            let query = getProjectModel(req.body);
+            db.query(`INSERT INTO project SET ?`,query, function(err, rows, fields) {
+              if (err) {
+                    console.error(err);
+                    res.send(Result.defaultError("保存失败"));
+                } else {
+                    reInitProjects();
+                    getOne(rows.insertId,res);
+                }
+            });
+        });
+
+        app.post('/umock/project/:id', (req, res, next) => {
+            let query = getProjectModel(req.body);
+            db.query(`update project SET ? where id = ${req.params.id}`,query, function(err, rows, fields) {
+              if (err) {
+                    console.error(err);
+                    res.send(Result.defaultError("更新失败"));
+                } else {
+                    reInitProjects();
+                    res.send(Result.R(rows));
+                }
+            });
+        });
+
+        app.delete('/umock/project/:id', (req, res, next) => {
+            db.query(`delete from project where id = ${req.params.id}`, function(err, rows, fields) {
+              if (err) {
+                    console.error(err);
+                    res.send(Result.defaultError("删除失败"));
+                } else {
+                    reInitProjects();
+                    res.send(Result.R(rows));
+                }
+            });
+        });
+
+        reInitProjects = function() {
+            db.query(`select * from project`, function(err, rows, fields) {
+                if (err){
+                  console.log(err);
+                  return;
+                }
+                var listO = {},
+                    listId = {};
+                rows.forEach((n, i) => {
+                    // if (listO[n.beginPath] == undefined) listO[n.beginPath] = {};
+                    listO[n.beginPath] = n;
+                    listId[n._id] = n;
+                });
+                mockServer.projects = listO;
+                mockServer.projectIds = listId;
+            });
+        };
     }
 
     let formatResp = (resp) => {
@@ -182,8 +268,9 @@ var view = function(mockServer, db) {
 
     let getProjectModel = (body) => {
         var data = {};
+            console.log(body);
         if (body.name != undefined) data.name = body.name;
-        if (body.desc != undefined) data.desc = body.desc;
+        if (body.description != undefined) data.description = body.description;
         if (body.isPublic != undefined) data.isPublic = body.isPublic;
         if (body.beginPath != undefined) data.beginPath = body.beginPath;
         if (body.proxy != undefined) data.proxy = body.proxy;
