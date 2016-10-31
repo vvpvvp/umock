@@ -42,6 +42,8 @@ const config = {
 };
 module.exports = config;
 ```
+*数据库初始化，使用文件mock.sql*
+
 ###使用Mongo存储配置数据
 执行
 ```
