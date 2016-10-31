@@ -33,11 +33,11 @@ npm install mysql
 ```json
 const config = {
 	"mysql": {
-	"connectionLimit" : 20,
-	   "host": "localhost",
-	   "user":"root",
-	   "password":"root",
-	   "database":"mock"
+		"connectionLimit" : 20,
+		"host": "localhost",
+		"user":"root",
+		"password":"root",
+		"database":"mock"
 	}
 };
 module.exports = config;
@@ -51,7 +51,7 @@ npm install mongoose
 ```json
 const config = {
     "mongo": {
-    	"uri" : uri
+    	"uri" : "uri"
     }
 
 };
@@ -67,7 +67,6 @@ npm install pouchdb
 ```json
 const config = {
     "pouchdb": {}
-
 };
 module.exports = config;
 ```
