@@ -14,30 +14,41 @@ var app = global.app;
 
 // log proxy data
 proxy.on('open', function(proxySocket) {
-    console.log("open")
 });
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
     console.log("proxyReq")
-    if ((req.method == "POST" || req.method == "PATCH") &&req.body && req.headers['content-type'].indexOf("application/json")===0) {
-        proxyReq.write(req.body);
-        proxyReq.end();
+    if ((req.method == "POST" || req.method == "PATCH") && req.body) {
+        if(req.headers['content-type'].indexOf("application/json")===0){
+            var data = JSON.stringify(req.body);
+            req.body = data;
+            // if(req.headers['connection']=='keep-alive'){
+            //     // proxyReq.setHeader('Content-Type', req.headers['content-type']);
+            //     // proxyReq.setHeader('Content-Length', data.length);
+
+            //     // proxyReq.setHeader('Connection', "keep-alive");
+            // }
+            if(req.isMock){
+                // console.log(proxyRes);
+                res.setHeader('Transfer-Encoding', "chunked");
+            }
+            proxyReq.write(req.body);
+            proxyReq.end();
+        }
     }
 });
 
 proxy.on('proxyRes', function(proxyRes, req, res) {
-    console.log("proxyRes");
-    // console.log("proxyRes");
-    // console.log('RAW Response from the target', JSON.stringify(proxyRes.headers, true, 2));
 });
 
 
 proxy.on('end', function(proxyRes, req, res) {
-    console.log("close");
+    console.log("end");
 });
 
 proxy.on('error', function(e, req, res) {
-    // console.log(arguments);
+    res.json({_status:500,_msg:"反向代理错误"});
+    res.end();
 });
 
 
@@ -157,55 +168,13 @@ umock.init = function(argument) {
 
     process.nextTick(function() {
         app.use(function(req, res, next) {
-
             if (req.proxy) {
-                var headers = {};
-                if ((req.method == "POST" || req.method == "PATCH") && req.body) {
-                    if(req.headers['content-type'].indexOf("application/json")===0){
-                        var data = JSON.stringify(req.body);
-                        // console.log(req.body);
-                        req.body = data;
-                        if(req.headers['connection']=='keep-alive'){
-                            headers = {  
-                                "Content-Type": req.headers['content-type'],
-                                "Content-Length": data.length
-                            }
-                        }
-                    }
-                    // else if(req.headers['content-type'].indexOf("application/x-www-form-urlencoded")===0){
-                    //     var data = JSON.stringify(req.body);
-                    //     console.log(data.length);
-                    //     req.body = data;
-                    //     headers = {  
-                    //         "Content-Type": req.headers['content-type'],
-                    //         "Content-Length": data.length
-                    //     }
-                    // }
-                }
-                // console.log(headers);
-                // if ((req.method == "POST" || req.method == "PATCH") && req.headers['content-type'].indexOf("application/json")===0) {
-                //     var data = JSON.stringify(req.body);
-                //     req.body = data;
-                //     if(req.headers['connection']=='keep-alive'){
-                //         headers = {  
-                //             "Content-Type": req.headers['content-type'],
-                //             "Content-Length": data.length
-                //         }
-                //     }
-                // }else if(req.headers['content-type'].indexOf("application/x-www-form-urlencoded")===0){
-                //     headers = {  
-                //         "Content-Type": 'application/x-www-form-urlencoded;charset=UTF-8',
-                //         "Content-Length": data.length
-                //     }
-                // }
                 proxy.web(req, res, {
                     target: req.proxy,
                     toProxy: true,
-                    changeOrigin: true,
-                    headers: headers
+                    changeOrigin: true
                 });
             } else {
-                // urlencoded(req, res, next);
                 next();
             }
         });

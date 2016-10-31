@@ -28,8 +28,11 @@ function overflyData(req, res, data) {
             var re = JSON.parse(body.join(""));
             //深度覆盖
             util.extendResultData(re, data);
-            // console.log("rewrite");
-            _write.call(res, JSON.stringify(re));
+            // console.log(re);
+            // console.log(JSON.stringify(re).length);
+            // res.json(result);
+            re = JSON.stringify(re);
+            _write.call(res, re);
         }
         _end.call(res);
     };
@@ -42,13 +45,14 @@ function handlerResult(req, res, element) {
         res.end();
         return true;
     } else {
+        req.isMock = true;
         overflyData(req, res, result);
     }
     return false;
 }
 
 mockServer.returnFunc = function(req, res, next) {
-    console.log("comein");
+    // console.log("comein");
     let url = decodeURI(req.baseUrl),
         hasUrl = false;
 
@@ -60,14 +64,15 @@ mockServer.returnFunc = function(req, res, next) {
         delete req.headers.author;
     }
     var server = mockServer.projects[beginPath];
+    let id = server.id||server._id;
     if (server) {
         req.proxy = server.proxy;
-        var serverMockList = mockServer.mockSetList[server._id];
+        var serverMockList = mockServer.mockSetList[id];
         if (serverMockList != undefined && serverMockList[url] != undefined) {
             hasUrl = handlerResult(req, res, serverMockList[url]);
         } else {
-            if (mockServer.mockRegExpList[server._id] != undefined) {
-                var RegExpList = mockServer.mockRegExpList[server._id];
+            if (mockServer.mockRegExpList[id] != undefined) {
+                var RegExpList = mockServer.mockRegExpList[id];
                 for (var j = 0; j < RegExpList.length; j++) {
                     let element = RegExpList[j];
                     if (new RegExp(element.regexp).test(url)) {
