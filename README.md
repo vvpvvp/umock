@@ -32,11 +32,11 @@ npm install mysql
 在配置文件umock.js中
 ```json
 const config = {
-	'mysql': {
-	'connectionLimit' : 20,
-	   'host': 'localhost',
-	   'user':"root",
-	   'password':"root",
+	"mysql": {
+	"connectionLimit" : 20,
+	   "host": "localhost",
+	   "user":"root",
+	   "password":"root",
 	   "database":"mock"
 	}
 };
@@ -50,8 +50,8 @@ npm install mongoose
 在配置文件umock.js中
 ```json
 const config = {
-    'mongo': {
-    	'uri' : uri
+    "mongo": {
+    	"uri" : uri
     }
 
 };
@@ -66,7 +66,7 @@ npm install pouchdb
 在配置文件umock.js中
 ```json
 const config = {
-    'pouchdb': {}
+    "pouchdb": {}
 
 };
 module.exports = config;
