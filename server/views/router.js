@@ -1,7 +1,4 @@
 'use strict';
-var mongoose = require('mongoose');
-var pouchdb = require("pouchdb");
-var mysql = require("mysql");
 var app = global.app;
 var util = require('../utils/util');
 var mocksetView = require("./mockset");
@@ -64,6 +61,9 @@ mockServer.returnFunc = function(req, res, next) {
         delete req.headers.author;
     }
     var server = mockServer.projects[beginPath];
+    if(!server){
+        next();
+    }
     let id = server.id||server._id;
     if (server) {
         req.proxy = server.proxy;
@@ -94,15 +94,17 @@ mockServer.initLocalServer = function() {
     const config = global.config;
     let db = null;
     if (config['mongo']) {
+        var mongoose = require('mongoose');
         db = mongoose.createConnection(config['mongo']['uri']);
         // 链接错误
         db.on('error', function(error) {
             console.log(error);
         });
     } else if(config['pouchdb']){
-        db = new PouchDB("mocksets");
+        var pouchdb = require("pouchdb");
+        db = new pouchdb("mocksets");
     }else if(config['mysql']){
-        console.log(config.mysql);
+        var mysql = require("mysql");
         db = new mysql.createPool(config.mysql);
         
     }

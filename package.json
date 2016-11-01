@@ -7,7 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "bash ./bin/umock"
+    "start": "node ./bin/umock"
   },
   "repository": {
     "type": "git",

@@ -3,3 +3,4 @@ umock.js
 /node_modules/
 /mocksets/
 /projects/
+*.log
