@@ -1,6 +1,5 @@
 'use strict';
 var app = global.app;
-var project = require('../schema/project');
 var Result = require("../utils/result");
 var Util = require("../utils/util");
 var urlencoded = require('body-parser').urlencoded({limit: '50mb', extended: true});
@@ -13,7 +12,25 @@ var view = function(mockServer, db) {
 
     if (config['mongo']) {
 
-        let ProjectModel = db.model('projectSet', project.ProjectSchema);
+
+
+        var ProjectSchema = new db.Schema({
+            url: String,
+            desc: String,
+            result: String,
+            dataHandler: {type:String,default: "over"},//over覆盖,overlying叠加
+            type: {type:String,default: "GET"},
+            isreg: {type:Boolean,default:false},
+            param: String,
+            respParam:String,
+            menuId:String,
+            projectId:String,
+            active: {type:Boolean,default: true},
+            createTime: {type:Date,default: Date.now},
+            modifyTime: {type:Date,default: Date.now}
+        });
+
+        let ProjectModel = db.model('projectSet', ProjectSchema);
 
         app.get('/umock/project/list', (req, res, next) => {
             ProjectModel.find().exec((err, docs) => {

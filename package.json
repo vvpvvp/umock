@@ -1,13 +1,13 @@
 {
   "name": "umock",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "服务器端的Mock",
   "bin": {
     "umock": "bin/umock"
   },
   "main": "index.js",
   "scripts": {
-    "start": "node ./bin/umock"
+    "start": "nodemon ./bin/umock"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,8 @@
     "leveldown": "^1.5.0",
     "morgan": "~1.6.1",
     "mysql": "^2.11.1",
-    "optimist": "^0.6.1"
+    "optimist": "^0.6.1",
+    "nodemon":"^1.11.0"
   },
   "bugs": {
     "url": "https://github.com/vvpvvp/UMock/issues"

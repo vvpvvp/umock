@@ -1,10 +1,10 @@
 'use strict';
 var app = global.app;
-var mock = require('../schema/mockset');
 var Result = require("../utils/result");
 var Util = require("../utils/util");
 
 var mocksetView = function(mockServer, db) {
+
     var reInitList = function() {};
 
 
@@ -51,7 +51,25 @@ var mocksetView = function(mockServer, db) {
             });
         };
 
-        let MockModel = db.model('mockSet', mock.MockSetSchema);
+
+        var MockSetSchema = new db.Schema({
+            url: String,
+            desc: String,
+            result: String,
+            dataHandler: {type:String,default: "over"},//over覆盖,overlying叠加
+            type: {type:String,default: "GET"},
+            isreg: {type:Boolean,default:false},
+            param: String,
+            respParam:String,
+            menuId:String,
+            projectId:String,
+            active: {type:Boolean,default: true},
+            createTime: {type:Date,default: Date.now},
+            modifyTime: {type:Date,default: Date.now}
+        });
+
+
+        let MockModel = db.model('mockSet', MockSetSchema);
 
         app.get('/umock/list/:id', (req, res, next) => {
             MockModel.find({
