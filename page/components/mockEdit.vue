@@ -97,6 +97,7 @@ import Mock from "../js/Mock"
 
 import ajax from "../js/ajax";
 import SimpleMDE from "simplemde/dist/simplemde.min";
+require("../css/font-awesome.min.css");
 require("simplemde/dist/simplemde.min.css");
 
 function valid(vm, param) {
@@ -172,7 +173,8 @@ export default {
     that.editor = new JSONEditor(container, options, {});
     that.simplemde = new SimpleMDE({
       element: document.getElementById('mocksetDescription'),
-      spellChecker:false
+      spellChecker:false,
+      autoDownloadFontAwesome:false
     });
     // that.paramEditor = new JSONEditor(paramContainer, options, {});
   },

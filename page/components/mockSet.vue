@@ -21,7 +21,7 @@
             </div>
             <div v-for="mockset in mocksets | filterBy filterMenu in 'menuId'" track-by="id" v-bind:class="{'active':mockset.active,'opened':mockset.opened,'mockDiv':true,'POST':mockset.type=='POST','GET':mockset.type=='GET'}">
                 <div class="mocksetHeader" v-on:click="togglePane">
-                    <span class="mockType">{{mockset.type}}</span><code>{{mockset.url}}</code><span class="text-info">{{mockset.shortDesc}}</span>
+                    <span class="mockType">{{mockset.type}}</span><a href="javascript:;" v-on:click="testMock(mockset)"><code>{{mockset.url}}</code></a><span class="text-info">{{mockset.shortDesc}}</span>
                     <div class="operator">
                         <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" @click="testMock(mockset)">
                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>测试
@@ -123,6 +123,8 @@ export default {
                 bar.next().slideToggle();
             else if(bar.parent().hasClass("mocksetHeader"))
                 bar.parent().next().slideToggle();
+            else if(bar[0].tagName=="CODE")
+                bar.parent().parent().next().slideDown();
         },
         getList() {
             var M = this;

@@ -19,7 +19,7 @@ proxy.on('open', function(proxySocket) {
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
     console.log("proxyReq")
     if ((req.method == "POST" || req.method == "PATCH") && req.body) {
-        if(req.headers['content-type'].indexOf("application/json")===0){
+        if(req.headers['content-type']&&req.headers['content-type'].indexOf("application/json")===0){
             var data = JSON.stringify(req.body);
             req.body = data;
             // if(req.headers['connection']=='keep-alive'){

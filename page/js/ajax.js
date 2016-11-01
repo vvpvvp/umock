@@ -97,17 +97,6 @@ const ajax = {
         this.addRequest(url);
       }
     }
-    if (params.loadding) {
-      params.loaddingDom = $('<div class="sys-loadding"></div>');
-      let openedComponent = $('.systab_component.selected');
-      if (openedComponent.size() == 0)openedComponent = $('body');
-      openedComponent.append(params.loaddingDom);
-    }
-
-    if (params.globalLoadding) {
-      params.loaddingDom = $('<div class="sys-loadding global"></div>');
-      $('body').append(params.loaddingDom);
-    }
         // let returnDeffer = ;
         // $.extend(returnDeffer,returnDeffer.then(function(resp){
         //     if (resp._status != 200) {
@@ -150,28 +139,6 @@ const ajax = {
       },
       complete(XMLHttpRequest, textStatus) {
         that.deleteRequest(this.url);
-        if (this.loaddingDom) {
-          this.loaddingDom.remove();
-        }
-        try {
-          const result = $.parseJSON(XMLHttpRequest.responseText);
-          if (result && result._status == 403) {
-                        // D.removeCookie(C.cookieToken);
-                        // D.removeCookie(C.cookieId);
-            window.top.location = '/login.html';
-          } else if (result && result._status != 200 && this.url != '/api/report/error') {
-                        // that.postJson("/report/error",{
-                        //     url:this.url,
-                        //     type:this.type,
-                        //     data:this.data,
-                        //     result:result
-                        // },{isDeffer:true});
-          }
-          // if (result && result._status != 200 && this.tipError) {
-          //   const errorMsg = this.type == 'POST' ? '提交失败' : '获取失败';
-          //   Toptip(this.tipError === true ? errorMsg : this.tipError, 'red');
-          // }
-        } catch (e) {}
       },
       statusCode: {
         400() {

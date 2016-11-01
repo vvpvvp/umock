@@ -70,6 +70,9 @@ div#editModal .modal-dialog {width: 90%;}
     overflow: hidden;
     cursor: default;
 }
+.mocksetHeader code{
+  font-size:16px;
+}
 
 .mockDiv.active{
     background-color: #F8E8EC !important;
@@ -99,7 +102,8 @@ span.mockType {
     /* font-weight: bold; */
     display: inline-block;
     /* padding: 12px; */
-    width: 73px;
+    width: 46px;
+    font-weight: bold;
     margin-left: -10px;
     border-radius: 5px;
     text-align: center;
