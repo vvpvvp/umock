@@ -7,7 +7,8 @@
   },
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./bin/umock"
+    "start": "node ./bin/umock",
+    "server": "nodemon ./bin/umock"
   },
   "repository": {
     "type": "git",
@@ -32,8 +33,7 @@
     "leveldown": "^1.5.0",
     "morgan": "~1.6.1",
     "mysql": "^2.11.1",
-    "optimist": "^0.6.1",
-    "nodemon":"^1.11.0"
+    "optimist": "^0.6.1"
   },
   "bugs": {
     "url": "https://github.com/vvpvvp/UMock/issues"

@@ -77,6 +77,7 @@ module.exports = config;
 
 
 ##启动
+
 ```javascript
 //github本地安装，需要在根目录下添加umock.js
 npm install
@@ -85,6 +86,13 @@ npm run start
 //全局安装启动
 umock -p 端口号 -f 配置文件
 ```
+
+推荐安装[nodemon](https://www.npmjs.com/package/nodemon)，如果安装了nodemon，则执行：
+
+```javascript
+npm run server
+```
+
 ##访问
 ```
 http://localhost:端口号
