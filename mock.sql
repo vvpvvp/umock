@@ -14,8 +14,8 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-drop database mock IF EXISTS `mock`;
-create database `mock` character set utf8;
+-- drop database mock IF EXISTS `mock`;
+-- create database `mock` character set utf8;
 --
 -- Table structure for table `mockset`
 --
@@ -29,7 +29,8 @@ CREATE TABLE `mockset` (
   `isreg` varchar(10) DEFAULT NULL,
   `result` varchar(10000) NOT NULL DEFAULT '',
   `description` varchar(10000) NOT NULL DEFAULT '',
-  `active` varchar(10) DEFAULT NULL,
+  `shortDesc` varchar(200) NOT NULL DEFAULT '',
+  `active` TINYINT(1) DEFAULT NULL,
   `type` varchar(10) DEFAULT NULL,
   `param` varchar(10) DEFAULT NULL,
   `respParam` varchar(100) NOT NULL DEFAULT '',

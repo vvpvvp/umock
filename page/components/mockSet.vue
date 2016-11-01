@@ -21,8 +21,11 @@
             </div>
             <div v-for="mockset in mocksets | filterBy filterMenu in 'menuId'" track-by="id" v-bind:class="{'active':mockset.active,'opened':mockset.opened,'mockDiv':true,'POST':mockset.type=='POST','GET':mockset.type=='GET'}">
                 <div class="mocksetHeader" v-on:click="togglePane">
-                    <span class="mockType">{{mockset.type}}</span><a href="javascript:;" v-on:click.stop="testMock(mockset)"><code>{{mockset.url}}</code></a><span class="text-info">{{mockset.desc}}</span>
+                    <span class="mockType">{{mockset.type}}</span><code>{{mockset.url}}</code><span class="text-info">{{mockset.shortDesc}}</span>
                     <div class="operator">
+                        <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" @click="testMock(mockset)">
+                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>测试
+                        </button>
                         <button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-target="#editModal" data-id={{mockset.id}}>
                             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>编辑
                         </button>
@@ -38,14 +41,7 @@
                     </div>
                 </div>
                 <div class="mocksetContent">
-                    <h4>Parameters</h4>
-                    <p>{{mockset.param}}</p>
-                    <h4>Response</h4>
-                    <p>{{mockset.respParam}}</p>
-                    <div>
-                        <h4>Result</h4>
-                        <pre><code class="json">{{mockset.result}}</code></pre>
-                    </div>
+                    <pre><code>{{mockset.description}}</code></pre>
                 </div>
             </div>
             <mock-edit :mocksets="mocksets" :now-project="nowProject" :menus ="menus"></mock-edit>
@@ -58,10 +54,11 @@
 import mockEdit from './mockEdit.vue';
 import mockTest from './mockTest.vue';
 import mockMenu from './mockMenu.vue';
+import ajax from "../js/ajax";
 
 function changeStatus(mockset, active) {
     var content = mockset;
-    $.post("/umock/mockset/" + content.id, {
+    ajax.postJson("/umock/mockset/" + content.id, {
         id: content.id,
         active: active
     }).done(() => {

@@ -2,11 +2,12 @@ const mock = {
   num: 0,
   id: "",
   url: "",
-  desc: "",
+  shortDesc: "",
   menuId: "",
   result: "",
   respParam: "",
   dataHandler: "over",
+  description:"",
   param: "",
   type: "",
   active: true

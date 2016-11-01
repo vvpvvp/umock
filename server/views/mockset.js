@@ -292,6 +292,7 @@ var mocksetView = function(mockServer, db) {
             data.isreg = data.url.includes(":");
         }
         if (body.result != undefined) data.result = body.result;
+        if (body.shortDesc != undefined) data.shortDesc = body.shortDesc;
         if (body.description != undefined) data.description = body.description;
         if (body.active != undefined) data.active = body.active;
         if (body.type != undefined) data.type = body.type;

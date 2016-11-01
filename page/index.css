@@ -42,7 +42,12 @@ code {
 }
 
 #jsoneditor {
-  height: 565px;
+  height: 518px;
+  margin-left: 10px;
+}
+
+.CodeMirror{
+    height: 700px;
 }
 
 #param-jsoneditor {
@@ -63,6 +68,7 @@ div#editModal .modal-dialog {width: 90%;}
     margin: -1px;
     border-radius: inherit;
     overflow: hidden;
+    cursor: default;
 }
 
 .mockDiv.active{
