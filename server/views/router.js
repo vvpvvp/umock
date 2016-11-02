@@ -63,6 +63,7 @@ mockServer.returnFunc = function(req, res, next) {
     var server = mockServer.projects[beginPath];
     if(!server){
         next();
+        return;
     }
     let id = server.id||server._id;
     if (server) {
