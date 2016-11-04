@@ -18,6 +18,10 @@ proxy.on('open', function(proxySocket) {
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
     console.log("proxyReq")
+    if(req.isMock){
+        // console.log(proxyRes);
+        res.setHeader('Transfer-Encoding', "chunked");
+    }
     if ((req.method == "POST" || req.method == "PATCH") && req.body) {
         if(req.headers['content-type']&&req.headers['content-type'].indexOf("application/json")===0){
             var data = JSON.stringify(req.body);
@@ -28,10 +32,6 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
 
             //     // proxyReq.setHeader('Connection', "keep-alive");
             // }
-            if(req.isMock){
-                // console.log(proxyRes);
-                res.setHeader('Transfer-Encoding', "chunked");
-            }
             proxyReq.write(req.body);
             proxyReq.end();
         }
