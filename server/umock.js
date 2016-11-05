@@ -19,9 +19,7 @@ proxy.on('open', function(proxySocket) {
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
     console.log("proxyReq")
     if(req.isMock){
-        // console.log(proxyRes);
         res.setHeader('Transfer-Encoding', "chunked");
-        res.setHeader('content-length', "");
     }
     if ((req.method == "POST" || req.method == "PATCH") && req.body) {
         if(req.headers['content-type']&&req.headers['content-type'].indexOf("application/json")===0){
@@ -40,6 +38,7 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
 });
 
 proxy.on('proxyRes', function(proxyRes, req, res) {
+    delete proxyRes.headers["content-length"];
 });
 
 
