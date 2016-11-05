@@ -38,7 +38,9 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
 });
 
 proxy.on('proxyRes', function(proxyRes, req, res) {
-    delete proxyRes.headers["content-length"];
+    if(req.isMock){
+        delete proxyRes.headers["content-length"];
+    }
 });
 
 
