@@ -313,6 +313,9 @@ var mocksetView = function(mockServer, db) {
         if (body.shortDesc != undefined) data.shortDesc = body.shortDesc;
         if (body.description != undefined) data.description = body.description;
         if (body.active != undefined) data.active = body.active;
+        if (body.develop != undefined) data.develop = body.develop;
+        if (body.frontdevelop != undefined) data.frontdevelop = body.frontdevelop;
+        if (body.backdevelop != undefined) data.backdevelop = body.backdevelop;
         if (body.type != undefined) data.type = body.type;
         if (body.param != undefined) data.param = body.param;
         if (body.respParam != undefined) data.respParam = body.respParam;

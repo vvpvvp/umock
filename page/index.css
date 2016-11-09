@@ -42,12 +42,12 @@ code {
 }
 
 #jsoneditor {
-  height: 518px;
+  height: 488px;
   margin-left: 10px;
 }
 
 .CodeMirror{
-    height: 700px;
+    height: 770px;
 }
 
 #param-jsoneditor {
@@ -173,6 +173,7 @@ div#mockMenu {
     width: 200px;
     bottom: 0;
     top: 0;
+    overflow-y: auto;
     border-right: 1px solid #eee;
 }
 

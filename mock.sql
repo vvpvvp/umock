@@ -27,10 +27,9 @@ CREATE TABLE `mockset` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` varchar(100) NOT NULL DEFAULT '',
   `isreg` varchar(10) DEFAULT NULL,
-  `result` varchar(10000) NOT NULL DEFAULT '',
+  `result` text NOT NULL,
   `description` varchar(10000) NOT NULL DEFAULT '',
-  `shortDesc` varchar(200) NOT NULL DEFAULT '',
-  `active` TINYINT(1) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
   `type` varchar(10) DEFAULT NULL,
   `param` varchar(10) DEFAULT NULL,
   `respParam` varchar(100) NOT NULL DEFAULT '',
@@ -38,8 +37,13 @@ CREATE TABLE `mockset` (
   `projectId` varchar(10) DEFAULT NULL,
   `dataHandler` varchar(11) DEFAULT NULL,
   `modifyTime` timestamp NULL DEFAULT NULL,
+  `shortDesc` varchar(200) DEFAULT NULL,
+  `frontdevelop` varchar(200) DEFAULT NULL,
+  `backdevelop` varchar(200) DEFAULT NULL,
+  `develop` tinyint(1) DEFAULT NULL,
+  
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
