@@ -13,7 +13,7 @@ const mock = {
   description:"",
   param: "",
   type: "",
-  active: true
+  active: 1
 }
 
 export default new Model(mock);

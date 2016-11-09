@@ -185,17 +185,17 @@ div#mockList {
     right: 500px;
     bottom: 0;
     overflow-y: scroll;
+    transition: right .5s;
     /* border-right: 1px solid #eee; */
 }
 
 div#mockTest {
     position: absolute;
     top: 1px;
-    padding: 20px;
     right:0;
     width: 500px;
     bottom: 0;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     z-index: 3;
     background-color: #FFF;
     border-left: 1px solid #eee;
@@ -249,17 +249,40 @@ div#testResult {
     height: 200px;
 }
 
-div#mockTest.expand button.expand::after {
-    content: "hide";
+div#mockTest.hideTest .showButton{
+  /* position:absolute; */
+  /* left: -30px; */
 }
 
-div#mockTest button.expand::after {
-    content: "show";
+
+div#mockTest.hideTest{
+  width: 10px;
+  /* overflow: hidden; */
+}
+
+
+div#mockTest.hideTest .mockTestContainer{
+  display:none;
+}
+.mockTestContainer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50px;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 20px;
 }
 
 div#testTopButton {
-    position: fixed;
-    z-index: 4;
+    padding: 20px;
+}
+
+div#mockTest.hideTest #testTopButton {
+  width: 40px;
+  position: absolute;
+  left: -32px;
+  padding: 0px;
 }
 
 .alert.alert-gray {
@@ -269,4 +292,8 @@ div#testTopButton {
 pre {
     background-color: rgba(254, 254, 254, 0.55);
     border: 1px solid #F4F4F4;
+}
+
+div#mockList.hideTest {
+    right: 0;
 }
