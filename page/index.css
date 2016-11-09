@@ -81,9 +81,19 @@ div#editModal .modal-dialog {width: 90%;}
 .mockDiv {margin: 10px 10px;background-color: #e7f0f7;     border: 1px solid #c3d9ec;border-radius: 5px;}
 
 .mocksetContent {
-    display: none;
     padding: 10px;
-    /* background: #FFF; */
+    display: none;
+}
+
+.mocksetContent pre {}
+
+.mocksetContent.display {
+    max-height: 10000px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.mocksetContent.display pre {
 }
 
 div#mockList {
@@ -296,6 +306,7 @@ div#mockTest.hideTest #testTopButton {
 pre {
     background-color: rgba(254, 254, 254, 0.55);
     border: 1px solid #F4F4F4;
+    margin: 0;
 }
 
 div#mockList.hideTest {

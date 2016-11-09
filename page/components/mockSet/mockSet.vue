@@ -25,7 +25,7 @@
                 </button>
             </div>
             <div v-for="mockset in filterMenus" track-by="id" v-bind:class="{'active':mockset.active,'opened':mockset.opened,'mockDiv':true,'POST':mockset.type=='POST','GET':mockset.type=='GET'}">
-                <div class="mocksetHeader" v-on:click="togglePane">
+                <div class="mocksetHeader" v-on:click="togglePane($event,mockset)" attr-id="{{mockset.id}}">
                     <span class="font12">{{$index+1}}</span>&nbsp;&nbsp;<span class="mockType">{{mockset.type}}</span><a href="javascript:;" v-on:click="testMock(mockset)"><code>{{mockset.url}}</code></a><span class="text-info">{{mockset.shortDesc}}</span>
 
                     <div class="operator">
@@ -50,7 +50,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="mocksetContent">
+                <div class="mocksetContent" :class="{'display':mockset.display}">
                     <pre><code>{{mockset.description}}</code></pre>
                 </div>
             </div>
@@ -65,6 +65,7 @@ import mockEdit from './mockEdit.vue';
 import mockTest from './mockTest.vue';
 import mockMenu from './mockMenu.vue';
 import mockDeveloper from './mockDeveloper.vue';
+import Router from "../../index.js";
 
 import ajax from "../../js/ajax";
 import Mock from "../../js/Mock";
@@ -167,8 +168,21 @@ export default {
         disactive(mockset) {
             changeStatus(mockset,"active", false);
         },
-        togglePane(event) {
+        togglePane(event,mockset) {
             var bar = $(event.target);
+            let url = "/"+this.$route.params.id+"/list?";
+            if(window.location.hash.indexOf('/develop')!=-1){
+                url = "/"+this.$route.params.id+"/develop?";
+            }
+            if(this.developer){
+                url += "develop="+this.developer+"&";
+            }else if(this.menu){
+                url += "menu="+this.menu+"&";
+            }
+            url+= "id="+mockset.id;
+            Router.go(url);
+            // mockset.display = !mockset.display;
+
             if (bar.hasClass("mocksetHeader"))
                 bar.next().slideToggle();
             else if(bar.parent().hasClass("mocksetHeader"))
@@ -183,6 +197,11 @@ export default {
                     if (result.result == "ok") {
                         M.mocksets = Mock.parse(result.content);
                         M.initMenu();
+                        Vue.nextTick(()=>{
+                            if(M.$route.query.id){
+                                $("[attr-id='"+M.$route.query.id+"']").next().slideDown();
+                            }
+                        })
                     }
                 });
         },

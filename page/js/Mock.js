@@ -13,7 +13,11 @@ const mock = {
   description:"",
   param: "",
   type: "",
-  active: 1
+  active: 1,
+  display:{
+    type:Model.BOOLEAN,
+    default:false
+  }
 }
 
 export default new Model(mock);
