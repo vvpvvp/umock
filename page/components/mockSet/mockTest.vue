@@ -1,8 +1,8 @@
 <template>
   <div id="mockTest">
     <div id="testTopButton">
-      <button type="button" class="btn btn-default btn-xs expand" v-on:click="expand">{{isExpand?"最小化":"最大化"}}</button>
-      <button type="button" class="btn btn-default btn-xs showButton" v-on:click="hide">{{isHide?"展示":"隐藏"}}</button>
+      <button type="button" class="btn btn-default btn-xs expand" v-if="!isHide" v-on:click="expand">{{isExpand?"最小化":"最大化"}}</button>
+      <button type="button" class="btn btn-default showButton btn-xs" :class="{'btn-primary':isHide}" v-on:click="hide()">{{isHide?"测试":"隐藏"}}</button>
     </div>
     <div class="mockTestContainer">
       <div class="form">
@@ -57,7 +57,7 @@ function getEmptyObject() {
 }
 
 function model(toO, fromO) {
-  toO._id = fromO._id;
+  toO.id = fromO.id;
   // if(toO.nowProject.isPublic!="1"){
   //     toO.url = fromO.url.substring(toO.nowProject.beginPath.length);
   // }else{
@@ -192,6 +192,7 @@ export default {
     'testMock': function(mockset) {
       var vm = this;
       this.hide(false);
+      if(this.id===mockset.id)return false;
       model(this, mockset);
       if (vm.nowProject.isPublic != "1") {
         let headers;

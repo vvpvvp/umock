@@ -263,6 +263,9 @@ div#mockTest.hideTest{
 
 div#mockTest.hideTest .mockTestContainer{
   display:none;
+  /* width: 0; */
+  /* overflow: hidden; */
+  /* padding: 0; */
 }
 .mockTestContainer {
     position: absolute;
@@ -281,7 +284,8 @@ div#testTopButton {
 div#mockTest.hideTest #testTopButton {
   width: 40px;
   position: absolute;
-  left: -32px;
+  left: -40px;
+  top: -40px;
   padding: 0px;
 }
 
