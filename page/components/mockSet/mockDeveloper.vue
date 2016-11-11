@@ -21,9 +21,9 @@ export default {
     methods: {
         changeDeveloper: function(data) {
             if(window.location.hash.indexOf('/develop')!=-1){
-                Router.go("/"+this.$route.params.id+"/develop?develop="+data);
+                Router.go("/mockset/"+this.$route.params.id+"/develop?develop="+data);
             }else{
-                Router.go("/"+this.$route.params.id+"/list?develop="+data);
+                Router.go("/mockset/"+this.$route.params.id+"/list?develop="+data);
             }
         }
     }

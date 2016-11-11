@@ -21,9 +21,9 @@ export default {
     methods: {
         changeMenu: function(menu) {
             if(window.location.hash.indexOf('/develop')!=-1){
-                Router.go("/"+this.$route.params.id+"/develop?menu="+menu);
+                Router.go("/mockset/"+this.$route.params.id+"/develop?menu="+menu);
             }else{
-                Router.go("/"+this.$route.params.id+"/list?menu="+menu);
+                Router.go("/mockset/"+this.$route.params.id+"/list?menu="+menu);
             }
         }
     }

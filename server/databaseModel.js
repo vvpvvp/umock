@@ -1,5 +1,6 @@
 var app = global.app;
 
+var Result = require("./utils/result");
 
 var init = function (db) {
   const config = global.config;
@@ -34,11 +35,12 @@ var init = function (db) {
           	}
           	tableSchema[r.columnname] = value;
           }
-          res.json({
-          	rows:rows,
-          	model:tableSchema
-          });
+          res.send(Result.R({
+            rows:rows,
+            model:tableSchema
+          }));
         }
+        // res.end();
       });
     });
 

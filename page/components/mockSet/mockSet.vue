@@ -5,8 +5,8 @@
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li :class={"active":!isDevelop}><a href="/#/{{id}}/list">列表</a></li>
-                    <li :class={"active":isDevelop}><a href="/#/{{id}}/develop">开发</a></li>
+                    <li :class={"active":!isDevelop}><a href="/#/mockset/{{id}}/list">列表</a></li>
+                    <li :class={"active":isDevelop}><a href="/#/mockset/{{id}}/develop">开发</a></li>
                     <li><a href="https://github.com/vvpvvp/UMock#readme" target="_blank">文档</a></li>
                 </ul>
             </div>

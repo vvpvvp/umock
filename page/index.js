@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import Vue from 'vue'
 import project from './components/project.vue';
 import mockSet from './components/mockSet/mockSet.vue';
+import databaseModel from './components/databaseModel.vue';
 import Router from 'vue-router-tiny';
 
 
@@ -30,7 +31,7 @@ var routes = {
     '/': {
         component: project
     },
-    '/:id': {
+    '/mockset/:id': {
         name: 'mockSet',
         component: mockSet,
         subRoutes:{
@@ -41,6 +42,10 @@ var routes = {
                 this.vue.$broadcast("developMode",false);
             }
         }
+    },
+    "/databaseModel":{
+        name:"databaseModel",
+        component:databaseModel
     }
 };
 
