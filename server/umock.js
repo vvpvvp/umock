@@ -12,6 +12,10 @@ var mockServer = require('./views/router');
 var proxy = httpProxy.createProxyServer();
 var app = global.app;
 
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ' + err);
+});
+
 // log proxy data
 proxy.on('open', function(proxySocket) {
 });

@@ -3,6 +3,7 @@ var app = global.app;
 var util = require('../utils/util');
 var mocksetView = require("./mockset");
 var projectView = require("./project");
+let databaseModel = require("../databaseModel");
 
 let mockServer = {};
 
@@ -107,7 +108,7 @@ mockServer.initLocalServer = function() {
     }else if(config['mysql']){
         var mysql = require("mysql");
         db = new mysql.createPool(config.mysql);
-        
+        databaseModel(db);
     }
     if(db==null){
         throw Error("无数据库配置");

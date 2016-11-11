@@ -223,7 +223,7 @@ var view = function(mockServer, db) {
             let query = getProjectModel(req.body);
             db.query(`INSERT INTO project SET ?`,query, function(err, rows, fields) {
               if (err) {
-                    console.error(err);
+                    console.log(err);
                     res.send(Result.defaultError("保存失败"));
                 } else {
                     reInitProjects();
@@ -236,7 +236,7 @@ var view = function(mockServer, db) {
             let query = getProjectModel(req.body);
             db.query(`update project SET ? where id = ${req.params.id}`,query, function(err, rows, fields) {
               if (err) {
-                    console.error(err);
+                    console.log(err);
                     res.send(Result.defaultError("更新失败"));
                 } else {
                     reInitProjects();
@@ -248,7 +248,7 @@ var view = function(mockServer, db) {
         app.delete('/umock/project/:id', (req, res, next) => {
             db.query(`delete from project where id = ${req.params.id}`, function(err, rows, fields) {
               if (err) {
-                    console.error(err);
+                    console.log(err);
                     res.send(Result.defaultError("删除失败"));
                 } else {
                     reInitProjects();

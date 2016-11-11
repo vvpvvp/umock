@@ -261,7 +261,7 @@ var mocksetView = function(mockServer, db) {
             console.log(query);
             db.query(`INSERT INTO mockset SET ?`,query, function(err, rows, fields) {
               if (err) {
-                    console.error(err);
+                    console.log(err);
                     res.send(Result.defaultError("保存失败"));
                 } else {
                     reInitList();
@@ -274,7 +274,7 @@ var mocksetView = function(mockServer, db) {
             let query = getModel(req.body);
             db.query(`update mockset SET ? where id = ${req.params.id}`,query, function(err, rows, fields) {
               if (err) {
-                    console.error(err);
+                    console.log(err);
                     res.send(Result.defaultError("更新失败"));
                 } else {
                     reInitList();
@@ -286,7 +286,7 @@ var mocksetView = function(mockServer, db) {
         app.delete('/umock/mockset/:id', (req, res, next) => {
             db.query(`delete from mockset where id = ${req.params.id}`, function(err, rows, fields) {
               if (err) {
-                    console.error(err);
+                    console.log(err);
                     res.send(Result.defaultError("删除失败"));
                 } else {
                     reInitList();
