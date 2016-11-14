@@ -43,10 +43,10 @@
         <div class="form-group">
           <div class="input-group">
             <div class="input-group-addon">数据库表</div>
-            <input class="form-control" type="text" v-model="tableName" placeholder="数据库表" v-on:keyup.enter="search"/>
+            <select class="form-control" id="selectChosen" type="text" placeholder="数据库表"></select>
           </div>
         </div>
-        <button type="button" class="btn btn-default" @click="search">查询</button>
+        <!-- <button type="button" class="btn btn-default" @click="search">查询</button> -->
       </div>
       <hr>
       <div class="row">
@@ -77,6 +77,8 @@
 </template>
 <script>
 import beautify from "js-beautify";
+import select2 from "select2";
+require("select2/dist/css/select2.css");
 export default {
   data() {
       return {
@@ -84,10 +86,26 @@ export default {
         result: {
           rows: [],
           model: "{}"
-        }
+        },
+        list:[]
       };
     },
     methods: {
+      getList(){
+        let that = this;
+        $.get("/umock/databaseModel/tables").done((result) => {
+          if (result.result == "ok") {
+            this.list = result.content;
+            this.list.unshift("");
+            $('#selectChosen').select2({
+              data: result.content
+            }).on("change",function(argument){
+              that.tableName = this.value;
+              that.search();
+            });
+          }
+        })
+      },
       search() {
         var P = this;
         if (this.tableName == "") return false;
@@ -96,7 +114,7 @@ export default {
         }).done((result) => {
           if (result.result == "ok") {
             this.result.rows = result.content.rows;
-            console.log(beautify(JSON.stringify(result.content.model)));
+            // console.log(beautify(JSON.stringify(result.content.model)));
             this.result.model = beautify(JSON.stringify(result.content.model));
           }else{
             alert(result.content);
@@ -106,6 +124,7 @@ export default {
     },
     ready() {
       // this.init();
+      this.getList();
     }
 }
 </script>
