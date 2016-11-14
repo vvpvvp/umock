@@ -13,7 +13,8 @@ var proxy = httpProxy.createProxyServer();
 var app = global.app;
 
 process.on('uncaughtException', function (err) {
-    console.log('Caught exception: ' + err);
+    console.log('Caught exception: ');
+    console.log(err);
 });
 
 // log proxy data

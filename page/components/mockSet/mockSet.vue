@@ -170,9 +170,9 @@ export default {
         },
         togglePane(event,mockset) {
             var bar = $(event.target);
-            let url = "/"+this.$route.params.id+"/list?";
+            let url = "/mockset/"+this.$route.params.id+"/list?";
             if(window.location.hash.indexOf('/develop')!=-1){
-                url = "/"+this.$route.params.id+"/develop?";
+                url = "/mockset/"+this.$route.params.id+"/develop?";
             }
             if(this.developer){
                 url += "develop="+this.developer+"&";
@@ -180,6 +180,7 @@ export default {
                 url += "menu="+this.menu+"&";
             }
             url+= "id="+mockset.id;
+            // console.log(url)
             Router.go(url);
             // mockset.display = !mockset.display;
 

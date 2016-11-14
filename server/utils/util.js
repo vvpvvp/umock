@@ -89,5 +89,10 @@ module.exports = {
             }
         }
         return temp;
+    },
+    parseName(name){
+        return name.replace(/\_[A-Za-z0-9_]{1}/g, function(word){
+          return word.substring(1).toUpperCase();}
+        );
     }
 }
