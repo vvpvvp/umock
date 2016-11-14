@@ -39,15 +39,15 @@
       <h3>数据库模型</h3>
     </div>
     <div class="row">
-      <form class="form-inline" role="form">
+      <div class="form-inline" role="form">
         <div class="form-group">
           <div class="input-group">
             <div class="input-group-addon">数据库表</div>
-            <input class="form-control" type="text" v-model="tableName" placeholder="数据库表">
+            <input class="form-control" type="text" v-model="tableName" placeholder="数据库表" v-on:keyup.enter="search"/>
           </div>
         </div>
         <button type="button" class="btn btn-default" @click="search">查询</button>
-      </form>
+      </div>
       <hr>
       <div class="row">
         <div class="col-md-4">
