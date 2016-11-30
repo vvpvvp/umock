@@ -49,6 +49,18 @@ function handlerResult(req, res, element) {
     return false;
 }
 
+function getObj(obj,path){
+    var paths = path.split(".");
+    while(paths.length>0){
+        if(obj == undefined || obj[paths[0]]==undefined){
+            return undefined;
+        }
+        obj = obj[paths[0]];
+        paths.shift();
+    }
+    return obj;
+}
+
 mockServer.returnFunc = function(req, res, next) {
     // console.log("comein");
     let url = decodeURI(req.baseUrl),
@@ -69,14 +81,15 @@ mockServer.returnFunc = function(req, res, next) {
     let id = server.id||server._id;
     if (server) {
         req.proxy = server.proxy;
-        var serverMockList = mockServer.mockSetList[id];
-        if (serverMockList != undefined && serverMockList[url] != undefined) {
-            hasUrl = handlerResult(req, res, serverMockList[url]);
+        var mockset = getObj(mockServer.mockSetList,id+"."+req.method+"."+url);
+        console.log(mockset);
+        var regExpList = getObj(mockServer.mockRegExpList,id+"."+req.method);
+        if (mockset != undefined) {
+            hasUrl = handlerResult(req, res, mockset);
         } else {
-            if (mockServer.mockRegExpList[id] != undefined) {
-                var RegExpList = mockServer.mockRegExpList[id];
-                for (var j = 0; j < RegExpList.length; j++) {
-                    let element = RegExpList[j];
+            if (regExpList != undefined) {
+                for (var j = 0; j < regExpList.length; j++) {
+                    let element = regExpList[j];
                     if (new RegExp(element.regexp).test(url)) {
                         hasUrl = handlerResult(req, res, element);
                         break;

@@ -14,7 +14,8 @@ var mocksetView = function(mockServer, db) {
         list.forEach(function(n, i) {
             var pid = n.projectId;
             if (listO[pid] == undefined) listO[pid] = {};
-            listO[pid][n.url] = n;
+            if (listO[pid][n.type] == undefined) listO[pid][n.type] = {};
+            listO[pid][n.type][n.url] = n;
         });
         return listO;
     }
@@ -23,8 +24,9 @@ var mocksetView = function(mockServer, db) {
         var listO = {};
         list.forEach(function(n, i) {
             var pid = n.projectId;
-            if (listO[pid] == undefined) listO[pid] = [];
-            listO[pid].push(n);
+            if (listO[pid] == undefined) listO[pid] = {};
+            if (listO[pid][n.type] == undefined) listO[pid][n.type] = [];
+            listO[pid][n.type].push(n);
         });
         return listO;
     }
@@ -290,6 +292,19 @@ var mocksetView = function(mockServer, db) {
                     res.send(Result.defaultError("删除失败"));
                 } else {
                     reInitList();
+                    res.send(Result.R(rows));
+                }
+            });
+        });
+
+        //废弃
+        app.post('/umock/mockset/:id/discard', (req, res, next) => {
+            db.query(`update mockset set status = 3 where id = ${req.params.id}`, function(err, rows, fields) {
+              if (err) {
+                    console.log(err);
+                    res.send(Result.defaultError("更新失败"));
+                } else {
+                    reInitProjects();
                     res.send(Result.R(rows));
                 }
             });
