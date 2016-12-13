@@ -59,6 +59,7 @@ CREATE TABLE `project` (
   `name` varchar(100) NOT NULL DEFAULT '',
   `beginPath` varchar(100) NOT NULL,
   `isPublic` varchar(10) DEFAULT NULL,
+  `rewrite` varchar(100) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
   `proxy` varchar(100) DEFAULT NULL,
   `modifyTime` timestamp NULL DEFAULT NULL,

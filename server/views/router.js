@@ -81,8 +81,8 @@ mockServer.returnFunc = function(req, res, next) {
     let id = server.id||server._id;
     if (server) {
         req.proxy = server.proxy;
+        req.proxyServer = server;
         var mockset = getObj(mockServer.mockSetList,id+"."+req.method+"."+url);
-        console.log(mockset);
         var regExpList = getObj(mockServer.mockRegExpList,id+"."+req.method);
         if (mockset != undefined) {
             hasUrl = handlerResult(req, res, mockset);

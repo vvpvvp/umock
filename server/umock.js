@@ -176,6 +176,7 @@ umock.init = function(argument) {
     process.nextTick(function() {
         app.use(function(req, res, next) {
             if (req.proxy) {
+                if(req.proxyServer.rewrite)req.url = req.url.replace(req.proxyServer.rewrite,"");
                 proxy.web(req, res, {
                     target: req.proxy,
                     toProxy: true,

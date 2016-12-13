@@ -288,6 +288,7 @@ var view = function(mockServer, db) {
             console.log(body);
         if (body.name != undefined) data.name = body.name;
         if (body.description != undefined) data.description = body.description;
+        if (body.rewrite != undefined) data.rewrite = body.rewrite;
         if (body.isPublic != undefined) data.isPublic = body.isPublic;
         if (body.beginPath != undefined) data.beginPath = body.beginPath;
         if (body.proxy != undefined) data.proxy = body.proxy;
