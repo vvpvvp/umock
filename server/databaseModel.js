@@ -56,7 +56,7 @@ var init = function () {
 
           var tableSchema = {};
           for (var r of rows) {
-            var value = { type: "Model.DATE" },
+            var value = { type: "Model.DATE",format:"Format.L" },
               datatype = (r.datatype + ",").toUpperCase();
             if (number.indexOf(datatype) != -1) {
               value = 0;

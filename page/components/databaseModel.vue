@@ -115,7 +115,9 @@ export default {
           if (result.result == "ok") {
             this.result.rows = result.content.rows;
             // console.log(beautify(JSON.stringify(result.content.model)));
-            this.result.model = beautify(JSON.stringify(result.content.model));
+            var modelString = JSON.stringify(result.content.model);
+            modelString = modelString.replace(/\"(\S+)\"/g,"$1");
+            this.result.model = beautify(modelString);
           }else{
             alert(result.content);
           }
