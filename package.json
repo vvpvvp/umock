@@ -33,7 +33,8 @@
     "leveldown": "^1.5.0",
     "morgan": "~1.6.1",
     "mysql": "^2.11.1",
-    "optimist": "^0.6.1"
+    "optimist": "^0.6.1",
+    "request": "^2.81.0"
   },
   "bugs": {
     "url": "https://github.com/vvpvvp/UMock/issues"
