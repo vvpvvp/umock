@@ -1,14 +1,15 @@
 body{
-  background: #F4F3F8;
+  color: #262626;
 }
 .app-header {
-  height: 40px;
+  height: 50px;
   position: absolute;
-  left: 150px;
+  left: 0px;
   background: @white-color;
-  box-shadow: @box-shadow;
   right: 0;
   z-index: 1;
+  background-color: #FAFAFA;
+  border-bottom: #E6E6E6 1px solid;
 }
 
 @menu-color: #3B4054;
@@ -24,7 +25,7 @@ body{
   background: linear-gradient(to bottom, #d41944, #6b4268, #443156);
 
   .app-menu-header{
-    height: 40px;
+    height: 50px;
   }
   .h-menu-dark{
     font-size: 13px;
@@ -39,10 +40,10 @@ body{
 }
 .app-body {
   position: absolute;
-  left: 150px;
+  left: 0px;
   right: 0;
   bottom: 0px;
-  top: 40px;
+  top: 50px;
   overflow: auto;
 }
 
@@ -64,5 +65,25 @@ body{
   a{
     margin: 0 10px;
     display: inline-block;
+  }
+}
+
+
+.content-body{
+  max-width: 1200px;
+  margin: 10px auto;
+
+  &-title{
+    padding: 20px 0;
+    font-weight: bold;
+  }
+
+
+  a {
+    color: inherit;
+    &:hover{
+      text-decoration: underline;
+      color: inherit;
+    }
   }
 }

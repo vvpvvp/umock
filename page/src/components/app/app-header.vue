@@ -1,7 +1,13 @@
 <style lang="less">
-.app-header-info {
-  line-height: 40px;
-  margin-right: 20px;
+.app-header{
+  >div{
+    padding: 5px 20px;
+    line-height: 40px;
+  }
+  &-title{
+    font-family: monospace;
+    font-size: 22px;
+  }
 }
 
 .app-header-dropdown{
@@ -13,10 +19,11 @@
 </style>
 <template>
   <div class="app-header">
-    <div class="float-right app-header-info">
-      <DropdownMenu class-name="app-header-dropdown"
-                    :datas="infoMenu"
-                    @onclick="trigger"><span>个人信息</span></DropdownMenu>
+    <div>
+      <span class="app-header-title"><router-link to="/">umock</router-link></span>
+      <div class="float-right app-header-info">
+        <a href="https://github.com/vvpvvp/umock#readme" v-font="25" target="_blank"><i class="h-icon-github"></i></a>
+      </div>
     </div>
   </div>
 </template>

@@ -2,9 +2,9 @@
   <div id="app">
     <appHead></appHead>
     <div class="app-container">
-      <div class="app-left">
+      <!--<div class="app-left">
         <appMenu></appMenu>
-      </div>
+      </div>-->
       <div class="app-body">
         <router-view></router-view>
       </div>

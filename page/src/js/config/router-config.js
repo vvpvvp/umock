@@ -5,28 +5,12 @@ const initRouter = ()=>{
     mode: 'history',
     routes: [{
       path: '/',
-      name: 'home',
-      component: (resolve) => require(['components/modules/home'], resolve)
-    }, {
-      path: '/seatList',
-      name: 'seatList',
-      component: (resolve) => require(['components/modules/seat-list'], resolve)
-    }, {
-      path: '/equipmentList',
-      name: 'equipmentList',
-      component: (resolve) => require(['components/modules/equipment-list'], resolve)
-    }, {
-      path: '/ctiSearch',
-      name: 'ctiSearch',
-      component: (resolve) => require(['components/modules/cti-search'], resolve)
-    }, {
-      path: '/report',
-      name: 'report',
-      component: (resolve) => require(['components/modules/report'], resolve)
-    }, {
-      path: '/system',
-      name: 'system',
-      component: (resolve) => require(['components/modules/system'], resolve)
+      name: 'index',
+      component: (resolve) => require(['components/project/project-list'], resolve)
+    },{
+      path: '/:id',
+      name: 'detail',
+      component: (resolve) => require(['components/project/project-detail'], resolve)
     }]
   };
 
@@ -37,7 +21,7 @@ const initRouter = ()=>{
     // if (titleConfig[to.name]) {
     //   document.title = titleConfig[to.name] + ' - 应用';
     // } else {
-      document.title = '管理系统';
+      document.title = 'UMock';
     // }
     next();
   })

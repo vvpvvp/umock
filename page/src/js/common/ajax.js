@@ -1,6 +1,6 @@
 import qs from 'qs';
 let ajax = {
-  PREFIX: "/api",
+  PREFIX: "/umock",
   HEADER: "heyui",
   requestingApi: new Set(),
   changeHeader(header) {

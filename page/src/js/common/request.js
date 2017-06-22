@@ -11,22 +11,19 @@ const Request = {
       return Ajax.post("/logout", param);
     }
   },
-  List: {
-    agentList(){
-      return Ajax.get('/agent/list');
+  Project: {
+    list(){
+      return Ajax.get('/project/list');
     },
-    extensionList(){
-      return Ajax.get('/extension/list');
+    getProject(id){
+      return Ajax.get(`/project/${id}`);
     },
-    recordList(param){
-      return Ajax.postJson('/call/record', param);
+    pathList(id){
+      return Ajax.get(`/list/${id}`);
     },
-    reportList(param){
-      return Ajax.get('/call/reportQuery', param);
+    swagger(url){
+      return Ajax.get(url);
     },
-    config(param){
-      return Ajax.get('/cti/config', param);
-    }
   }
 };
 

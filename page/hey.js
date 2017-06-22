@@ -1,5 +1,5 @@
 module.exports = {
-  port: 9012,
+  port: 9000,
   root: "dist",
   webpack: {
     publicPath: "/",
@@ -44,8 +44,8 @@ module.exports = {
     },
     devServer: {
 	    "proxy": {
-	      "/api": {
-	        "target": "http://umock.ch-un.com"
+	      "/umock": {
+	        "target": "http://localhost:8000"
 	      }
 	    },
       historyApiFallback: true
