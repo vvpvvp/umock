@@ -2,7 +2,7 @@ module.exports = {
   port: 9000,
   root: "dist",
   webpack: {
-    publicPath: "/",
+    publicPath: "/server/",
     output: {
       "./index.html": {
         entry: "./src/app",

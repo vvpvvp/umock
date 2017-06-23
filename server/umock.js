@@ -162,10 +162,10 @@ umock.static = function(url, dir) {
 umock.init = function(argument) {
 
     app.get("/", function(req, res) {
-        res.redirect('/umock')
+        res.redirect('/server')
     });
 
-    app.use("/umock", express.static(path.join(__dirname, "../page/dist")));
+    app.use("/server", express.static(path.join(__dirname, "../page/dist")));
 
     umock({
         url: '*', // 匹配的url

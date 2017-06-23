@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 const initRouter = ()=>{
   const routerParam = {
     mode: 'history',
+    base: '/server/',
     routes: [{
       path: '/',
       name: 'index',
@@ -11,7 +12,7 @@ const initRouter = ()=>{
       path: '/:id',
       name: 'detail',
       component: (resolve) => require(['components/project/project-detail'], resolve)
-    }]
+    },]
   };
 
   let router = new VueRouter(routerParam);
