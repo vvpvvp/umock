@@ -308,7 +308,6 @@ export default {
               }
               let responses = null;
               for (let status in info.responses) {
-                log(status);
                 let isJson = false;
                 if(info.produces){
                   isJson = info.produces.some((data)=>{
