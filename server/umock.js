@@ -166,6 +166,11 @@ umock.init = function(argument) {
     });
 
     app.use("/server", express.static(path.join(__dirname, "../page/dist")));
+    app.use("/server/*", express.static(path.join(__dirname, "../page/dist/index.html")));
+
+    // app.use("/server/*", function(req, res) {
+    //     res.location(path.join(__dirname, "../page/dist"))
+    // });
 
     umock({
         url: '*', // 匹配的url
