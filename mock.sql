@@ -62,6 +62,7 @@ CREATE TABLE `project` (
   `rewrite` varchar(100) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
   `proxy` varchar(100) DEFAULT NULL,
+  `swagger` varchar(100) DEFAULT NULL,
   `modifyTime` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;

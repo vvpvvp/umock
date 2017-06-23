@@ -1,6 +1,6 @@
 {
   "name": "umock",
-  "version": "2.1.7",
+  "version": "2.1.9",
   "description": "服务器端的Mock",
   "bin": {
     "umock": "bin/umock"

@@ -308,7 +308,14 @@ export default {
               }
               let responses = null;
               for (let status in info.responses) {
-                if (status == 200 && info.produces && info.produces.indexOf('application/json') != -1) {
+                log(status);
+                let isJson = false;
+                if(info.produces){
+                  isJson = info.produces.some((data)=>{
+                    return data.indexOf('application/json') != -1;
+                  })
+                }
+                if (status == 200 && isJson) {
                   responses = info.responses[status].schema;
                 }
               }
