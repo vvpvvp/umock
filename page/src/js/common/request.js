@@ -22,8 +22,18 @@ const Request = {
       return Ajax.get(`/list/${id}`);
     },
     swagger(url){
-      return Ajax.get(url);
+      return Ajax.get(`/swagger`, {url});
     },
+    editProject(project){
+      if (project.id) {
+        return Ajax.postJson(`/project/${project.id}`, project);
+      } else {
+        return Ajax.postJson(`/project`, project);
+      }
+    },
+    delete(id){
+      return Ajax.delete(`/project/${id}`);
+    }
   }
 };
 

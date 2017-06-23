@@ -2,6 +2,7 @@ var app = global.app;
 
 var Result = require("./utils/result");
 var Util = require("./utils/util");
+var request = require("request");
 
 var init = function () {
   const config = global.config;
@@ -76,6 +77,20 @@ var init = function () {
     });
 
   }
+
+  app.get('/umock/swagger', (req, res, next) => {
+    var options = {
+      headers: { "Connection": "close" },
+      url: req.query.url,
+      method: 'GET',
+      json: true
+    }
+
+    request(options, function (error, response, data) {
+      res.json(data);
+    });
+  });
+
 }
 
 

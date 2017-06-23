@@ -20,7 +20,8 @@ export default {
     return {
     }
   },
-  methods: {},
+  methods: {
+  },
   components: {
     appHead,
     appMenu

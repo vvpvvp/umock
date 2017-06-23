@@ -70,12 +70,13 @@ body{
 
 
 .content-body{
-  max-width: 1200px;
-  margin: 10px auto;
+  max-width: 1500px;
+  margin: 0px auto;
 
   &-title{
     padding: 20px 0;
-    font-weight: bold;
+    position: relative;
+    border-bottom: #E6E6E6 1px solid;
   }
 
 
@@ -87,3 +88,40 @@ body{
     }
   }
 }
+.project{
+    &-title{
+      font-size: 17px;
+    }
+    @width: 40px;
+    &-author{
+      color: @dark-color;
+      background: @gray4-color;
+      border: @border;
+      height: @width;
+      width: @width;
+      text-align: center;
+      line-height: @width;
+      border-radius: 25px;
+      font-size: 20px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+      text-transform: Uppercase;
+    }
+  }
+
+
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+  .middle-right{
+    position: absolute;
+    top: 50%;
+    right: 0;
+    top: 50%;
+    transform: translate(0%, -50%);
+  }

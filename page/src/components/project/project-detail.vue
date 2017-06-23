@@ -1,75 +1,351 @@
 <style lang='less'>
-.app-project{
-  .project{
-    &-list{
-      >li{
-        border-top: @border;
-        padding: 15px 2px;
+.app-project {
+  .content-body-title{
+    position: relative;
+    margin-right: 5%;
+    >div{
+      padding-left: 180px;
+    }
+  }
+  .path-tags {
+    &-container {
+      position: absolute;
+      overflow: auto;
+      bottom: 0;
+      top: 131px;
+      left: 0%;
+    }
+    &-list {
+      width: 180px;
+      font-size: 17px;
+      >li {
+        padding: 10px 30px;
+        text-align: right;
+        &.tab-selected{
+          color: @primary-color;
+        }
       }
     }
-    &-title{
-      font-size: 17px;
+  }
+  .path {
+    &-list {
+      font-family: monospace;
+      padding-left: 180px;
+      padding-right: 5%;
+      padding-top: 20px;
+      padding-bottom: 50px;
     }
+
+    &-head {
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      padding: 5px;
+      align-items: center;
+    }
+
+    &-method {
+      font-size: 14px;
+      min-width: 80px;
+      padding: 5px 0px;
+      text-align: center;
+      border-radius: 3px;
+      background: #000;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+      font-family: Titillium Web, sans-serif;
+      color: #fff;
+      text-transform: Uppercase;
+    }
+
+    .theme(@color) {
+      border: 1px solid @color;
+      background-color: fade(@color, 5%);
+
+      &:hover .path-head{
+        background-color: fade(@color, 15%);
+      }
+      .path {
+        &-method {
+          background-color: @color;
+        }
+        &-info {
+          border-top: 1px solid @color;
+        }
+      }
+    }
+
+    &-li {
+      margin: 0 0 15px;
+      border: 1px solid #000;
+      border-radius: 4px;
+      box-shadow: 0 0 3px rgba(0, 0, 0, .19);
+      transition: .3s cubic-bezier(0, 1, 0, 1);
+      &-post {
+        .theme(#49cc90);
+      }
+      &-get {
+        .theme(#61affe);
+      }
+      &-put {
+        .theme(#fca130);
+      }
+      &-delete {
+        .theme(#f93e3e);
+      }
+      &-deprecated {
+        .theme(#ebebeb);
+        color: #ebebeb;
+      }
+    }
+
+    &-info {
+      border-top: 1px solid @primary-color;
+      overflow: hidden;
+      margin-bottom: -1px;
+      max-height: 0;
+      transition: max-height .2s cubic-bezier(0, 1, 0, 1);
+      &-show {
+        max-height: 10000px;
+        transition: max-height .8s ease-in-out;
+      }
+      >div{
+        padding: 20px;
+      }
+    }
+
+    &-name {
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    &-description {
+      font-size: 13px;
+      margin-left: 10px;
+    }
+  }
+
+  h3 {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  h4{
+    font-size: 14px;
+    margin: 10px 0;
+  }
+
+  .path-info-body {
+    border: 1px solid #EEE;
+    padding: 10px;
+    background: #ffffff;
   }
 }
 </style>
 <template>
   <div class="app-project">
-    <div class="app-header-menu">
+    <div class="content-body-title" v-font="18">
+      <div>
+        <span class="project-author">{{project.beginPath?project.beginPath.substr(0,1):''}}</span>
+        <span class="project-title">{{project.name}} / {{project.beginPath}}</span>
+        <!--<span>
+          <span>
+            Path
+          </span>
+          <span>
+            Model
+          </span>
+        </span>-->
+      </div>
+      <div class="middle-right">
+        <Search v-model="searchText" trigger-type="input" placeholder=""></Search>
+      </div>
     </div>
-    <div class="content-body">
+    <div>
+      <div class="path-tags-container">
+        <Affix :offset-top="50">
+          <ul class="path-tags-list">
+            <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">All
+              <span>{{paths.length}}</span>
+            </li>
+            <li v-for="tag of swagger.tags" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">{{tag.name}}
+              <span>{{counts[tag.name]}}</span>
+            </li>
+          </ul>
+        </Affix>
+      </div>
       <ul class="path-list">
-        <li v-for="project of list">
-          <p><span class="path-title"><span class="project-author">{{project.beginPath.substr(0,1)}}</span><router-link :to="{name: 'detail', params:{id: project.id}}">{{project.name}}  /  {{project.beginPath}}</router-link></span><i class="h-split"></i><span class="gray-color">{{project.description}}</span>
-          <span class="float-right text-hover"><i class="h-icon-setting"></i></span></p>
+        <li v-for="path of computedPaths" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
+          <div class="path-head" @click="path.show=!path.show">
+            <span class="path-method">{{path.method}}</span>
+            <span class="path-name">{{path.path}}</span>
+            <span class="path-description text-ellipsis">{{path.info.description}}</span>
+          </div>
+          <div class="path-info" :class="{'path-info-show': path.show}">
+            <div>
+              <h3>Parameters</h3>
+              <p>
+                <span v-if="path.info.consumes">content-type:{{path.info.consumes.join(',')}}</span>
+              </p>
+              <template v-if="path.parameters.query.length">
+                <h4>Query</h4>
+                <ul>
+                  <paramView v-for="query of path.parameters.query" :param="query" :key="query"></paramView>
+                </ul>
+              </template>
+              <template v-if="path.parameters.path.length">
+                <h4>Path</h4>
+                <ul>
+                  <paramView v-for="path of path.parameters.path" :param="path" :key="path"></paramView>
+                </ul>
+              </template>
+              <template v-if="path.parameters.formData.length">
+                <h4>FormData</h4>
+                <ul>
+                  <paramView v-for="query of path.parameters.formData" :param="query" :key="query"></paramView>
+                </ul>
+              </template>
+              <template v-if="path.parameters.body">
+                <h4>Body</h4>
+                <div class="path-info-body">
+                  <paramView :param="path.parameters.body.model" :definitions="swagger.definitions"></paramView>
+                </div>
+              </template>
+              <template v-if="path.responses">
+              <h3>Responses</h3>
+              <p>
+                <span v-if="path.info.produces">content-type:{{path.info.produces.join(',')}}</span>
+              </p>
+              <h4>Body</h4>
+              <div class="path-info-body">
+                <paramView :param="path.responses" :definitions="swagger.definitions"></paramView>
+              </div>
+              </template>
+              <h3>Remark</h3>
+            </div>
+  
+          </div>
         </li>
       </ul>
     </div>
+
+    <BackTop :target="getTarget" :bottom="40" :right="40"></BackTop>
   </div>
 </template>
 <script>
 
 import Path from 'model/project/Path';
 import Project from 'model/project/Project';
+import Beautify from 'components/common/js-beautify';
+import paramView from 'components/common/param-view';
 
 export default {
   data() {
     return {
       list: [],
       project: Project.parse({}),
-      loading: true
+      loading: true,
+      swagger: {},
+      paths: [],
+      models: {},
+      counts: {},
+      searchText: null
     }
   },
   mounted() {
+    this.$Loading("加载中");
     this.getData();
   },
   methods: {
+    getTarget() {
+      return document.querySelector('.app-body');
+    },
+    changeTab(tab) {
+      this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {tab: tab}});
+    },
     getData() {
       this.loading = true;
-      R.Project.getProject(this.$route.params.id).then(resp=>{
-        if(resp.status == 200){
+      R.Project.getProject(this.$route.params.id).then(resp => {
+        if (resp.result == 'ok') {
           this.project = Project.parse(resp.content);
           this.getList();
         }
       });
     },
     getList() {
-      R.Project.pathList(this.$route.params.id).then(resp=>{
-        if(resp.status == 200){
+      R.Project.pathList(this.$route.params.id).then(resp => {
+        if (resp.result == 'ok') {
           this.list = Path.parse(resp.content);
           this.getSwagger();
         }
       });
     },
     getSwagger() {
-      this.loading = true;
-      R.Project.swagger(this.project.swagger).then(resp=>{
-        if(resp.status == 200){
-          // this.list = Path.parse(resp.body);
-        }
-        this.loading = false;
-      });
+      if (this.project.swagger) {
+        R.Project.swagger(this.project.swagger).then(resp => {
+          this.swagger = resp;
+          let paths = [];
+          let counts = {};
+          for (let path in this.swagger.paths) {
+            let pathInfo = this.swagger.paths[path];
+            for (let method in pathInfo) {
+              let info = pathInfo[method];
+              if (info.tags) {
+                for (let tag of info.tags) {
+                  counts[tag] = (counts[tag] || 0) + 1;
+                }
+              }
+              let parameters = { query: [], formData: [], body: null, path:[] };
+              for (let param of info.parameters) {
+                if (param.in == 'query') {
+                  parameters.query.push(param);
+                } else if (param.in == 'formData') {
+                  parameters.formData.push(param);
+                } else if (param.in == 'path') {
+                  parameters.path.push(param);
+                } else if (param.in == 'body') {
+                  param.model = param.schema;
+                  parameters.body = param;
+                }
+              }
+              let responses = null;
+              for (let status in info.responses) {
+                if (status == 200 && info.produces && info.produces.indexOf('application/json') != -1) {
+                  responses = info.responses[status].schema;
+                }
+              }
+              paths.push({ path, method, info, parameters, responses, show: false });
+            }
+          }
+          this.paths = paths;
+          this.counts = counts;
+          this.$Loading.close();
+        });
+      } else {
+        this.analysis();
+        this.$Loading.close();
+      }
     },
+    analysis() {
+
+    }
+  },
+  computed: {
+    computedPaths() {
+      if(this.searchText){
+        return this.paths.filter((path) => {
+          return path.path.indexOf(this.searchText) > -1;
+        });
+      }
+      if(this.$route.query.tab){
+        return this.paths.filter((path) => {
+          return path.info.tags.indexOf(this.$route.query.tab) > -1;
+        });
+      }
+      return this.paths;
+    }
+  },
+  components: {
+    Beautify,
+    paramView
   }
 }
 </script>
