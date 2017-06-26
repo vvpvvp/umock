@@ -166,14 +166,14 @@
             <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">All
               <span>{{paths.length}}</span>
             </li>
-            <li v-for="tag of swagger.tags" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">{{tag.name}}
+            <li v-for="tag of swagger.tags" :key="tag" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">{{tag.name}}
               <span>{{counts[tag.name]}}</span>
             </li>
           </ul>
         </Affix>
       </div>
       <ul class="path-list">
-        <li v-for="path of computedPaths" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
+        <li v-for="path of computedPaths" :key="path" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
           <div class="path-head" @click="path.show=!path.show">
             <span class="path-method">{{path.method}}</span>
             <span class="path-name">{{path.path}}</span>
