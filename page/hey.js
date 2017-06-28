@@ -15,7 +15,7 @@ module.exports = {
     },
     commonTrunk: {
       common:[
-        "heyui/themes/common.less",
+        "heyui/src/themes/common.less",
         "axios",
         "manba",
         "js-model",

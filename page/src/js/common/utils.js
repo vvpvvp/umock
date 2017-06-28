@@ -6,7 +6,8 @@ const rnotwhite = (/\S+/g);
 function getClass(elem) {
   return elem.getAttribute && elem.getAttribute("class") || "";
 }
-module.exports = utils.extend({}, utils, {
+
+let U = utils.extend({}, utils, {
   addClass(elem, value) {
     let classes;
     let cur;
@@ -96,18 +97,6 @@ module.exports = utils.extend({}, utils, {
     }
     return param;
   },
-  toggleValue(list, value) {
-    if (!this.isArray(list)) return;
-    if (list.includes(value)) {
-      list.splice(list.indexOf(value), 1);
-    } else {
-      list.push(value);
-    }
-  },
-  padLeft(str, size) {
-    var s = "00000" + str;
-    return s.substr(s.length - size);
-  },
   toggleValueByKey(list, key, value) {
     if (!this.isArray(list)) return;
     let index = -1;
@@ -130,19 +119,7 @@ module.exports = utils.extend({}, utils, {
       list.push(a[keyName])
     }
     return list;
-  },
-  toSimpleArray(data, key) {
-    let r = [];
-    if (this.isObject(data)) {
-      for (let d of Object.keys(data)) {
-        r.push(data[d][key]);
-      }
-    }
-    if (this.isArray(data)) {
-      for (let d of data) {
-        r.push(d[key]);
-      }
-    }
-    return r;
   }
 });
+
+module.exports = U;
