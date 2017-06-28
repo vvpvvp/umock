@@ -1,14 +1,4 @@
 <style lang="less">
-.app-header{
-  >div{
-    padding: 5px 20px;
-    line-height: 40px;
-  }
-  &-title{
-    font-family: monospace;
-    font-size: 22px;
-  }
-}
 
 .app-header-dropdown{
   padding: 0 10px 0 20px;

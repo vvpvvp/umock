@@ -4,6 +4,8 @@ export default new Model({
   beginPath: "inmind",
   isPublic: 0,
   description: "",
+  private: 0,
+  swagger: "",
   proxy: "",
   modifyTime: {
     type: Model.DATE

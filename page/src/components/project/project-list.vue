@@ -1,12 +1,25 @@
 <style lang='less'>
-.app-home{
+.project-list{
+  .content-body-tabs{
+    position: absolute;
+    top: 10px;
+    line-height: 56px;
+    left: 200px;
+    font-size: 18px;
+    z-index: 2;
+  }
   .project-list{
     >li{
       border-bottom: @border;
       position: relative;
-      padding: 15px 2px;
+      padding: 15px 12px;
+      &:hover{
+        background: lighten(@primary-color, 38%);
+        .h-icon-setting{
+          color: @primary-color;
+        }
+      }
     }
-
 
     .project-edit{
       right:10px;
@@ -17,17 +30,19 @@
 }
 </style>
 <template>
-  <div class="app-home">
+  <div class="project-list">
     <div class="content-body">
       <div class="content-body-title">
         <span v-font="30">Projects</span>
+        <Tabs class="content-body-tabs" :datas="{public: '公共', private: '私有'}" v-model="menu" @change="change"></Tabs>
         <div class="middle-right" v-font="20" @click="editProject()"><span class="link">创建</span></div>
       </div>
       <ul class="project-list">
-        <li v-for="project of list">
+        <li v-for="project of projectList" :key="project">
           <p><span class="project-title">
-            <span class="project-author" :style="getBg()">{{project.name.substr(0,1)}}</span>
-          <router-link :to="{name: 'detail', params:{id: project.id}}">{{project.name}}  /  {{project.beginPath}}</router-link></span><i class="h-split"></i><span class="gray-color">{{project.description}}</span>
+            <span class="project-author" :style="getBg(project)">{{project.name.substr(0,1)}}</span>
+          <router-link :to="{name: 'detail', params:{id: project.id}}">{{project.name}}  /  {{project.beginPath}}</router-link></span><i class="h-split"></i>
+          <span class="gray-color">{{project.description}}- <span v-font="13">{{project.isPublic?'URL前缀':'HEAD参数'}}</span></span>
           <span class="project-edit middle" @click="editProject(project)"><i class="h-icon-setting text-hover"></i></span></p>
         </li>
       </ul>
@@ -41,6 +56,7 @@
           <FormItem label="识别参数" prop="beginPath"><input type="text" v-model="project.beginPath"></FormItem>
           <FormItem label="去除url前缀"><input type="text" v-model="project.rewrite"></FormItem>
           <FormItem label="反向代理" prop="proxy"><input type="text" v-model="project.proxy"></FormItem>
+          <FormItem label="private"><Radio dict="Private" v-model="project.private"></Radio></FormItem>
           <FormItem label="swagger"><input type="text" v-model="project.swagger"></FormItem>
           <FormItem label="描述"><textarea v-autosize v-model="project.description"></textarea></FormItem>
         </Form>
@@ -60,19 +76,28 @@ export default {
       list: [],
       opened: false,
       project: Project.parse({}),
+      menu: this.$route.query.menu || 'public',
       rule: {
-        required: [ 'name', 'beginPath', 'isPublic', 'proxy']
+        required: [ 'name', 'beginPath', 'isPublic', 'proxy', 'private']
       }
     }
   },
   mounted() {
     this.getList();
   },
+  watch: {
+    '$route.query.menu'() {
+      this.menu = this.$route.query.menu || 'public';
+    }
+  },
   methods: {
+    change(tab) {
+      this.$router.push({ name: 'index', query: { menu: tab.key }})
+    },
     getTarget() {
       return document.querySelector('.app-body');
     },
-    getBg() {
+    getBg(project) {
       const colors = ['rgb(223, 247, 233)', 'rgb(251, 237, 238)', 'rgb(230, 245, 255)', 'rgb(255, 239, 213)', 'rgb(250, 230, 253)', 'rgb(232, 234, 255)'];
       return {'background-color': colors[Math.round(Math.random() * 5)]};
     },
@@ -112,6 +137,13 @@ export default {
           }
         });
       }
+    }
+  },
+  computed: {
+    projectList() {
+      // return this.list;
+      let isPrivate = this.menu == 'public' ? 2 : 1;
+      return this.list.filter(item=>item.private == isPrivate);
     }
   }
 }

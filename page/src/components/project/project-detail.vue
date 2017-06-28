@@ -4,22 +4,32 @@
     position: relative;
     margin-right: 5%;
     >div{
-      padding-left: 180px;
+      padding-left: 210px;
     }
+  }
+
+  .search-input{
+    position: fixed;
+    z-index: 2;
+    top: 10px;
+    right: 110px;
   }
   .path-tags {
     &-container {
-      position: absolute;
-      overflow: auto;
+      position: fixed;
       bottom: 0;
-      top: 131px;
+      top: 50px;
       left: 0%;
+      overflow: auto;
+      background: @white-color;
     }
     &-list {
+      padding-top: 20px;
+      padding-bottom: 20px;
       width: 180px;
-      font-size: 17px;
+      font-size: 16px;
       >li {
-        padding: 10px 30px;
+        padding: 8px 20px 8px 0;
         text-align: right;
         &.tab-selected{
           color: @primary-color;
@@ -30,7 +40,7 @@
   .path {
     &-list {
       font-family: monospace;
-      padding-left: 180px;
+      padding-left: 210px;
       padding-right: 5%;
       padding-top: 20px;
       padding-bottom: 50px;
@@ -61,10 +71,13 @@
       border: 1px solid @color;
       background-color: fade(@color, 5%);
 
-      &:hover .path-head{
-        background-color: fade(@color, 15%);
-      }
+      
       .path {
+        &-head {
+          &:hover{
+            background-color: fade(@color, 15%);
+          }
+        }
         &-method {
           background-color: @color;
         }
@@ -138,6 +151,9 @@
     padding: 10px;
     background: #ffffff;
   }
+  .content-body-title{
+    border: none;
+  }
 }
 </style>
 <template>
@@ -155,31 +171,29 @@
           </span>
         </span>-->
       </div>
-      <div class="middle-right">
-        <Search v-model="searchText" trigger-type="input" placeholder=""></Search>
-      </div>
+    </div>
+    <div class="search-input">
+      <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
     </div>
     <div>
       <div class="path-tags-container">
-        <Affix :offset-top="50">
-          <ul class="path-tags-list">
-            <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">All
-              <span>{{paths.length}}</span>
-            </li>
-            <li v-for="tag of swagger.tags" :key="tag" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">{{tag.name}}
-              <span>{{counts[tag.name]}}</span>
-            </li>
-          </ul>
-        </Affix>
+        <ul class="path-tags-list">
+          <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">All
+            <span>{{paths.length}}</span>
+          </li>
+          <li v-for="tag of swagger.tags" :key="tag" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">{{tag.name}}
+            <span>{{counts[tag.name]}}</span>
+          </li>
+        </ul>
       </div>
       <ul class="path-list">
         <li v-for="path of computedPaths" :key="path" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
           <div class="path-head" @click="path.show=!path.show">
             <span class="path-method">{{path.method}}</span>
             <span class="path-name">{{path.path}}</span>
-            <span class="path-description text-ellipsis">{{path.info.description}}</span>
+            <span class="path-description text-ellipsis">{{path.info.description||path.info.summary}}</span>
           </div>
-          <div class="path-info" :class="{'path-info-show': path.show}">
+          <div class="path-info" :class="{'path-info-show': path.show}" v-if="path.show">
             <div>
               <h3>Parameters</h3>
               <p>
@@ -281,6 +295,10 @@ export default {
     getSwagger() {
       if (this.project.swagger) {
         R.Project.swagger(this.project.swagger).then(resp => {
+          if(!resp){
+            this.$Loading.close();
+            return;
+          }
           this.swagger = resp;
           let paths = [];
           let counts = {};
@@ -343,6 +361,9 @@ export default {
       }
       if(this.$route.query.tab){
         return this.paths.filter((path) => {
+          if(!path.info.tags){
+            return false;
+          }
           return path.info.tags.indexOf(this.$route.query.tab) > -1;
         });
       }

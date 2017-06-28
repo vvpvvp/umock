@@ -111,17 +111,30 @@ body{
   }
 
 
-.text-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(113, 113, 113, 0.06);
+  border-radius: 12px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: @primary-color;
+  border-radius: 12px;
 }
 
 
-  .middle-right{
-    position: absolute;
-    top: 50%;
-    right: 0;
-    top: 50%;
-    transform: translate(0%, -50%);
+.app-header{
+  >div{
+    padding: 5px 20px;
+    line-height: 40px;
   }
+  &-title{
+    font-family: monospace;
+    font-size: 22px;
+  }
+}

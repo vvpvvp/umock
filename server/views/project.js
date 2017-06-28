@@ -24,6 +24,8 @@ var view = function(mockServer, db) {
             param: String,
             respParam:String,
             menuId:String,
+            private: {type:Number,default: 0},
+            swagger:String,
             projectId:String,
             active: {type:Boolean,default: true},
             createTime: {type:Date,default: Date.now},
@@ -285,12 +287,13 @@ var view = function(mockServer, db) {
 
     let getProjectModel = (body) => {
         var data = {};
-            console.log(body);
         if (body.name != undefined) data.name = body.name;
         if (body.description != undefined) data.description = body.description;
         if (body.rewrite != undefined) data.rewrite = body.rewrite;
         if (body.isPublic != undefined) data.isPublic = body.isPublic;
         if (body.beginPath != undefined) data.beginPath = body.beginPath;
+        if (body.swagger != undefined) data.swagger = body.swagger;
+        if (body.private != undefined) data.private = body.private;
         if (body.proxy != undefined) data.proxy = body.proxy;
         data.modifyTime = new Date();
         return data;
