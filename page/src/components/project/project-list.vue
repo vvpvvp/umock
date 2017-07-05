@@ -55,7 +55,7 @@
           <FormItem label="类型" prop="isPublic"><Radio :datas="[{key:1, title:'URL前缀'}, {key:0 , title:'HEAD参数'}]" v-model="project.isPublic"></Radio></FormItem>
           <FormItem label="识别参数" prop="beginPath"><input type="text" v-model="project.beginPath"></FormItem>
           <FormItem label="去除url前缀"><input type="text" v-model="project.rewrite"></FormItem>
-          <FormItem label="反向代理" prop="proxy"><input type="text" v-model="project.proxy"></FormItem>
+          <FormItem label="反向代理" prop="proxy"><div class="h-input-group"><input type="text" v-model="project.proxy"><span class="h-input-addon" @click="analysis()"><span class="link">自动解析</span></span></div></FormItem>
           <FormItem label="private"><Radio dict="Private" v-model="project.private"></Radio></FormItem>
           <FormItem label="swagger"><input type="text" v-model="project.swagger"></FormItem>
           <FormItem label="描述"><textarea v-autosize v-model="project.description"></textarea></FormItem>
@@ -137,6 +137,18 @@ export default {
           }
         });
       }
+    },
+    analysis() {
+      R.Project.getLocation().then((resp) => {
+        let port = '';
+        if (this.project.proxy) {
+          let matchs = this.project.proxy.match(/\:(\d+)/);
+          if(matchs.index){
+            port = `:${matchs[1]}`;
+          }
+        }
+        this.project.proxy= `http://${resp.ip}${port}`;
+      });
     }
   },
   computed: {

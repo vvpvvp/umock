@@ -12,6 +12,9 @@ const Request = {
     }
   },
   Project: {
+    getLocation() {
+      return Ajax.get('/location');
+    },
     list(){
       return Ajax.get('/project/list');
     },
