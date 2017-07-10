@@ -51,6 +51,7 @@
       cursor: pointer;
       display: flex;
       padding: 5px;
+      position: relative;
       align-items: center;
     }
 
@@ -74,6 +75,10 @@
       
       .path {
         &-head {
+          .h-tag{
+            background-color: fade(@color, 85%);
+            color: #FFF;
+          }
           &:hover{
             background-color: fade(@color, 15%);
           }
@@ -192,6 +197,7 @@
             <span class="path-method">{{path.method}}</span>
             <span class="path-name">{{path.path}}</span>
             <span class="path-description text-ellipsis">{{path.info.description||path.info.summary}}</span>
+            <span class="middle-right"><span class="h-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
           </div>
           <div class="path-info" :class="{'path-info-show': path.show}" v-if="path.show">
             <div>
