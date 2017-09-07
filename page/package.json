@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.16.2",
+    "clipboard": "^1.7.1",
     "hey-global": "^0.0.1",
     "hey-log": "^0.0.7",
     "hey-utils": "^0.0.15",

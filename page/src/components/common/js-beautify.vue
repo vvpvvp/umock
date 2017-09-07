@@ -10,7 +10,7 @@ export default {
   mounted() {
     this.init();
   },
-  datas() {
+  data() {
     return {
       model: ""
     }
