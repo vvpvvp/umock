@@ -34,6 +34,15 @@
         &.tab-selected{
           color: @primary-color;
         }
+        .tag-name{
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          max-width: 120px;
+          line-height: 18px;
+          display: inline-block;
+          vertical-align: -3px;
+        }
       }
     }
   }
@@ -167,14 +176,6 @@
       <div>
         <span class="project-author">{{project.beginPath?project.beginPath.substr(0,1):''}}</span>
         <span class="project-title">{{project.name}} / {{project.beginPath}}</span>
-        <!--<span>
-          <span>
-            Path
-          </span>
-          <span>
-            Model
-          </span>
-        </span>-->
       </div>
     </div>
     <div class="search-input">
@@ -186,7 +187,8 @@
           <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">All
             <span>{{paths.length}}</span>
           </li>
-          <li v-for="tag of swagger.tags" :key="tag" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">{{tag.name}}
+          <li v-for="tag of swagger.tags" :key="tag" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">
+            <span class="tag-name">{{tag.name}}</span>
             <span>{{counts[tag.name]}}</span>
           </li>
         </ul>
@@ -196,11 +198,13 @@
           <div class="path-head" @click="path.show=!path.show">
             <span class="path-method">{{path.method}}</span>
             <span class="path-name">{{path.path}}</span>
-            <span class="path-description text-ellipsis">{{path.info.description||path.info.summary}}</span>
+            <span class="path-description text-ellipsis">{{path.info.summary}}</span>
             <span class="middle-right"><span class="h-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
           </div>
           <div class="path-info" :class="{'path-info-show': path.show}" v-if="path.show">
             <div>
+              <h3 v-if="path.info.description">Description</h3>
+              <pre>{{path.info.description}}</pre>
               <h3>Parameters</h3>
               <p>
                 <span v-if="path.info.consumes">content-type:{{path.info.consumes.join(',')}}</span>
@@ -239,7 +243,6 @@
                 <paramView :param="path.responses" :definitions="swagger.definitions"></paramView>
               </div>
               </template>
-              <h3>Remark</h3>
             </div>
   
           </div>
@@ -306,6 +309,7 @@ export default {
             return;
           }
           this.swagger = resp;
+          this.swagger.tags = this.swagger.tags.sort((a, b)=>{return a.name > b.name ? 1 : -1});
           let paths = [];
           let counts = {};
           for (let path in this.swagger.paths) {

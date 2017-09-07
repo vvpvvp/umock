@@ -40,7 +40,8 @@
       <span class="param-name" v-if="model.name">{{model.name}}<span class="param-split">:</span></span>
       <template v-if="model.type == 'object'">
         <span v-if="model.ref" class="param-ref link" @click="initObject=true;showObject=!showObject">{{model.ref}}</span>
-        <template v-if="initObject">
+        <template v-if="model.additionalProperties">{{model.additionalProperties.type}}</template>
+        <template v-else-if="initObject">
           <span class="param-view-prefix" v-show="showObject">{</span>
           <div class="param-object-container" v-show="showObject" v-if="model.model">
             <paramView v-for="m of model.model" :param="m" :definitions="definitions" :key="m" :show="false"></paramView>
