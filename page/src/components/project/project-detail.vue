@@ -26,7 +26,7 @@
     &-list {
       padding-top: 20px;
       padding-bottom: 20px;
-      width: 180px;
+      width: 200px;
       font-size: 16px;
       >li {
         padding: 8px 20px 8px 0;
@@ -49,7 +49,7 @@
   .path {
     &-list {
       font-family: monospace;
-      padding-left: 210px;
+      padding-left: 230px;
       padding-right: 5%;
       padding-top: 20px;
       padding-bottom: 50px;

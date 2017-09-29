@@ -32,7 +32,7 @@
       </div>
     </div>
     <footer>
-      <Button>复制</Button>
+      <Button @click="copy">复制</Button>
     </footer>
   </div>
 </template>
@@ -86,7 +86,7 @@ export default {
       let btn = this.$el.querySelector('.h-btn');
       new Clipboard(btn, {
           text: function(trigger) {
-              return container.innerText;
+            return container.innerText;
           }
       });
     })
@@ -94,6 +94,9 @@ export default {
   methods: {
     close() {
       this.$emit('close');
+    },
+    copy() {
+      this.$Message.info('复制成功');
     }
   }
 }
