@@ -37,11 +37,11 @@ CREATE TABLE `mockset` (
   `dataHandler` varchar(11) DEFAULT NULL,
   `modifyTime` timestamp NULL DEFAULT NULL,
   `shortDesc` varchar(200) DEFAULT NULL,
-  `frontdevelop` varchar(200) DEFAULT NULL,
-  `backdevelop` varchar(200) DEFAULT NULL,
-  `develop` tinyint(1) DEFAULT NULL,
+  `develop` int(1) DEFAULT NULL,
+  `frontdevelop` varchar(100) DEFAULT NULL,
+  `backdevelop` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=551 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
