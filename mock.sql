@@ -21,8 +21,7 @@
 --
 
 DROP TABLE IF EXISTS `mockset`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `mockset` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` varchar(100) NOT NULL DEFAULT '',
@@ -41,9 +40,8 @@ CREATE TABLE `mockset` (
   `frontdevelop` varchar(200) DEFAULT NULL,
   `backdevelop` varchar(200) DEFAULT NULL,
   `develop` tinyint(1) DEFAULT NULL,
-  
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -51,21 +49,25 @@ CREATE TABLE `mockset` (
 -- Table structure for table `project`
 --
 
+# Dump of table project
+# ------------------------------------------------------------
+
 DROP TABLE IF EXISTS `project`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+
 CREATE TABLE `project` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL DEFAULT '',
   `beginPath` varchar(100) NOT NULL,
   `isPublic` varchar(10) DEFAULT NULL,
-  `rewrite` varchar(100) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
   `proxy` varchar(100) DEFAULT NULL,
-  `swagger` varchar(100) DEFAULT NULL,
   `modifyTime` timestamp NULL DEFAULT NULL,
+  `rewrite` varchar(100) DEFAULT NULL,
+  `swagger` varchar(100) DEFAULT NULL,
+  `private` int(11) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
