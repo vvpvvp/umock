@@ -26,7 +26,7 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
     if(req.isMock){
         res.setHeader('Transfer-Encoding', "chunked");
     }
-    if ((req.method == "POST" || req.method == "PATCH") && req.body) {
+    if ((req.method == "POST" || req.method == "PATCH" || req.method == "PUT") && req.body) {
         if(req.headers['content-type']&&req.headers['content-type'].indexOf("application/json")===0){
             var data = JSON.stringify(req.body);
             req.body = data;
