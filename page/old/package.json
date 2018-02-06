@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.6",
-    "jquery": "^2.2.0",
+    "jquery": "^3.0.0",
     "js-beautify": "^1.6.2",
     "js-model": "^1.1.8",
     "jsoneditor": "5.1.3",
