@@ -309,7 +309,8 @@ export default {
             return;
           }
           this.swagger = resp;
-          this.swagger.tags = this.swagger.tags.sort((a, b)=>{return a.name > b.name ? 1 : -1});
+          let tags = this.swagger.tags || [];
+          this.swagger.tags = tags.sort((a, b)=>{return a.name > b.name ? 1 : -1});
           let paths = [];
           let counts = {};
           for (let path in this.swagger.paths) {
@@ -322,28 +323,32 @@ export default {
                 }
               }
               let parameters = { query: [], formData: [], body: null, path:[] };
-              for (let param of info.parameters) {
-                if (param.in == 'query') {
-                  parameters.query.push(param);
-                } else if (param.in == 'formData') {
-                  parameters.formData.push(param);
-                } else if (param.in == 'path') {
-                  parameters.path.push(param);
-                } else if (param.in == 'body') {
-                  param.model = param.schema;
-                  parameters.body = param;
+              if(info.parameters) {
+                for (let param of info.parameters) {
+                  if (param.in == 'query') {
+                    parameters.query.push(param);
+                  } else if (param.in == 'formData') {
+                    parameters.formData.push(param);
+                  } else if (param.in == 'path') {
+                    parameters.path.push(param);
+                  } else if (param.in == 'body') {
+                    param.model = param.schema;
+                    parameters.body = param;
+                  }
                 }
               }
               let responses = null;
-              for (let status in info.responses) {
-                let isJson = false;
-                if(info.produces){
-                  isJson = info.produces.some((data)=>{
-                    return data.indexOf('application/json') != -1;
-                  })
-                }
-                if (status == 200 && isJson) {
-                  responses = info.responses[status].schema;
+              if(info.responses) {
+                for (let status in info.responses) {
+                  let isJson = false;
+                  if(info.produces){
+                    isJson = info.produces.some((data)=>{
+                      return data.indexOf('application/json') != -1;
+                    })
+                  }
+                  if (status == 200 && isJson) {
+                    responses = info.responses[status].schema;
+                  }
                 }
               }
               paths.push({ path, method, info, parameters, responses, show: false });
