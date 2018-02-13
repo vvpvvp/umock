@@ -1,7 +1,7 @@
 # umock
 ## 服务器端的Mock Server
 - 综合配置众多后台服务的反向代理，集成不同的后台，前端任意调用不同的后台调试。
-- 通过解析swagger.json统一接口数据展示，并且可以随意备注。
+- 通过解析swagger.json统一接口数据展示。
 - 对每个接口可以设定测试数据，随时完成API调试。
 - mock数据，开发前期协作利器。
 - 中间拦截，修改返回数据，前后端彻底分离开发。
@@ -68,6 +68,14 @@ npm run server
 ```
 http://localhost:端口号
 ```
+### 配置Demo
+这里我们使用Swagger的官方demo进行配置  
+<img width="500" src="http://p3mm4te0u.bkt.clouddn.com//demo/1518494340627.jpg"/>
+
+在详情页，可以查看该Swagger返回的接口说明。  
+![图片](http://p3mm4te0u.bkt.clouddn.com//demo/preview.gif)
+
+具体请访问 [http://umock.ch-un.com/server/2](http://umock.ch-un.com/server/2)
 
 ## 在线版本
 
