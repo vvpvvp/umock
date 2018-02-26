@@ -70,12 +70,12 @@ http://localhost:端口号
 ```
 ### Demo
 #### 配置
-这里我们使用Swagger的官方demo进行配置:  
+这里我们使用Swagger的官方demo进行配置:    
 <img width="500" src="http://p3mm4te0u.bkt.clouddn.com//demo/1518494340627.jpg"/>
 #### 详情
 在详情页，可以查看该Swagger返回的接口说明，具体请访问 [http://umock.ch-un.com/server/2](http://umock.ch-un.com/server/2)
 #### 反向代理
-umock本身就是一个数据mock的服务器，通过访问umock,添加author的Header，即可反向代理至任何后端。 
+umock本身就是一个数据mock的服务器，通过访问umock,添加author的Header，即可反向代理至任何后端。  
 <img width="500" src="http://p3mm4te0u.bkt.clouddn.com//demo/1518494327259.jpg"/> 
 
 ## 在线版本
