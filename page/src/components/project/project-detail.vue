@@ -1,11 +1,13 @@
 <style lang='less'>
 .app-project {
   .content-body-title{
-    position: relative;
+    position: fixed;
+    border: none;
+    top: 0px;
+    left: 210px;
     margin-right: 5%;
-    >div{
-      padding-left: 210px;
-    }
+    padding: 5px 0;
+    z-index: 2;
   }
 
   .search-input{
@@ -14,20 +16,41 @@
     top: 10px;
     right: 110px;
   }
+  .h-tabs-default{
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background: #FFF;
+    padding-left: 210px;
+    > div {
+      line-height: 30px;
+      width: 92px;
+      text-align: center;
+    }
+  }
+  .path-container {
+    padding-top: 62px;
+  }
   .path-tags {
     &-container {
       position: fixed;
       bottom: 0;
       top: 50px;
       left: 0%;
-      overflow: auto;
       background: @white-color;
     }
     &-list {
-      padding-top: 20px;
+      overflow: auto;
+      padding-top: 10px;
       padding-bottom: 20px;
       width: 200px;
       font-size: 16px;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      bottom: 0;
+      left: 0;
       >li {
         padding: 8px 20px 8px 0;
         text-align: right;
@@ -165,9 +188,6 @@
     padding: 10px;
     background: #ffffff;
   }
-  .content-body-title{
-    border: none;
-  }
 }
 </style>
 <template>
@@ -181,9 +201,10 @@
     <div class="search-input">
       <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
     </div>
-    <div>
+     <Tabs :datas="tabs" v-model="nowTab" @change="changeClassify"></Tabs>
+    <div class="path-container">
       <div class="path-tags-container">
-        <ul class="path-tags-list">
+        <ul class="path-tags-list" key="swagger" v-if="nowTab == 'swagger'">
           <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">All
             <span>{{paths.length}}</span>
           </li>
@@ -192,16 +213,26 @@
             <span>{{counts[tag.name]}}</span>
           </li>
         </ul>
+        <ul class="path-tags-list" key="defined" v-else>
+          <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">
+            All
+            <span>{{mocksets.length}}</span>
+          </li>
+          <li v-for="m of mocksetObj.menus" :key="m" class="text-hover" :class="{'tab-selected': $route.query.tab == m}" @click="changeTab(m)">
+            <span class="tag-name">{{m}}</span>
+            <span>{{mocksetObj.objects[m].length}}</span>
+          </li>
+        </ul>
       </div>
-      <ul class="path-list">
+      <ul class="path-list" key="swagger" v-if="nowTab == 'swagger'">
         <li v-for="path of computedPaths" :key="path" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
-          <div class="path-head" @click="path.show=!path.show">
+          <div class="path-head" @click="changeShowUrl(path.totalUrl)">
             <span class="path-method">{{path.method}}</span>
-            <span class="path-name">{{path.path}}</span>
+            <span class="path-name">{{path.path}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.path)" content="copy path"></span></span>
             <span class="path-description text-ellipsis">{{path.info.summary}}</span>
             <span class="middle-right"><span class="h-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
           </div>
-          <div class="path-info" :class="{'path-info-show': path.show}" v-if="path.show">
+          <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
             <div>
               <h3 v-if="path.info.description">Description</h3>
               <pre>{{path.info.description}}</pre>
@@ -248,8 +279,25 @@
           </div>
         </li>
       </ul>
+      <ul class="path-list" key="defined" v-else>
+        <li v-for="path of computedMocksets" :key="path" class="path-li" :class="`path-li-${path.type}`">
+          <div class="path-head" @click="changeShowUrl(path.totalUrl)">
+            <span class="path-method">{{path.type}}</span>
+            <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.url)" content="copy path"></span></span>
+            <span class="path-description text-ellipsis">{{path.shortDesc}}</span>
+            <span class="middle-right"><span class="h-tag">{{path.menuId}}</span></span>
+          </div>
+          <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
+            <div>
+              <div class="gray-color float-right"><span class="text-hover">编辑</span><span class="h-split"></span><span class="text-hover" @click="deleteMockset(path)">删除</span></div>
+              <h3>Description</h3>
+              <pre>{{path.description}}</pre>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
-
+    <span class="copy-path" :data-clipboard-text="nowPath"></span>
     <BackTop :target="getTarget" :bottom="40" :right="40"></BackTop>
   </div>
 </template>
@@ -260,29 +308,94 @@ import Project from 'model/project/Project';
 import Beautify from 'components/common/js-beautify';
 import paramView from 'components/common/param-view';
 
+import Clipboard from 'clipboard';
 export default {
   data() {
     return {
-      list: [],
       project: Project.parse({}),
       loading: true,
       swagger: {},
       paths: [],
       models: {},
       counts: {},
-      searchText: null
+      searchText: null,
+      mocksets: [],
+      mocksetObj: {
+        menus: [],
+        objects: []
+      },
+      showPath: this.$route.query.url,
+      nowPath: "",
+      nowTab: this.$route.query.classify || 'swagger',
+      tabs: {
+        swagger: 'Swagger',
+        defined: '自定义'
+      }
     }
   },
   mounted() {
     this.$Loading("加载中");
     this.getData();
+    this.$nextTick(() => {
+      var clipboard = new Clipboard('.copy-path');
+    })
   },
   methods: {
+    scrollToPath() {
+      this.$nextTick(() => {
+        let focus = this.$el.querySelector('.path-info-show');
+        if(focus) {
+          HeyUI.$ScrollIntoView(focus, {
+            time: 500,
+            align:{
+              top: 0, //视图比例 0 to 1, 默认 0.5 (center)
+              topOffset: 120, //视图位移 pixels to offset top alignment
+            },
+          });
+        }
+      })
+    },
+    scrollToTop() {
+      this.$nextTick(()=>{
+        document.querySelector('.app-body').scrollTop = 0;
+      });
+    },
+    changeShowUrl(url) {
+      if (this.showPath == url) {
+        this.showPath = "";
+      } else {
+        this.showPath = url;
+        this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {classify: this.$route.query.classify, tab: this.$route.query.tab, url: url}});
+        this.scrollToPath();
+      }
+    },
+    copy(path) {
+      this.nowPath = path;
+      this.$Message.info('复制成功');
+      this.$nextTick(()=>{
+        document.querySelector('.copy-path').click();
+      });
+    },
     getTarget() {
       return document.querySelector('.app-body');
     },
+    changeClassify(tab) {
+      this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {classify: tab.key}});
+      this.scrollToTop();
+    },
     changeTab(tab) {
-      this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {tab: tab}});
+      this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {tab: tab, classify: this.$route.query.classify}});
+      this.scrollToTop();
+    },
+    deleteMockset(path) {
+      if(!path.id) return;
+      this.$Confirm('确定删除？').then(()=>{
+        R.Mockset.delete(path.id).then(resp => {
+          if (resp.result == 'ok') {
+            this.getList();
+          }
+        });
+      });
     },
     getData() {
       this.loading = true;
@@ -296,9 +409,27 @@ export default {
     getList() {
       R.Project.pathList(this.$route.params.id).then(resp => {
         if (resp.result == 'ok') {
-          this.list = Path.parse(resp.content);
-          this.getSwagger();
+          for(let c of resp.content) {
+            c.type = (c.type || 'get').toLowerCase();
+            c.show = false;
+            c.totalUrl= `${c.type}${c.url}`
+          }
+          this.mocksets = Path.parse(resp.content);
+          let menus = [];
+          let mocksetObj = {};
+          for(let m of resp.content) {
+            if(!m.menuId) continue;
+            if(menus.indexOf(m.menuId) == -1) {
+              menus.push(m.menuId);
+              mocksetObj[m.menuId] = [];
+            }
+            mocksetObj[m.menuId].push(m);
+          }
+          this.mocksetObj.menus = menus;
+          this.mocksetObj.objects = mocksetObj;
         }
+
+        this.getSwagger();
       });
     },
     getSwagger() {
@@ -351,23 +482,28 @@ export default {
                   }
                 }
               }
-              paths.push({ path, method, info, parameters, responses, show: false });
+              paths.push({ totalUrl: `${method}${path}`,path, method, info, parameters, responses, show: false });
             }
           }
           this.paths = paths;
           this.counts = counts;
           this.$Loading.close();
+          this.scrollToPath();
         });
       } else {
-        this.analysis();
+        this.scrollToPath();
         this.$Loading.close();
       }
-    },
-    analysis() {
-
     }
   },
   computed: {
+    computedMocksets() {
+      if(this.$route.query.tab) {
+        return this.mocksetObj.objects[this.$route.query.tab];
+      } else {
+        return this.mocksets;
+      }
+    },
     computedPaths() {
       if(this.searchText){
         return this.paths.filter((path) => {

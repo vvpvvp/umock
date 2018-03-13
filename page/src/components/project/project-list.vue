@@ -40,7 +40,7 @@
       <ul class="project-list">
         <li v-for="project of projectList" :key="project">
           <p><span class="project-title">
-            <span class="project-author" :style="getBg(project)">{{project.name.substr(0,1)}}</span>
+            <span class="project-author" :style="getBg(project)">{{project.beginPath.substr(0,1)}}</span>
           <router-link :to="{name: 'detail', params:{id: project.id}}">{{project.name}}  /  {{project.beginPath}}</router-link></span><i class="h-split"></i>
           <span class="gray-color">{{project.description}}- <span v-font="13">{{project.isPublic?'URL前缀':'HEAD参数'}}</span></span>
           <span class="project-edit middle" @click="editProject(project)"><i class="h-icon-setting text-hover"></i></span></p>
@@ -155,7 +155,7 @@ export default {
     projectList() {
       // return this.list;
       let isPrivate = this.menu == 'public' ? 2 : 1;
-      return this.list.filter(item=>item.private == isPrivate);
+      return this.list.filter(item=>item.private == isPrivate).sort((a,b)=>a.beginPath>b.beginPath?1:-1);
     }
   }
 }

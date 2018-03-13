@@ -37,6 +37,18 @@ const Request = {
     delete(id){
       return Ajax.delete(`/project/${id}`);
     }
+  },
+  Mockset: {
+    delete(id) {
+      return Ajax.delete(`/mockset/${id}`);
+    },
+    edit(mockset) {
+      if (mockset.id) {
+        return Ajax.postJson(`/mockset/${mockset.id}`, mockset);
+      } else {
+        return Ajax.postJson(`/mockset`, mockset);
+      }
+    },
   }
 };
 

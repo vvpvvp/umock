@@ -18,7 +18,7 @@ const initRouter = ()=>{
   let router = new VueRouter(routerParam);
 
   router.beforeEach((to, from, next) => {
-    HeyUI.$LoadingBar.start();
+    // HeyUI.$LoadingBar.start();
     // if (titleConfig[to.name]) {
     //   document.title = titleConfig[to.name] + ' - 应用';
     // } else {
@@ -27,7 +27,7 @@ const initRouter = ()=>{
     next();
   })
   router.afterEach(() => {
-    HeyUI.$LoadingBar.success();
+    // HeyUI.$LoadingBar.success();
     // Vue.nextTick(() => {
     //   $('.app-body').scrollTop(0);
     // });
