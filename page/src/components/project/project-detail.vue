@@ -441,7 +441,6 @@ export default {
           }
           this.swagger = resp;
           let tags = this.swagger.tags || [];
-          this.swagger.tags = tags.sort((a, b)=>{return a.name > b.name ? 1 : -1});
           let paths = [];
           let counts = {};
           for (let path in this.swagger.paths) {
@@ -450,6 +449,9 @@ export default {
               let info = pathInfo[method];
               if (info.tags) {
                 for (let tag of info.tags) {
+                  if(!tags.some(item => item.name == tag)) {
+                    tags.push({name: tag});
+                  }
                   counts[tag] = (counts[tag] || 0) + 1;
                 }
               }
@@ -485,6 +487,8 @@ export default {
               paths.push({ totalUrl: `${method}${path}`,path, method, info, parameters, responses, show: false });
             }
           }
+          log(tags)
+          this.swagger.tags = tags.sort((a, b)=>{return a.name > b.name ? 1 : -1});
           this.paths = paths;
           this.counts = counts;
           this.$Loading.close();
