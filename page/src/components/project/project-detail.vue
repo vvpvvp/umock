@@ -88,14 +88,15 @@
     }
 
     &-method {
-      font-size: 14px;
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 700;
       min-width: 80px;
       padding: 5px 0px;
       text-align: center;
       border-radius: 3px;
       background: #000;
       text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
-      font-family: Titillium Web, sans-serif;
       color: #fff;
       text-transform: Uppercase;
     }
@@ -113,6 +114,9 @@
           }
           &:hover{
             background-color: fade(@color, 15%);
+          }
+          .h-icon-link {
+            font-size: 12px;
           }
         }
         &-method {
