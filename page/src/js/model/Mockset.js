@@ -3,5 +3,6 @@ export default new Model({
   url: "",
   type: "",
   shortDesc: "",
-  description: ""
+  description: "",
+  menuId: ''
 })

@@ -30,7 +30,7 @@
     }
   }
   .path-container {
-    padding-top: 62px;
+    padding-top: 50px;
   }
   .path-tags {
     &-container {
@@ -69,13 +69,22 @@
       }
     }
   }
+
+  .add-path-button {
+    right: 20px;
+    position: fixed;
+    top: 63px;
+    z-index: 3;
+  }
+  .path-list-container {
+    padding-left: 230px;
+    padding-right: 5%;
+    padding-top: 30px;
+    padding-bottom: 50px;
+  }
   .path {
     &-list {
       font-family: monospace;
-      padding-left: 230px;
-      padding-right: 5%;
-      padding-top: 20px;
-      padding-bottom: 50px;
     }
 
     &-head {
@@ -156,12 +165,12 @@
       border-top: 1px solid @primary-color;
       overflow: hidden;
       margin-bottom: -1px;
-      max-height: 0;
-      transition: max-height .2s cubic-bezier(0, 1, 0, 1);
-      &-show {
-        max-height: 10000px;
-        transition: max-height .8s ease-in-out;
-      }
+      // max-height: 0;
+      // transition: max-height 2s cubic-bezier(0, 1, 0, 1);
+      // &-show {
+      //   max-height: 10000px;
+      //   transition: max-height 2s ease-in-out;
+      // }
       >div{
         padding: 20px;
       }
@@ -205,7 +214,8 @@
     <div class="search-input">
       <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
     </div>
-     <Tabs :datas="tabs" v-model="nowTab" @change="changeClassify"></Tabs>
+    <div class="add-path-button" v-if="nowTab == 'defined'"><span class="text-hover" @click="EditMockset">新增自定义</span></div>
+    <Tabs :datas="tabs" v-model="nowTab" @change="changeClassify"></Tabs>
     <div class="path-container">
       <div class="path-tags-container">
         <ul class="path-tags-list" key="swagger" v-if="nowTab == 'swagger'">
@@ -228,78 +238,80 @@
           </li>
         </ul>
       </div>
-      <ul class="path-list" key="swagger" v-if="nowTab == 'swagger'">
-        <li v-for="path of computedPaths" :key="path" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
-          <div class="path-head" @click="changeShowUrl(path.totalUrl)">
-            <span class="path-method">{{path.method}}</span>
-            <span class="path-name">{{path.path}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.path)" content="copy path"></span></span>
-            <span class="path-description text-ellipsis">{{path.info.summary}}</span>
-            <span class="middle-right"><span class="h-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
-          </div>
-          <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
-            <div>
-              <h3 v-if="path.info.description">Description</h3>
-              <pre>{{path.info.description}}</pre>
-              <h3>Parameters</h3>
-              <p>
-                <span v-if="path.info.consumes">content-type:{{path.info.consumes.join(',')}}</span>
-              </p>
-              <template v-if="path.parameters.query.length">
-                <h4>Query</h4>
-                <ul>
-                  <paramView v-for="query of path.parameters.query" :param="query" :key="query"></paramView>
-                </ul>
-              </template>
-              <template v-if="path.parameters.path.length">
-                <h4>Path</h4>
-                <ul>
-                  <paramView v-for="path of path.parameters.path" :param="path" :key="path"></paramView>
-                </ul>
-              </template>
-              <template v-if="path.parameters.formData.length">
-                <h4>FormData</h4>
-                <ul>
-                  <paramView v-for="query of path.parameters.formData" :param="query" :key="query"></paramView>
-                </ul>
-              </template>
-              <template v-if="path.parameters.body">
+      <div class="path-list-container">
+        <ul class="path-list" key="swagger" v-if="nowTab == 'swagger'">
+          <li v-for="path of computedPaths" :key="path" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
+            <div class="path-head" @click="changeShowUrl(path.totalUrl)">
+              <span class="path-method">{{path.method}}</span>
+              <span class="path-name">{{path.path}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.path)" content="copy path"></span></span>
+              <span class="path-description text-ellipsis">{{path.info.summary}}</span>
+              <span class="middle-right"><span class="h-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
+            </div>
+            <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
+              <div>
+                <h3 v-if="path.info.description">Description</h3>
+                <pre>{{path.info.description}}</pre>
+                <h3>Parameters</h3>
+                <p>
+                  <span v-if="path.info.consumes">content-type:{{path.info.consumes.join(',')}}</span>
+                </p>
+                <template v-if="path.parameters.query.length">
+                  <h4>Query</h4>
+                  <ul>
+                    <paramView v-for="query of path.parameters.query" :param="query" :key="query"></paramView>
+                  </ul>
+                </template>
+                <template v-if="path.parameters.path.length">
+                  <h4>Path</h4>
+                  <ul>
+                    <paramView v-for="path of path.parameters.path" :param="path" :key="path"></paramView>
+                  </ul>
+                </template>
+                <template v-if="path.parameters.formData.length">
+                  <h4>FormData</h4>
+                  <ul>
+                    <paramView v-for="query of path.parameters.formData" :param="query" :key="query"></paramView>
+                  </ul>
+                </template>
+                <template v-if="path.parameters.body">
+                  <h4>Body</h4>
+                  <div class="path-info-body">
+                    <paramView :param="path.parameters.body.model" :definitions="swagger.definitions"></paramView>
+                  </div>
+                </template>
+                <template v-if="path.responses">
+                <h3>Responses</h3>
+                <p>
+                  <span v-if="path.info.produces">content-type:{{path.info.produces.join(',')}}</span>
+                </p>
                 <h4>Body</h4>
                 <div class="path-info-body">
-                  <paramView :param="path.parameters.body.model" :definitions="swagger.definitions"></paramView>
+                  <paramView :param="path.responses" :definitions="swagger.definitions"></paramView>
                 </div>
-              </template>
-              <template v-if="path.responses">
-              <h3>Responses</h3>
-              <p>
-                <span v-if="path.info.produces">content-type:{{path.info.produces.join(',')}}</span>
-              </p>
-              <h4>Body</h4>
-              <div class="path-info-body">
-                <paramView :param="path.responses" :definitions="swagger.definitions"></paramView>
+                </template>
               </div>
-              </template>
+    
             </div>
-  
-          </div>
-        </li>
-      </ul>
-      <ul class="path-list" key="defined" v-else>
-        <li v-for="path of computedMocksets" :key="path" class="path-li" :class="`path-li-${path.type}`">
-          <div class="path-head" @click="changeShowUrl(path.totalUrl)">
-            <span class="path-method">{{path.type}}</span>
-            <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.url)" content="copy path"></span></span>
-            <span class="path-description text-ellipsis">{{path.shortDesc}}</span>
-            <span class="middle-right"><span class="h-tag">{{path.menuId}}</span></span>
-          </div>
-          <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
-            <div>
-              <div class="gray-color float-right"><span class="text-hover">编辑</span><span class="h-split"></span><span class="text-hover" @click="deleteMockset(path)">删除</span></div>
-              <h3>Description</h3>
-              <pre>{{path.description}}</pre>
+          </li>
+        </ul>
+        <ul class="path-list" key="defined" v-else>
+          <li v-for="path of computedMocksets" :key="path" class="path-li" :class="`path-li-${path.type}`">
+            <div class="path-head" @click="changeShowUrl(path.totalUrl)">
+              <span class="path-method">{{path.type}}</span>
+              <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.url)" content="copy path"></span></span>
+              <span class="path-description text-ellipsis">{{path.shortDesc}}</span>
+              <span class="middle-right"><span class="h-tag">{{path.menuId}}</span></span>
             </div>
-          </div>
-        </li>
-      </ul>
+            <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
+              <div>
+                <div class="gray-color float-right"><span class="text-hover" @click="EditMockset(path)">编辑</span><span class="h-split"></span><span class="text-hover" @click="deleteMockset(path)">删除</span></div>
+                <h3>Description</h3>
+                <pre>{{path.description}}</pre>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
     <span class="copy-path" :data-clipboard-text="nowPath"></span>
     <BackTop :target="getTarget" :bottom="40" :right="40"></BackTop>
@@ -311,6 +323,7 @@ import Path from 'model/project/Path';
 import Project from 'model/project/Project';
 import Beautify from 'components/common/js-beautify';
 import paramView from 'components/common/param-view';
+import EditMockset from 'components/common/edit-mockset';
 
 import Clipboard from 'clipboard';
 export default {
@@ -502,6 +515,16 @@ export default {
         this.scrollToPath();
         this.$Loading.close();
       }
+    },
+    EditMockset(mockset = null) {
+      this.$Modal({
+        component: {
+          vue: EditMockset,
+          data: {
+            mockset
+          }
+        }
+      })
     }
   },
   computed: {
