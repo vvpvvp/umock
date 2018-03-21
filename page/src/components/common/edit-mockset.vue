@@ -42,7 +42,7 @@ export default {
     params: Object,
   },
   data() {
-    log(Mockset.parse(this.params.mockset||{}))
+    // log(Mockset.parse(this.params.mockset||{}))
     return {
       types: [
         'get',
@@ -59,7 +59,7 @@ export default {
   methods: {
     comfirm() {
       R.Mockset.edit(this.mockset, (resp) => {
-        log(resp)
+        // log(resp)
       })
     }
   }

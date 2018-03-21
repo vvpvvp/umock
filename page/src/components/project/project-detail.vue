@@ -214,7 +214,7 @@
     <div class="search-input">
       <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
     </div>
-    <div class="add-path-button" v-if="nowTab == 'defined'"><span class="text-hover" @click="EditMockset">新增自定义</span></div>
+    <!-- <div class="add-path-button" v-if="nowTab == 'defined'"><span class="text-hover" @click="EditMockset">新增自定义</span></div> -->
     <Tabs :datas="tabs" v-model="nowTab" @change="changeClassify"></Tabs>
     <div class="path-container">
       <div class="path-tags-container">
@@ -280,14 +280,14 @@
                   </div>
                 </template>
                 <template v-if="path.responses">
-                <h3>Responses</h3>
-                <p>
-                  <span v-if="path.info.produces">content-type:{{path.info.produces.join(',')}}</span>
-                </p>
-                <h4>Body</h4>
-                <div class="path-info-body">
-                  <paramView :param="path.responses" :definitions="swagger.definitions"></paramView>
-                </div>
+                  <h3>Responses</h3>
+                  <p>
+                    <span v-if="path.info.produces">content-type:{{path.info.produces.join(',')}}</span>
+                  </p>
+                  <h4>Body</h4>
+                  <div class="path-info-body">
+                    <paramView :param="path.responses" :definitions="swagger.definitions"></paramView>
+                  </div>
                 </template>
               </div>
     
@@ -347,7 +347,8 @@ export default {
       tabs: {
         swagger: 'Swagger',
         defined: '自定义'
-      }
+      },
+      swaggerVersion: "2.0",
     }
   },
   mounted() {
@@ -456,6 +457,10 @@ export default {
             this.$Loading.close();
             return;
           }
+          if(resp.openapi) {
+            this.swaggerVersion = '3.0';
+            resp.definitions = resp.components.schemas;
+          }
           this.swagger = resp;
           let tags = this.swagger.tags || [];
           let paths = [];
@@ -488,23 +493,39 @@ export default {
                 }
               }
               let responses = null;
+              info.produces = info.produces || [];
+              if(this.swaggerVersion == '3.0') {
+                if(info.requestBody) {
+                  for (let param in info.requestBody.content) {
+                    parameters.body = {in: 'body', model: info.requestBody.content[param].schema}
+                    // info.produces.push(param);
+                  }
+                }
+              }
               if(info.responses) {
                 for (let status in info.responses) {
                   let isJson = false;
-                  if(info.produces){
-                    isJson = info.produces.some((data)=>{
-                      return data.indexOf('application/json') != -1;
-                    })
-                  }
-                  if (status == 200 && isJson) {
-                    responses = info.responses[status].schema;
+                  if(this.swaggerVersion == '3.0') {
+                    for (let param in info.responses[status].content) {
+                      responses = info.responses[status].content[param].schema;
+                      info.produces.push(param);
+                    }
+                  } else {
+                    if(info.produces){
+                      isJson = info.produces.some((data)=>{
+                        return data.indexOf('application/json') != -1;
+                      })
+                    }
+                    if (status == 200 && isJson) {
+                      responses = info.responses[status].schema;
+                    }
                   }
                 }
               }
               paths.push({ totalUrl: `${method}${path}`,path, method, info, parameters, responses, show: false });
             }
           }
-          log(tags)
+          // log(tags)
           this.swagger.tags = tags.sort((a, b)=>{return a.name > b.name ? 1 : -1});
           this.paths = paths;
           this.counts = counts;

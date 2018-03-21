@@ -62,7 +62,7 @@ export default {
         if(m.additionalProperties){
           return `{ ${returnType(m.additionalProperties.type)} }`;
         } else if(m.$ref){
-          return `{ ${m.$ref.substring(14)} }`;
+          return `{ ${Utils.getSchema(m.$ref)} }`;
         }
         return `{}`;
       } else if (m.type == 'array') {
@@ -74,7 +74,7 @@ export default {
       }
 
       if (m.$ref) {
-        return `${m.$ref.substring(14)}`;
+        return `${Utils.getSchema(m.$ref)}`;
       } else {
         return returnType(m.type);
       }

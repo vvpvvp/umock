@@ -119,6 +119,14 @@ let U = utils.extend({}, utils, {
       list.push(a[keyName])
     }
     return list;
+  },
+  getSchema(schema) {
+    if(schema.indexOf("#/definitions") == 0) {
+      return schema.substring(14);
+    } else if (schema.indexOf("#/components/schemas/") == 0){
+      return schema.substring(21);
+    }
+    return schema;
   }
 });
 

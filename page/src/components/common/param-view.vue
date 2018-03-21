@@ -118,7 +118,8 @@ export default {
         };
       }
       if (schema.$ref) {
-        let ref = schema.$ref.substring(14);
+        let ref = Utils.getSchema(schema.$ref);
+        // log(ref);
         return Utils.extend({
           type: 'object',
           model: this.initDefinitions(this.definitions[ref]),
