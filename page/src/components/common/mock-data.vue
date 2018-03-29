@@ -27,7 +27,7 @@
     <div class="mock-data-container">
       <div>
         <p>{</p>
-        <p v-for="(m, index) of param.model.model" :key="m.name">&nbsp;&nbsp;&nbsp;&nbsp;{{m.name}}: {{m | dataType}}<template v-if="index < param.model.model.length - 1">, </template><template v-if="m.description && showComment">//{{m.description}}</template></p>
+        <p v-for="(m, index) of param.model.model" :key="m.name">&nbsp;&nbsp;&nbsp;&nbsp;{{m.name}}: {{m | dataType}}<template v-if="index < param.model.model.length - 1">, </template><template v-if="(m.description || m.title) && showComment">//{{m.description || m.title}}</template></p>
         <p>}</p>
       </div>
     </div>

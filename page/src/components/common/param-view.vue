@@ -58,7 +58,7 @@
       </template>
       <template v-else><span class="param-type">{{model.format=='date-time'?'date':model.type}}</span></template>
       <template  v-if="model.name">,</template>
-      <span class="param-description">{{model.description}}<template v-if="model.enum">Enum: {{model.enum.join(', ')}}</template></span>
+      <span class="param-description">{{model.description || model.title}}<template v-if="model.enum">Enum: {{model.enum.join(', ')}}</template></span>
   </div>
 </template>
 <script>
