@@ -86,7 +86,7 @@ export default {
       let btn = this.$el.querySelector('.h-btn');
       new Clipboard(btn, {
           text: function(trigger) {
-            return container.innerText;
+            return container.innerText.replace(/\n\s{3,6}/g, '\n\t');
           }
       });
     })
