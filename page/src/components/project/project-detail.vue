@@ -214,7 +214,7 @@
     <div class="search-input">
       <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
     </div>
-    <!-- <div class="add-path-button" v-if="nowTab == 'defined'"><span class="text-hover" @click="EditMockset">新增自定义</span></div> -->
+    <div class="add-path-button" v-if="nowTab == 'defined'"><span class="text-hover" @click="EditMockset()">新增自定义</span></div>
     <Tabs :datas="tabs" v-model="nowTab" @change="changeClassify"></Tabs>
     <div class="path-container">
       <div class="path-tags-container">
@@ -300,7 +300,7 @@
               <span class="path-method">{{path.type}}</span>
               <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.url)" content="copy path"></span></span>
               <span class="path-description text-ellipsis">{{path.shortDesc}}</span>
-              <span class="middle-right"><span class="h-tag">{{path.menuId}}</span></span>
+              <span class="middle-right" v-if="path.menuId"><span class="h-tag">{{path.menuId}}</span></span>
             </div>
             <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
               <div>
@@ -421,6 +421,7 @@ export default {
         if (resp.result == 'ok') {
           this.project = Project.parse(resp.content);
           this.getList();
+          this.getSwagger();
         }
       });
     },
@@ -446,8 +447,6 @@ export default {
           this.mocksetObj.menus = menus;
           this.mocksetObj.objects = mocksetObj;
         }
-
-        this.getSwagger();
       });
     },
     getSwagger() {
@@ -542,7 +541,13 @@ export default {
         component: {
           vue: EditMockset,
           data: {
-            mockset
+            mockset: mockset || {projectId: this.project.id},
+            menus: this.mocksetObj.menus
+          }
+        },
+        events: {
+          success: ()=>{
+            this.getList();
           }
         }
       })

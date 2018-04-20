@@ -6,6 +6,10 @@ const heyuiConfig = () => {
     }
   });
 
+  HeyUI.config('modal', {
+    hasDivider: true
+  })
+
   // HeyUI.config("autocomplete.configs", {
   //   simple: {
   //     loadData,

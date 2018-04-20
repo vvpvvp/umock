@@ -10,18 +10,34 @@
   <div class="edit-mockset-vue" >
     <header>Mockset</header>
     <div class="container">
-      <Form>
-        <FormItem label="URL">
+      <Form :model="mockset" :rules="validationRules">
+        <FormItem label="URL" prop="url">
           <input type="text" v-model="mockset.url"/>
         </FormItem>
-        <FormItem label="说明">
+        <FormItem label="说明" prop="shortDesc">
           <input type="text" v-model="mockset.shortDesc"/>
         </FormItem>
-        <FormItem label="type">
-          <Radio :datas="types" v-model="mockset.type"/>
+        <FormItem label="type" prop="type">
+          <SwitchList :datas="types" v-model="mockset.type"></SwitchList>
+        </FormItem>
+        <FormItem label="目录">
+          <AutoComplete  :datas="params.menus" :mustMatch="false" v-model="mockset.menuId"></AutoComplete>
         </FormItem>
         <FormItem label="描述">
-          <textarea type="text" rows="10" v-model="mockset.description"></textarea>
+          <AceEditor
+            :fontSize="14"
+            :showPrintMargin="true"
+            :showGutter="true"
+            :highlightActiveLine="true"
+            mode="markdown"
+            theme="monokai"
+            :onChange="onChange"
+            name="editor"
+            :defaultValue="mockset.description"
+            :editorProps="{$blockScrolling: true}"
+          />
+
+          <!-- <textarea type="text" rows="10" v-model=""></textarea> -->
         </FormItem>
       </Form>
     </div>
@@ -33,9 +49,11 @@
 </template>
 <script>
 import Mockset from 'model/Mockset';
+import AceEditor from './Ace.component'
 
 export default {
   components: {
+    AceEditor
   },
   name: 'mockSetEdit',
   props: {
@@ -44,23 +62,38 @@ export default {
   data() {
     // log(Mockset.parse(this.params.mockset||{}))
     return {
-      types: [
-        'get',
-        'post',
-        'put',
-        'delete',
-        'patch'
-      ],
-      mockset: {}
+      types: {
+        get: 'GET',
+        post: 'POST',
+        put: 'PUT',
+        delete: 'DELETE',
+        patch: 'PATCH'
+      },
+      mockset: Mockset.parse(this.params.mockset || {}),
+      validationRules: {
+        required: [
+          'url',
+          'type',
+          'shortDesc',
+        ]
+      }
     };
   },
   mounted() {
   },
   methods: {
     comfirm() {
-      R.Mockset.edit(this.mockset, (resp) => {
-        // log(resp)
+      let mockset = Mockset.dispose(this.mockset);
+      R.Mockset.edit(mockset).then((resp) => {
+        if(resp.ok) {
+          this.$Message('保存成功');
+          this.$emit('event', 'success');
+          this.$emit('close');
+        }
       })
+    },
+    onChange(content){
+      this.mockset.description = content;
     }
   }
 }

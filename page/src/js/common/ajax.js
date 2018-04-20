@@ -118,6 +118,7 @@ let ajax = {
             HeyUI.$Message.error(data.message);
           }
         }
+        data.ok = data.result == 'ok';
         resolve(data);
       })
     });
