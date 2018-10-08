@@ -5,6 +5,7 @@ export default new Model({
     type: String,
     default: 'get'
   },
+  result: '',
   shortDesc: "",
   projectId: 1,
   description: "",

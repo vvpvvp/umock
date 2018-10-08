@@ -1,6 +1,7 @@
 <style lang='less'>
   .edit-mockset-vue{
-    width: 500px;
+    width: 620px;
+    margin: 20px auto;
     .container{
       padding: 20px 40px 20px 0;
     }

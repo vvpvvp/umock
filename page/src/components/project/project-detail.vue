@@ -156,8 +156,8 @@
         .theme(#f93e3e);
       }
       &-deprecated {
-        .theme(#ebebeb);
-        color: #ebebeb;
+        .theme(#646464);
+        color: #646464;
       }
     }
 
@@ -324,6 +324,7 @@ import Project from 'model/project/Project';
 import Beautify from 'components/common/js-beautify';
 import paramView from 'components/common/param-view';
 import EditMockset from 'components/common/edit-mockset';
+// import AceEditor from 'components/common/Ace.component';
 
 import Clipboard from 'clipboard';
 export default {
@@ -538,6 +539,7 @@ export default {
     },
     EditMockset(mockset = null) {
       this.$Modal({
+        hasCloseIcon: true,
         component: {
           vue: EditMockset,
           data: {
@@ -580,7 +582,7 @@ export default {
   },
   components: {
     Beautify,
-    paramView
+    paramView,
   }
 }
 </script>

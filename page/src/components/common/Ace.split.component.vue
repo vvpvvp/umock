@@ -16,6 +16,8 @@
 
   import { editorOptions } from 'js/editorOptions';
   import propsValue from 'js/props';
+  import 'brace/theme/monokai';
+  import 'brace/mode/markdown';
 
   import 'brace/ext/split';
   import 'brace/ext/language_tools';
