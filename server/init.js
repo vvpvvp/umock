@@ -1,7 +1,4 @@
-/**
- * Created by an.han on 15/7/20.
- */
-//var Promise = require('es6-promise').Promise;
+
 var imitator = require('./umock');
 var path = require('path');
 var fs = require('fs');
@@ -25,7 +22,7 @@ var main = {
     customRoute: function() {
         var argv = this.argv;
         var home = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'PWD'];
-        var defautImitatorFile = path.resolve(home, 'umock.js');
+        var defautImitatorFile = path.resolve(home, 'config.js');
         var imitatorFile;
 
         if (argv.f) {
@@ -49,7 +46,7 @@ var main = {
             global.config = require(imitatorFile);
             if (global.config.port) this.app.set('port', global.config.port);
         } else {
-            global.config = {};
+            throw Error(`配置文件未找到:${imitatorFile}`);
         }
 
         this.imitator.init();

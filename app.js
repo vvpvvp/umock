@@ -2,8 +2,8 @@
 
 var http = require('http');
 var optimist = require('optimist');
-var app = require('../server/app');
-var init = require('../server/init');
+var app = require('./server/app');
+var init = require('./server/init');
 var port = optimist.argv.p||8000;
 var cwd = process.cwd();
 var server;

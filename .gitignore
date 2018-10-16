@@ -1,6 +1,5 @@
-umock.js
-/page/node_modules/
-/node_modules/
-/mocksets/
-/projects/
+config.js
+node_modules
+mocksets
+projects
 *.log

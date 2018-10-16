@@ -243,7 +243,7 @@
           <li v-for="path of computedPaths" :key="path" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
             <div class="path-head" @click="changeShowUrl(path.totalUrl)">
               <span class="path-method">{{path.method}}</span>
-              <span class="path-name">{{path.path}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.path)" content="copy path"></span></span>
+              <span class="path-name">{{path.path}} <span class="h-icon-link text-hover" theme="white" v-tooltip @click.stop="copy(path.path)" content="复制链接"></span></span>
               <span class="path-description text-ellipsis">{{path.info.summary}}</span>
               <span class="middle-right"><span class="h-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
             </div>
@@ -298,7 +298,7 @@
           <li v-for="path of computedMocksets" :key="path" class="path-li" :class="`path-li-${path.type}`">
             <div class="path-head" @click="changeShowUrl(path.totalUrl)">
               <span class="path-method">{{path.type}}</span>
-              <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" v-tooltip @click.stop="copy(path.url)" content="copy path"></span></span>
+              <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" theme="white" v-tooltip @click.stop="copy(path.url)" content="复制链接"></span></span>
               <span class="path-description text-ellipsis">{{path.shortDesc}}</span>
               <span class="middle-right" v-if="path.menuId"><span class="h-tag">{{path.menuId}}</span></span>
             </div>
@@ -540,6 +540,7 @@ export default {
     EditMockset(mockset = null) {
       this.$Modal({
         hasCloseIcon: true,
+        fullScreen: true,
         component: {
           vue: EditMockset,
           data: {
