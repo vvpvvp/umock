@@ -1,19 +1,20 @@
 <style lang='less'>
   .edit-mockset-vue{
-    // width: 620px;
+    width: 500px;
     margin: 20px auto;
     .container{
       padding: 20px 40px 20px 0;
+    }
+    footer {
+      text-align: center !important;
     }
   }
 </style>
 <template>
   <div class="edit-mockset-vue" >
-    <header>Mockset</header>
+    <header>{{mockset.id ? '编辑接口' : '新增接口'}}</header>
     <div class="container">
       <Form :model="mockset" :rules="validationRules">
-        <Row>
-          <Col :width="12">
             <FormItem label="URL" prop="url">
               <input type="text" v-model="mockset.url"/>
             </FormItem>
@@ -27,7 +28,7 @@
               <AutoComplete  :datas="params.menus" :mustMatch="false" v-model="mockset.menuId"></AutoComplete>
             </FormItem>
             <FormItem label="描述">
-              <AceEditor
+              <!-- <AceEditor
                 :fontSize="14"
                 :showPrintMargin="true"
                 :showGutter="true"
@@ -38,15 +39,10 @@
                 name="editor"
                 :defaultValue="mockset.description"
                 :editorProps="{$blockScrolling: true}"
-              />
+              /> -->
 
-              <!-- <textarea type="text" rows="10" v-model=""></textarea> -->
+              <textarea type="text" rows="15" v-model="mockset.description"></textarea>
             </FormItem>
-          </Col>
-          <Col :width="12"></Col>
-        </Row>
-
-        
       </Form>
     </div>
     <footer>

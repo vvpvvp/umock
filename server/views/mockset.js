@@ -6,9 +6,6 @@ var Util = require("../utils/util");
 var mocksetView = function(mockServer, db) {
 
     var reInitList = function() {};
-
-
-
     function toObject(list) {
         var listO = {};
         list.forEach(function(n, i) {

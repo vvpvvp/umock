@@ -9,42 +9,24 @@ pre {
 }
 .app-header {
   height: 50px;
-  position: absolute;
+  position: fixed;
   left: 0px;
   background: @white-color;
   right: 0;
   z-index: 1;
   background-color: #FAFAFA;
   border-bottom: #E6E6E6 1px solid;
-}
-
-@menu-color: #3B4054;
-
-.app-left {
-  overflow-y: auto;
-  width: 150px;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0px;
-  background: linear-gradient(to bottom, #d41944, #6b4268, #443156);
-
-  .app-menu-header{
-    height: 50px;
+  >div{
+    padding: 5px 20px;
+    line-height: 40px;
   }
-  .h-menu-dark{
-    font-size: 13px;
-    background: transparent;
-    .h-menu-li-selected{
-      background: rgba(255, 255, 255, 0.27);
-    }
-    .h-menu-ul{
-      background: rgba(255, 255, 255, 0.07);
-    }
+  &-title{
+    font-family: monospace;
+    font-size: 22px;
   }
 }
-.app-body {
+
+.app-container {
   position: absolute;
   left: 0px;
   right: 0;
@@ -106,7 +88,7 @@ pre {
       height: @width;
       width: @width;
       text-align: center;
-      line-height: @width;
+      line-height: @width - 2px;
       border-radius: 25px;
       font-size: 20px;
       display: inline-block;
@@ -132,19 +114,6 @@ pre {
   background-color: @primary-color;
   border-radius: 12px;
 }
-
-
-.app-header{
-  >div{
-    padding: 5px 20px;
-    line-height: 40px;
-  }
-  &-title{
-    font-family: monospace;
-    font-size: 22px;
-  }
-}
-
 .h-form .h-form-item-error{
   font-size: 12px;
 }

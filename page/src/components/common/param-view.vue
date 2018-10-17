@@ -39,7 +39,7 @@
       <span class="param-required" v-if="model.name" :class="{'required': model.required}"></span>
       <span class="param-name" v-if="model.name">{{model.name}}<span class="param-split">:</span></span>
       <template v-if="model.type == 'object'">
-        <span v-if="model.ref" class="param-ref" @click="toggle"><span class="link">{{model.ref}}</span> <i class="h-icon-link link" @click.stop="showMockData(model)"></i></span>
+        <span v-if="model.ref" class="param-ref" @click="toggle"><span class="link">{{model.ref}}</span> <i class="h-icon-link link" @click.stop="showMockData(model)" v-tooltip theme="white" content="查看对象"></i></span>
         <template v-if="model.additionalProperties">{{model.additionalProperties.type}}</template>
         <template v-else-if="initObject">
           <span class="param-view-prefix" v-show="showObject">{</span>

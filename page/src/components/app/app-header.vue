@@ -10,7 +10,7 @@
 <template>
   <div class="app-header">
     <div>
-      <span class="app-header-title"><router-link to="/">umock</router-link></span>
+      <span class="app-header-title"><router-link to="/">UMock</router-link></span>
       <div class="float-right app-header-info">
         <a href="https://github.com/vvpvvp/umock#readme" v-font="25" target="_blank"><i class="h-icon-github"></i></a>
       </div>

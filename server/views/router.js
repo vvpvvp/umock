@@ -26,9 +26,6 @@ function overflyData(req, res, data) {
             var re = JSON.parse(body.join(""));
             //深度覆盖
             util.extendResultData(re, data);
-            // console.log(re);
-            // console.log(JSON.stringify(re).length);
-            // res.json(result);
             re = JSON.stringify(re);
             _write.call(res, re);
         }
@@ -72,6 +69,9 @@ mockServer.returnFunc = function(req, res, next) {
     if (author) {
         beginPath = author;
         delete req.headers.author;
+    } else if (req.query.umockauthor) {
+        beginPath = req.query.umockauthor;
+        req.query.umockauthor = null;
     }
     var server = mockServer.projects[beginPath];
     if(!server){

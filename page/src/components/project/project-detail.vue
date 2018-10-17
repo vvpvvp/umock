@@ -1,31 +1,35 @@
 <style lang='less'>
+@menu-width: 200px;
 .app-project {
-  .content-body-title{
-    position: fixed;
+  .body-title{
     border: none;
     top: 0px;
-    left: 210px;
-    margin-right: 5%;
-    padding: 5px 0;
     z-index: 2;
+    .back-icon{
+      position: absolute;
+      top: 8px;
+      left: 20px;
+    }
+    .title {
+      padding: 10px 0 0px @menu-width;
+    }
   }
 
   .search-input{
-    position: fixed;
+    position: absolute;
     z-index: 2;
     top: 10px;
-    right: 110px;
+    right: 40px;
   }
   .h-tabs-default{
-    position: fixed;
+    position: absolute;
     left: 0;
     right: 0;
     z-index: 2;
     background: #FFF;
-    padding-left: 210px;
+    padding-left: @menu-width + 38px;
     > div {
       line-height: 30px;
-      width: 92px;
       text-align: center;
     }
   }
@@ -42,7 +46,7 @@
     }
     &-list {
       overflow: auto;
-      padding-top: 10px;
+      padding-top: 20px;
       padding-bottom: 20px;
       width: 200px;
       font-size: 16px;
@@ -71,16 +75,19 @@
   }
 
   .add-path-button {
-    right: 20px;
-    position: fixed;
-    top: 63px;
-    z-index: 3;
+    // position: absolute;
+    // z-index: 3;
+    // right: 40px;
+    // top: 80px;
   }
   .path-list-container {
-    padding-left: 230px;
-    padding-right: 5%;
-    padding-top: 30px;
-    padding-bottom: 50px;
+    position: absolute;
+    right: 0;
+    left: @menu-width;
+    top: 100px;
+    bottom: 0;
+    overflow: auto;
+    padding: 35px;
   }
   .path {
     &-list {
@@ -205,17 +212,19 @@
 </style>
 <template>
   <div class="app-project">
-    <div class="content-body-title" v-font="18">
-      <div>
+    <div class="body-title">
+      <span class="back-icon link app-header-title" @click="goBack">UMock</span>
+      <div class="title">
         <span class="project-author">{{project.beginPath?project.beginPath.substr(0,1):''}}</span>
         <span class="project-title">{{project.name}} / {{project.beginPath}}</span>
       </div>
+      <div class="search-input">
+        <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
+      </div>
     </div>
-    <div class="search-input">
-      <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
-    </div>
-    <div class="add-path-button" v-if="nowTab == 'defined'"><span class="text-hover" @click="EditMockset()">新增自定义</span></div>
-    <Tabs :datas="tabs" v-model="nowTab" @change="changeClassify"></Tabs>
+    <Tabs :datas="tabs" v-model="nowTab" @change="changeClassify">
+      <template slot-scope="props" slot="item"><span>{{props.tab.title}} ( {{props.tab.key == 'swagger' ? paths.length:mocksets.length}} )</span></template>
+    </Tabs>
     <div class="path-container">
       <div class="path-tags-container">
         <ul class="path-tags-list" key="swagger" v-if="nowTab == 'swagger'">
@@ -228,6 +237,7 @@
           </li>
         </ul>
         <ul class="path-tags-list" key="defined" v-else>
+          <li><Button color="primary" class="add-path-button" @click="EditMockset()">新增接口</Button></li>
           <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">
             All
             <span>{{mocksets.length}}</span>
@@ -360,6 +370,9 @@ export default {
     })
   },
   methods: {
+    goBack() {
+      this.$router.push('/');
+    },
     scrollToPath() {
       this.$nextTick(() => {
         let focus = this.$el.querySelector('.path-info-show');
@@ -376,7 +389,7 @@ export default {
     },
     scrollToTop() {
       this.$nextTick(()=>{
-        document.querySelector('.app-body').scrollTop = 0;
+        document.querySelector('.path-list-container').scrollTop = 0;
       });
     },
     changeShowUrl(url) {
@@ -396,7 +409,7 @@ export default {
       });
     },
     getTarget() {
-      return document.querySelector('.app-body');
+      return document.querySelector('.path-list-container');
     },
     changeClassify(tab) {
       this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {classify: tab.key}});
@@ -404,6 +417,7 @@ export default {
     },
     changeTab(tab) {
       this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {tab: tab, classify: this.$route.query.classify}});
+      this.searchText = null;
       this.scrollToTop();
     },
     deleteMockset(path) {
@@ -540,7 +554,7 @@ export default {
     EditMockset(mockset = null) {
       this.$Modal({
         hasCloseIcon: true,
-        fullScreen: true,
+        // fullScreen: true,
         component: {
           vue: EditMockset,
           data: {
@@ -558,6 +572,11 @@ export default {
   },
   computed: {
     computedMocksets() {
+      if(this.searchText){
+        return this.mocksets.filter((path) => {
+          return path.url.indexOf(this.searchText) > -1 || (path.shortDesc||'').indexOf(this.searchText) > -1;
+        });
+      }
       if(this.$route.query.tab) {
         return this.mocksetObj.objects[this.$route.query.tab];
       } else {
@@ -567,7 +586,7 @@ export default {
     computedPaths() {
       if(this.searchText){
         return this.paths.filter((path) => {
-          return path.path.indexOf(this.searchText) > -1;
+          return path.path.indexOf(this.searchText) > -1 || (path.info.summary||'').indexOf(this.searchText) > -1;
         });
       }
       if(this.$route.query.tab){

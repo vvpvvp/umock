@@ -3,8 +3,8 @@ module.exports = {
   root: "dist",
   webpack: {
     console: true,
-    // publicPath: "/server/",
-    publicPath: "/",
+    publicPath: "/server/",
+    // publicPath: "/",
     output: {
       "./index.html": {
         entry: "./src/app",
