@@ -11,9 +11,7 @@ export default new Model({
     default: "GET"
   },
   isreg: { type: Model.BOOLEAN, default: false },
-  param: '',
-  respParam: '',
-  menuId: '',
+  tags: '',
   projectId: '',
   active: {
     type: Model.BOOLEAN,

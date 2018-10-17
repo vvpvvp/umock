@@ -53,14 +53,12 @@ var mocksetView = function(mockServer, db) {
 
         var MockSetSchema = new db.Schema({
             url: String,
-            desc: String,
+            summary: String,
             result: String,
             dataHandler: {type:String,default: "over"},//over覆盖,overlying叠加
             type: {type:String,default: "GET"},
             isreg: {type:Boolean,default:false},
-            param: String,
-            respParam:String,
-            menuId:String,
+            tags:String,
             projectId:String,
             active: {type:Boolean,default: true},
             createTime: {type:Date,default: Date.now},
@@ -322,20 +320,14 @@ var mocksetView = function(mockServer, db) {
             data.isreg = data.url.includes(":");
         }
         if (body.result != undefined) data.result = body.result;
-        if (body.shortDesc != undefined) data.shortDesc = body.shortDesc;
+        if (body.summary != undefined) data.summary = body.summary;
         if (body.description != undefined) data.description = body.description;
         if (body.active != undefined) data.active = body.active;
-        if (body.develop != undefined) data.develop = body.develop;
-        if (body.frontdevelop != undefined) data.frontdevelop = body.frontdevelop;
-        if (body.backdevelop != undefined) data.backdevelop = body.backdevelop;
         if (body.type != undefined) data.type = body.type;
-        if (body.param != undefined) data.param = body.param;
-        if (body.respParam != undefined) data.respParam = body.respParam;
         if (body.dataHandler != undefined) data.dataHandler = body.dataHandler;
-        if (body.menuId != undefined) data.menuId = body.menuId;
+        if (body.tags != undefined) data.tags = body.tags;
         if (body.projectId != undefined) data.projectId = body.projectId;
 
-        data.modifyTime = new Date();
         return data;
     }
 

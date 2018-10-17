@@ -91,8 +91,8 @@ var view = function (mockServer, db) {
       var listO = {},
         listId = {};
       rows.forEach((n, i) => {
-        // if (listO[n.beginPath] == undefined) listO[n.beginPath] = {};
-        listO[n.beginPath] = n;
+        // if (listO[n.uniqueKey] == undefined) listO[n.uniqueKey] = {};
+        listO[n.uniqueKey] = n;
         listId[n.id] = n;
       });
       mockServer.projects = listO;
@@ -112,13 +112,12 @@ var view = function (mockServer, db) {
     var data = {};
     if (body.name != undefined) data.name = body.name;
     if (body.description != undefined) data.description = body.description;
-    if (body.rewrite != undefined) data.rewrite = body.rewrite;
-    if (body.isPublic != undefined) data.isPublic = body.isPublic;
-    if (body.beginPath != undefined) data.beginPath = body.beginPath;
+    if (body.rewritePath != undefined) data.rewritePath = body.rewritePath;
+    if (body.identification != undefined) data.identification = body.identification;
+    if (body.uniqueKey != undefined) data.uniqueKey = body.uniqueKey;
     if (body.swagger != undefined) data.swagger = body.swagger;
     if (body.private != undefined) data.private = body.private;
     if (body.proxy != undefined) data.proxy = body.proxy;
-    data.modifyTime = new Date();
     return data;
   };
 

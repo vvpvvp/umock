@@ -1,8 +1,8 @@
 export default new Model({
   id: 24,
   name: "Inmind",
-  beginPath: "inmind",
-  isPublic: 0,
+  uniqueKey: "inmind",
+  identification: 0,
   description: "",
   private: 0,
   swagger: "",
@@ -10,5 +10,5 @@ export default new Model({
   modifyTime: {
     type: Model.DATE
   },
-  rewrite: ''
+  rewritePath: ''
 })

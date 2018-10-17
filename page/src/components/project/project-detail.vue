@@ -215,8 +215,8 @@
     <div class="body-title">
       <span class="back-icon link app-header-title" @click="goBack">UMock</span>
       <div class="title">
-        <span class="project-author">{{project.beginPath?project.beginPath.substr(0,1):''}}</span>
-        <span class="project-title">{{project.name}} / {{project.beginPath}}</span>
+        <span class="project-author">{{project.uniqueKey?project.uniqueKey.substr(0,1):''}}</span>
+        <span class="project-title">{{project.name}} / {{project.uniqueKey}}</span>
       </div>
       <div class="search-input">
         <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
@@ -300,7 +300,6 @@
                   </div>
                 </template>
               </div>
-    
             </div>
           </li>
         </ul>
@@ -309,8 +308,11 @@
             <div class="path-head" @click="changeShowUrl(path.totalUrl)">
               <span class="path-method">{{path.type}}</span>
               <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" theme="white" v-tooltip @click.stop="copy(path.url)" content="复制链接"></span></span>
-              <span class="path-description text-ellipsis">{{path.shortDesc}}</span>
-              <span class="middle-right" v-if="path.menuId"><span class="h-tag">{{path.menuId}}</span></span>
+              <span class="path-description text-ellipsis">{{path.summary}}</span>
+              <span class="middle-right">
+                <Button size="xs" color="red">拦截中</Button>
+                <span class="h-tag" v-if="path.tags">{{path.tags}}</span>
+              </span>
             </div>
             <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
               <div>
@@ -452,12 +454,12 @@ export default {
           let menus = [];
           let mocksetObj = {};
           for(let m of resp.content) {
-            if(!m.menuId) continue;
-            if(menus.indexOf(m.menuId) == -1) {
-              menus.push(m.menuId);
-              mocksetObj[m.menuId] = [];
+            if(!m.tags) continue;
+            if(menus.indexOf(m.tags) == -1) {
+              menus.push(m.tags);
+              mocksetObj[m.tags] = [];
             }
-            mocksetObj[m.menuId].push(m);
+            mocksetObj[m.tags].push(m);
           }
           this.mocksetObj.menus = menus;
           this.mocksetObj.objects = mocksetObj;
@@ -467,8 +469,12 @@ export default {
     getSwagger() {
       if (this.project.swagger) {
         R.Project.swagger(this.project.swagger).then(resp => {
+          
           if(!resp){
-            this.$Loading.close();
+            return;
+          }
+          if(resp.err) {
+            this.$Message.error(`swagger文件加载失败:${this.project.swagger}`);
             return;
           }
           if(resp.openapi) {
@@ -543,13 +549,12 @@ export default {
           this.swagger.tags = tags.sort((a, b)=>{return a.name > b.name ? 1 : -1});
           this.paths = paths;
           this.counts = counts;
-          this.$Loading.close();
           this.scrollToPath();
         });
       } else {
         this.scrollToPath();
-        this.$Loading.close();
       }
+      this.$Loading.close();
     },
     EditMockset(mockset = null) {
       this.$Modal({
@@ -574,7 +579,7 @@ export default {
     computedMocksets() {
       if(this.searchText){
         return this.mocksets.filter((path) => {
-          return path.url.indexOf(this.searchText) > -1 || (path.shortDesc||'').indexOf(this.searchText) > -1;
+          return path.url.indexOf(this.searchText) > -1 || (path.summary||'').indexOf(this.searchText) > -1;
         });
       }
       if(this.$route.query.tab) {

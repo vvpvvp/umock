@@ -6,8 +6,8 @@ export default new Model({
     default: 'get'
   },
   result: '',
-  shortDesc: "",
+  summary: "",
   projectId: 1,
   description: "",
-  menuId: ''
+  tags: ''
 })

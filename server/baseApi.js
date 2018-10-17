@@ -85,10 +85,13 @@ var init = function () {
       method: 'GET',
       json: true
     }
-
     request(options, function (error, response, data) {
-      res.json(data);
-    });
+      if (error) {
+        res.json({err: true});
+      } else {
+        res.json(data || {});
+      }
+    })
   });
 
   app.get('/umock/location', (req, res, next) => {

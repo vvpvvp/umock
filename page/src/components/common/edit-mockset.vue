@@ -18,14 +18,14 @@
             <FormItem label="URL" prop="url">
               <input type="text" v-model="mockset.url"/>
             </FormItem>
-            <FormItem label="说明" prop="shortDesc">
-              <input type="text" v-model="mockset.shortDesc"/>
+            <FormItem label="说明" prop="summary">
+              <input type="text" v-model="mockset.summary"/>
             </FormItem>
             <FormItem label="type" prop="type">
               <SwitchList :datas="types" v-model="mockset.type"></SwitchList>
             </FormItem>
             <FormItem label="目录">
-              <AutoComplete  :datas="params.menus" :mustMatch="false" v-model="mockset.menuId"></AutoComplete>
+              <AutoComplete  :datas="params.menus" :mustMatch="false" v-model="mockset.tags"></AutoComplete>
             </FormItem>
             <FormItem label="描述">
               <!-- <AceEditor
@@ -78,7 +78,7 @@ export default {
         required: [
           'url',
           'type',
-          'shortDesc',
+          'summary',
         ]
       }
     };

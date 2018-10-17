@@ -63,17 +63,20 @@ mockServer.returnFunc = function(req, res, next) {
     let url = decodeURI(req.baseUrl),
         hasUrl = false;
 
-    let beginPath = (url.match(/\/\w+/) || [""])[0];
+    let uniqueKey = (url.match(/\/\w+/) || [""])[0];
 
     var author = req.headers.author;
     if (author) {
-        beginPath = author;
+        uniqueKey = author;
         delete req.headers.author;
-    } else if (req.query.umockauthor) {
-        beginPath = req.query.umockauthor;
-        req.query.umockauthor = null;
+    } else if (req.headers._umock) {
+        uniqueKey = req.headers._umock;
+        delete req.headers._umock;
+    } else if (req.query._umock) {
+        uniqueKey = req.query._umock;
+        req.query._umock = null;
     }
-    var server = mockServer.projects[beginPath];
+    var server = mockServer.projects[uniqueKey];
     if(!server){
         next();
         return;

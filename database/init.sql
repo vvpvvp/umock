@@ -23,25 +23,21 @@
 DROP TABLE IF EXISTS `mockset`;
 
 CREATE TABLE `mockset` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(100) NOT NULL DEFAULT '',
-  `isreg` varchar(10) DEFAULT NULL,
-  `result` text NOT NULL,
-  `description` varchar(10000) NOT NULL DEFAULT '',
-  `active` tinyint(1) DEFAULT NULL,
-  `type` varchar(10) DEFAULT NULL,
-  `param` varchar(10) DEFAULT NULL,
-  `respParam` varchar(100) NOT NULL DEFAULT '',
-  `menuId` varchar(10) DEFAULT NULL,
-  `projectId` varchar(10) DEFAULT NULL,
-  `dataHandler` varchar(11) DEFAULT NULL,
-  `modifyTime` timestamp NULL DEFAULT NULL,
-  `shortDesc` varchar(200) DEFAULT NULL,
-  `develop` int(1) DEFAULT NULL,
-  `frontdevelop` varchar(100) DEFAULT NULL,
-  `backdevelop` varchar(100) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `projectId` varchar(10) DEFAULT NULL COMMENT '项目id',
+  `url` varchar(100) NOT NULL DEFAULT '' COMMENT 'url',
+  `type` varchar(10) DEFAULT NULL COMMENT 'url 类型',
+  `tags` varchar(10) DEFAULT NULL COMMENT '标签',
+  `summary` varchar(200) DEFAULT NULL COMMENT '简短描述',
+  `isreg` varchar(10) DEFAULT NULL COMMENT '是否为正则表达式url',
+  `description` varchar(10000) NOT NULL DEFAULT '' COMMENT '描述',
+  `result` text NOT NULL COMMENT '预设返回结果',
+  `active` tinyint(1) DEFAULT NULL COMMENT '是否开启拦截',
+  `dataHandler` varchar(11) DEFAULT NULL COMMENT 'over覆盖,overlying叠加，拦截类型',
+  `createTime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `modifyTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=551 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -56,17 +52,17 @@ DROP TABLE IF EXISTS `project`;
 
 CREATE TABLE `project` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL DEFAULT '',
-  `beginPath` varchar(100) NOT NULL,
-  `isPublic` varchar(10) DEFAULT NULL,
-  `description` varchar(100) DEFAULT NULL,
-  `proxy` varchar(100) DEFAULT NULL,
-  `modifyTime` timestamp NULL DEFAULT NULL,
-  `rewrite` varchar(100) DEFAULT NULL,
-  `swagger` varchar(100) DEFAULT NULL,
-  `private` int(11) DEFAULT '1',
+  `name` varchar(100) NOT NULL DEFAULT '' COMMENT '项目名称',
+  `uniqueKey` varchar(100) NOT NULL DEFAULT '' COMMENT '唯一标识',
+  `identification` varchar(10) DEFAULT '0' COMMENT '1:URL前缀, 0: HEAD参数',
+  `rewritePath` varchar(100) DEFAULT NULL COMMENT '删除的前缀',
+  `description` varchar(100) DEFAULT NULL COMMENT '描述',
+  `proxy` varchar(100) DEFAULT NULL COMMENT '反向代理地址',
+  `swagger` varchar(100) DEFAULT NULL COMMENT 'swagger url',
+  `private` int(11) DEFAULT '1' COMMENT 'public: 公共 private: 私有',
+  `modifyTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8;
 
 /*!40101 SET character_set_client = @saved_cs_client */;
 
