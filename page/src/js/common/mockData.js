@@ -34,17 +34,14 @@ module.exports = {
         return schema;
       }
     } else if (model.type == 'object') {
-      if (schema.items.$ref) {
-        return {
-          type: 'array',
-          name: schema.name,
-          model: this.initData({
-            type: 'object',
-            $ref: schema.items.$ref
-          }, definitions, level-1)
-        };
+      if (model.model) {
+        let o = {};
+        for(let m of model.model) {
+          o[m.name] = this.initData(m);
+        }
+        return o;
       } else {
-        return schema;
+        return null;
       }
     } else {
       return 
