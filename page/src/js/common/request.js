@@ -42,6 +42,9 @@ const Request = {
     delete(id) {
       return Ajax.delete(`/mockset/${id}`);
     },
+    updateActive(id, active) {
+      return Ajax.postJson(`/mockset/updateActive/${id}`, {active})
+    },
     edit(mockset) {
       if (mockset.id) {
         return Ajax.postJson(`/mockset/${mockset.id}`, mockset);

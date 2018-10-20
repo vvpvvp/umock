@@ -31,6 +31,7 @@
     "express": "~4.13.1",
     "http-proxy": "^1.11.1",
     "leveldown": "^1.5.0",
+    "mockjs": "^1.0.1-beta3",
     "morgan": "~1.6.1",
     "mysql": "^2.11.1",
     "optimist": "^0.6.1",

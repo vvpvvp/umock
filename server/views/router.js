@@ -22,19 +22,30 @@ function overflyData(req, res, data) {
     };
     var _end = res.end;
     res.end = function() {
-        if (res.statusCode == 200) {
-            var re = JSON.parse(body.join(""));
-            //深度覆盖
-            util.extendResultData(re, data);
-            re = JSON.stringify(re);
-            _write.call(res, re);
+        if (res.get('Content-Type').indexOf('application/json')>-1) {
+            try {
+                var re = JSON.parse(body.join(""));
+                //深度覆盖
+                util.extendResultData(re, data);
+                re = JSON.stringify(re);
+                _write.call(res, re);
+            } catch (error) {
+                _write.call(res, body.join(""));
+            }
+        } else {
+            _write.call(res, body.join(""));
         }
         _end.call(res);
     };
 }
 
 function handlerResult(req, res, element) {
-    let result = JSON.parse(element.result);
+    let result = {};
+    try {
+        result = JSON.parse(element.result);
+    } catch (error) {
+        
+    }
     if (element.dataHandler == "over") {
         res.json(result);
         res.end();
@@ -85,8 +96,8 @@ mockServer.returnFunc = function(req, res, next) {
     if (server) {
         req.proxy = server.proxy;
         req.proxyServer = server;
-        var mockset = getObj(mockServer.mockSetList,id+"."+req.method+"."+url);
-        var regExpList = getObj(mockServer.mockRegExpList,id+"."+req.method);
+        var mockset = getObj(mockServer.mockSetList,id+"."+req.method.toLowerCase()+"."+url);
+        var regExpList = getObj(mockServer.mockRegExpList,id+"."+req.method.toLowerCase());
         if (mockset != undefined) {
             hasUrl = handlerResult(req, res, mockset);
         } else {

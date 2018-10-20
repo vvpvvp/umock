@@ -124,7 +124,7 @@
       
       .path {
         &-head {
-          .h-tag{
+          .path-tag{
             background-color: fade(@color, 85%);
             color: #FFF;
           }
@@ -237,7 +237,7 @@
           </li>
         </ul>
         <ul class="path-tags-list" key="defined" v-else>
-          <li><Button color="primary" class="add-path-button" @click="EditMockset()">新增接口</Button></li>
+          <li><Button color="primary" class="add-path-button" @click="EditMockset()">新增接口模拟</Button></li>
           <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">
             All
             <span>{{mocksets.length}}</span>
@@ -255,10 +255,15 @@
               <span class="path-method">{{path.method}}</span>
               <span class="path-name">{{path.path}} <span class="h-icon-link text-hover" theme="white" v-tooltip @click.stop="copy(path.path)" content="复制链接"></span></span>
               <span class="path-description text-ellipsis">{{path.info.summary}}</span>
-              <span class="middle-right"><span class="h-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
+              <span class="middle-right"><span class="h-tag path-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
             </div>
             <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
               <div>
+                <p>
+                  <Button color="primary" v-if="mocksetObjs[path.totalUrl]" @click="EditMockset(mocksetObjs[path.totalUrl])">编辑数据模拟</Button>
+                  <Button color="primary" v-else @click="CreateMockset(path)">开启数据模拟</Button>
+                  <Button color="primary" @click="CreateData(path)">生成模拟数据</Button>
+                </p>
                 <h3 v-if="path.info.description">Description</h3>
                 <pre>{{path.info.description}}</pre>
                 <h3>Parameters</h3>
@@ -272,7 +277,7 @@
                   </ul>
                 </template>
                 <template v-if="path.parameters.path.length">
-                  <h4>Path</h4>
+                  <h4>Mockset</h4>
                   <ul>
                     <paramView v-for="path of path.parameters.path" :param="path" :key="path"></paramView>
                   </ul>
@@ -304,21 +309,27 @@
           </li>
         </ul>
         <ul class="path-list" key="defined" v-else>
-          <li v-for="path of computedMocksets" :key="path" class="path-li" :class="`path-li-${path.type}`">
+          <li v-for="path of computedMocksets" :key="path" class="path-li" :class="`path-li-${path.active ? path.type : 'deprecated'}`">
             <div class="path-head" @click="changeShowUrl(path.totalUrl)">
               <span class="path-method">{{path.type}}</span>
-              <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" theme="white" v-tooltip @click.stop="copy(path.url)" content="复制链接"></span></span>
+              <span class="path-name">{{path.url}} <span class="h-icon-link text-hover" theme="white" v-tooltip @click.stop="copyMock(path)" content="复制测试链接"></span></span>
               <span class="path-description text-ellipsis">{{path.summary}}</span>
               <span class="middle-right">
-                <Button size="xs" color="red">拦截中</Button>
-                <span class="h-tag" v-if="path.tags">{{path.tags}}</span>
+                <span v-if="path.active" class="h-tag font13" :class="{'h-tag-red': path.dataHandler == 'over', 'h-tag-yellow': path.dataHandler == 'overlying'}">{{path.dataHandler == 'over' ? '数据模拟中' : '数据叠加中'}}</span>
+                <!-- <Button v-if="path.active" text-color='red' size="s" @click="goTest(path)">迁移测试</button> -->
+                <i class="h-split"></i>
               </span>
             </div>
             <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
               <div>
-                <div class="gray-color float-right"><span class="text-hover" @click="EditMockset(path)">编辑</span><span class="h-split"></span><span class="text-hover" @click="deleteMockset(path)">删除</span></div>
-                <h3>Description</h3>
-                <pre>{{path.description}}</pre>
+                <div>
+                  <Button v-if="path.active" text-color='yellow' size="s" @click="updateActive(path.id, 0)">关闭数据模拟</button>
+                  <Button v-else text-color='green' size="s" @click="updateActive(path.id, 1)" icon="h-icon-check">开启数据模拟</button>
+                  <Button text-color='blue' size="s" @click="EditMockset(path)" icon="h-icon-edit">编辑</button>
+                  <Button text-color='red' size="s" @click="deleteMockset(path)" icon="h-icon-trash">删除</Button>
+                </div>
+                <h3>Result</h3>
+                <pre>{{path.result}}</pre>
               </div>
             </div>
           </li>
@@ -331,11 +342,13 @@
 </template>
 <script>
 
-import Path from 'model/project/Path';
+import Mockset from 'model/Mockset';
 import Project from 'model/project/Project';
 import Beautify from 'components/common/js-beautify';
 import paramView from 'components/common/param-view';
 import EditMockset from 'components/common/edit-mockset';
+
+import mockData from 'js/common/mockData'
 // import AceEditor from 'components/common/Ace.component';
 
 import Clipboard from 'clipboard';
@@ -359,7 +372,7 @@ export default {
       nowTab: this.$route.query.classify || 'swagger',
       tabs: {
         swagger: 'Swagger',
-        defined: '自定义'
+        defined: '数据模拟'
       },
       swaggerVersion: "2.0",
     }
@@ -389,6 +402,12 @@ export default {
         }
       })
     },
+    CreateMockset() {
+
+    },
+    CreateData(path) {
+      mockData.generate(path, this.swagger.definitions);
+    },
     scrollToTop() {
       this.$nextTick(()=>{
         document.querySelector('.path-list-container').scrollTop = 0;
@@ -402,6 +421,12 @@ export default {
         this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {classify: this.$route.query.classify, tab: this.$route.query.tab, url: url}});
         this.scrollToPath();
       }
+    },
+    copyMock(path) {
+      this.copy(`${window.location.origin}${path.url}?_umock=${this.project.uniqueKey}`)
+    },
+    goTest(path) {
+      window.open(`${window.location.origin}${path.url}?_umock=${this.project.uniqueKey}`);
     },
     copy(path) {
       this.nowPath = path;
@@ -450,7 +475,7 @@ export default {
             c.show = false;
             c.totalUrl= `${c.type}${c.url}`
           }
-          this.mocksets = Path.parse(resp.content);
+          this.mocksets = Mockset.parse(resp.content);
           let menus = [];
           let mocksetObj = {};
           for(let m of resp.content) {
@@ -573,6 +598,14 @@ export default {
           }
         }
       })
+    },
+    updateActive(id, active) {
+      R.Mockset.updateActive(id, active).then((resp) => {
+        if(resp.ok) {
+          this.$Message('更新成功');
+          this.getList();
+        }
+      })
     }
   },
   computed: {
@@ -587,6 +620,9 @@ export default {
       } else {
         return this.mocksets;
       }
+    },
+    mocksetObjs() {
+      return Utils.toObject(this.mocksets, 'totalUrl');
     },
     computedPaths() {
       if(this.searchText){

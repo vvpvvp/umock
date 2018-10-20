@@ -1,7 +1,7 @@
 export default new Model({
   id: 24,
-  name: "Inmind",
-  uniqueKey: "inmind",
+  name: "",
+  uniqueKey: "",
   identification: 0,
   description: "",
   private: 0,

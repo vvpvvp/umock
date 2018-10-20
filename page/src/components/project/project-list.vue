@@ -46,7 +46,7 @@
               <p><span class="project-title">
                 <span class="project-author" :style="getBg(project)">{{project.uniqueKey.substr(0,1)}}</span>
               <router-link :to="{name: 'detail', params:{id: project.id}}">{{project.name}}  /  {{project.uniqueKey}}</router-link></span><i class="h-split"></i>
-              <span class="gray-color">{{project.description}}- <span v-font="13">{{project.identification?'URL前缀':'HEAD参数'}}</span></span>
+              <span class="gray-color">{{project.description}}</span>
               <span class="project-edit middle" @click="editProject(project)"><i class="h-icon-setting text-hover"></i></span></p>
             </li>
           </ul>
@@ -56,7 +56,7 @@
           <div v-width="500">
             <Form :rules="rule" :model="project" ref="createForm" :label-width="120">
               <FormItem label="项目名" prop="name"><input type="text" v-model="project.name"></FormItem>
-              <FormItem label="类型" prop="identification"><Radio :datas="[{key:1, title:'URL前缀'}, {key:0 , title:'HEAD参数'}]" v-model="project.identification"></Radio></FormItem>
+              <!-- <FormItem label="类型" prop="identification"><Radio :datas="[{key:1, title:'URL前缀'}, {key:0 , title:'HEAD参数'}]" v-model="project.identification"></Radio></FormItem> -->
               <FormItem label="识别参数" prop="uniqueKey"><input type="text" v-model="project.uniqueKey"></FormItem>
               <FormItem label="去除url前缀"><input type="text" v-model="project.rewritePath"></FormItem>
               <FormItem label="反向代理" prop="proxy"><div class="h-input-group"><input type="text" v-model="project.proxy"><span class="h-input-addon" @click="analysis()"><span class="link">自动解析</span></span></div></FormItem>

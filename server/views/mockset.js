@@ -62,7 +62,7 @@ var mocksetView = function(mockServer, db) {
             projectId:String,
             active: {type:Boolean,default: true},
             createTime: {type:Date,default: Date.now},
-            modifyTime: {type:Date,default: Date.now}
+            // modifyTime: {type:Date,default: Date.now}
         });
 
 
@@ -263,6 +263,19 @@ var mocksetView = function(mockServer, db) {
                 } else {
                     reInitList();
                     getOne(rows.insertId,res);
+                }
+            });
+        });
+
+        app.post('/umock/mockset/updateActive/:id', (req, res, next) => {
+            let query = getModel(req.body);
+            db.query(`update mockset SET active = ? where id = ${req.params.id}`, [req.body.active] , function(err, rows, fields) {
+              if (err) {
+                    console.log(err);
+                    res.send(Result.defaultError("更新失败"));
+                } else {
+                    reInitList();
+                    res.send(Result.R(rows));
                 }
             });
         });

@@ -11,6 +11,7 @@
     overflow-x: auto;
     p {
       white-space: nowrap;
+      margin: 3px 0;
     }
   }
   .toggleComment{
@@ -27,7 +28,7 @@
     <div class="mock-data-container">
       <div>
         <p>{</p>
-        <p v-for="(m, index) of param.model.model" :key="m.name">&nbsp;&nbsp;&nbsp;&nbsp;{{m.name}}: {{m | dataType}}<template v-if="index < param.model.model.length - 1">, </template><template v-if="(m.description || m.title) && showComment">//{{m.description || m.title}}</template></p>
+        <p v-for="(m, index) of param.model.model" :key="m.name">&nbsp;&nbsp;&nbsp;&nbsp;{{m.name}}: <span class="primary-color">{{m | dataType}}</span><template v-if="index < param.model.model.length - 1">, </template><template v-if="(m.description || m.title) && showComment"> <span class="gray-color">//{{m.description || m.title}}</span></template></p>
         <p>}</p>
       </div>
     </div>
@@ -40,8 +41,11 @@
 
 import Clipboard from 'clipboard';
 
-const returnType = function(type){
-  return {integer: '0', 'date-time': 'Date', string: "''", object: "", boolean: "true", number: '0'}[type];
+const returnType = function({type, format}){
+  if(format == 'data' || format == 'date-time') {
+    return 'Date';
+  }
+  return {integer: 'Number', string: "String", object: "{}", boolean: "Boolean", number: 'Number'}[type] || '';
 }
 export default {
   components: {
@@ -60,7 +64,7 @@ export default {
     dataType(m){
       if(m.type == 'object'){
         if(m.additionalProperties){
-          return `{ ${returnType(m.additionalProperties.type)} }`;
+          return `{ ${returnType(m.additionalProperties)} }`;
         } else if(m.$ref){
           return `{ ${Utils.getSchema(m.$ref)} }`;
         }
@@ -69,14 +73,14 @@ export default {
         if (m.items.$ref) {
           return `[ ${m.items.$ref.substring(14)} ]`;
         } else {
-          return `[ ${returnType(m.items.type)} ]`;
+          return `[ ${returnType(m.items)} ]`;
         }
       }
 
       if (m.$ref) {
         return `${Utils.getSchema(m.$ref)}`;
       } else {
-        return returnType(m.type);
+        return returnType(m);
       }
     }
   },

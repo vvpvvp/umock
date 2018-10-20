@@ -15,7 +15,7 @@
   import 'brace/ext/language_tools';
   import 'brace/theme/monokai';
   import 'brace/theme/tomorrow';
-  import 'brace/mode/markdown';
+  import 'brace/mode/javascript';
 
   import { editorOptions } from 'js/editorOptions';
   import propsValue from 'js/props';
