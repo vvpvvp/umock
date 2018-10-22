@@ -1,10 +1,10 @@
-import mockjs from 'mockjs';
+import {Random, Mock} from 'mockjs';
 
 module.exports = {
   generate(path, definitions) {
     let level = 6;
-    let model = this.getModel(path.responses, definitions, level);
-    log(model)
+    let model = this.getModel(path, definitions, level);
+    return this.initData(model)
   },
   initDefinitions(definition) {
     let list = [];
@@ -13,38 +13,37 @@ module.exports = {
     }
     return list;
   },
-  function({type, format}){
-    if(format == 'data' || format == 'date-time') {
-      return 'Date';
-    }
-    return {integer: 'Number', string: "String", object: "{}", boolean: "Boolean", number: 'Number'}[type] || '';
-  },
   initData(model) {
     if (model.type == 'array') {
-      if (schema.items.$ref) {
-        return {
-          type: 'array',
-          name: schema.name,
-          model: this.initData({
-            type: 'object',
-            $ref: schema.items.$ref
-          }, definitions, level-1)
-        };
-      } else {
-        return schema;
+      if(model.items) {
+        return [this.initData(model.items)];
       }
-    } else if (model.type == 'object') {
-      if (model.model) {
-        let o = {};
-        for(let m of model.model) {
-          o[m.name] = this.initData(m);
-        }
-        return o;
-      } else {
+      if(model.model == null) {
         return null;
       }
-    } else {
-      return 
+      return [this.initData(model.model)]
+    } else if (model.type == 'object') {
+      let result = {};
+      if(model.model == null) {
+        return null;
+      }
+      for(let m of model.model) {
+        result[m.name] = this.initData(m);
+      }
+      return result
+    } else if (model.type == 'string'){
+      if (model.format == 'data' || model.format == 'date-time') {
+        return Random.datetime();
+      }
+      return Random.string('upper', 5, 10);
+    } else if (model.type == 'integer'){
+      return Random.int(1, 100);
+    } else if (model.type == 'integer'){
+      return Random.int(1, 100);
+    } else if (model.type == 'boolean'){
+      return Random.boolean();
+    } else if (model.type == 'number'){
+      return Random.float(60, 100, 3, 5);
     }
   },
   getModel(schema, definitions, level) {

@@ -183,7 +183,7 @@ umock.init = function(argument) {
         app.use(function(req, res, next) {
             if (req.proxy) {
                 if(req.proxyServer.rewritePath)req.url = req.url.replace(req.proxyServer.rewritePath,"");
-                console.log(req.proxy);
+                // console.log(req.proxy);
                 proxy.web(req, res, {
                     target: req.proxy,
                     toProxy: true,

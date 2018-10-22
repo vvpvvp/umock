@@ -262,7 +262,6 @@
                 <p>
                   <Button color="primary" v-if="mocksetObjs[path.totalUrl]" @click="EditMockset(mocksetObjs[path.totalUrl])">编辑数据模拟</Button>
                   <Button color="primary" v-else @click="CreateMockset(path)">开启数据模拟</Button>
-                  <Button color="primary" @click="CreateData(path)">生成模拟数据</Button>
                 </p>
                 <h3 v-if="path.info.description">Description</h3>
                 <pre>{{path.info.description}}</pre>
@@ -290,6 +289,7 @@
                 </template>
                 <template v-if="path.parameters.body">
                   <h4>Body</h4>
+                  <p><Button size="xs" color="primary" @click="CreateData(path.parameters.body.model)">生成模拟数据</Button></p>
                   <div class="path-info-body">
                     <paramView :param="path.parameters.body.model" :definitions="swagger.definitions"></paramView>
                   </div>
@@ -300,6 +300,7 @@
                     <span v-if="path.info.produces">content-type:{{path.info.produces.join(',')}}</span>
                   </p>
                   <h4>Body</h4>
+                  <p><Button size="xs" color="primary" @click="CreateData(path.responses)">生成模拟数据</Button></p>
                   <div class="path-info-body">
                     <paramView :param="path.responses" :definitions="swagger.definitions"></paramView>
                   </div>
@@ -328,8 +329,8 @@
                   <Button text-color='blue' size="s" @click="EditMockset(path)" icon="h-icon-edit">编辑</button>
                   <Button text-color='red' size="s" @click="deleteMockset(path)" icon="h-icon-trash">删除</Button>
                 </div>
-                <h3>Result</h3>
-                <pre>{{path.result}}</pre>
+                <!-- <h3>Result</h3> -->
+                <!-- <pre>{{path.result}}</pre> -->
               </div>
             </div>
           </li>
@@ -347,6 +348,7 @@ import Project from 'model/project/Project';
 import Beautify from 'components/common/js-beautify';
 import paramView from 'components/common/param-view';
 import EditMockset from 'components/common/edit-mockset';
+import showMockData from 'components/common/show-mock-data';
 
 import mockData from 'js/common/mockData'
 // import AceEditor from 'components/common/Ace.component';
@@ -402,11 +404,59 @@ export default {
         }
       })
     },
-    CreateMockset() {
-
+    CreateMockset(path) {
+      let data = mockData.generate(path.responses, this.swagger.definitions);
+      this.$Modal({
+        component: {
+          vue: EditMockset,
+          data: {
+            mockset: {
+              result: JSON.stringify(data, null, 2),
+              url: `${this.project.rewritePath}${path.path}`,
+              type: path.method,
+              summary: path.info.summary,
+              tags: path.info.tags.length ? path.info.tags[0] : null,
+              dataHandler: 'over',
+              projectId: this.project.id
+            },
+            menus: this.mocksetObj.menus
+          }
+        },
+        events: {
+          success: ()=>{
+            this.getList();
+          }
+        }
+      })
+    },
+    EditMockset(mockset = null) {
+      this.$Modal({
+        hasCloseIcon: true,
+        // fullScreen: true,
+        component: {
+          vue: EditMockset,
+          data: {
+            mockset: mockset || {projectId: this.project.id},
+            menus: this.mocksetObj.menus
+          }
+        },
+        events: {
+          success: ()=>{
+            this.getList();
+          }
+        }
+      })
     },
     CreateData(path) {
-      mockData.generate(path, this.swagger.definitions);
+      let data = mockData.generate(path, this.swagger.definitions);
+      this.$Modal({
+        component: {
+          vue: showMockData,
+          data: {
+            content: JSON.stringify(data, null, 2)
+          }
+        },
+      })
     },
     scrollToTop() {
       this.$nextTick(()=>{
@@ -580,24 +630,6 @@ export default {
         this.scrollToPath();
       }
       this.$Loading.close();
-    },
-    EditMockset(mockset = null) {
-      this.$Modal({
-        hasCloseIcon: true,
-        // fullScreen: true,
-        component: {
-          vue: EditMockset,
-          data: {
-            mockset: mockset || {projectId: this.project.id},
-            menus: this.mocksetObj.menus
-          }
-        },
-        events: {
-          success: ()=>{
-            this.getList();
-          }
-        }
-      })
     },
     updateActive(id, active) {
       R.Mockset.updateActive(id, active).then((resp) => {

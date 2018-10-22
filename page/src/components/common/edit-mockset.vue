@@ -33,6 +33,7 @@
             </FormItem>
             <FormItem label="模拟数据">
               <AceEditor
+                :wrapEnabled="true"
                 :fontSize="14"
                 :showPrintMargin="true"
                 :showGutter="true"

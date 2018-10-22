@@ -44,7 +44,7 @@ function handlerResult(req, res, element) {
     try {
         result = JSON.parse(element.result);
     } catch (error) {
-        
+        console.error(error)
     }
     if (element.dataHandler == "over") {
         res.json(result);

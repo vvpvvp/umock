@@ -62,7 +62,7 @@ var mocksetView = function(mockServer, db) {
             projectId:String,
             active: {type:Boolean,default: true},
             createTime: {type:Date,default: Date.now},
-            // modifyTime: {type:Date,default: Date.now}
+            modifyTime: {type:Date,default: Date.now}
         });
 
 

@@ -16,6 +16,7 @@
   import 'brace/theme/monokai';
   import 'brace/theme/tomorrow';
   import 'brace/mode/javascript';
+  import 'brace/mode/json';
 
   import { editorOptions } from 'js/editorOptions';
   import propsValue from 'js/props';
@@ -144,6 +145,7 @@
     },
     mounted() { // Mounted
       const {
+        readonly,
         onBeforeLoad,
         onValidate,
         mode,
@@ -181,7 +183,7 @@
       }
       this.editor.renderer.setScrollMargin(scrollMargin[0], scrollMargin[1], scrollMargin[2], scrollMargin[3])
       this.editor.getSession().setMode(`ace/mode/${mode}`);
-
+      if(readonly===true) this.editor.setReadOnly(true);
       this.editor.setTheme(`ace/theme/${theme}`);
       this.editor.setFontSize(fontSize);
       this.editor.getSession().setValue(!defaultValue ? value : defaultValue, cursorStart);
@@ -197,7 +199,8 @@
       this.editor.on('input', this.onInputUpdate);
       this.editor.getSession().selection.on('changeSelection', this.selectionChange);
       this.editor.getSession().selection.on('changeCursor', this.cursorChange);
-
+      this.editor.getSession().foldAll();
+      this.editor.getSession().toggleFold(true);
       if (onValidate) {
         this.editor.getSession().on('changeAnnotation', () => {
           const annotations = this.editor.getSession().getAnnotations();

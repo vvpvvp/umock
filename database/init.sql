@@ -31,7 +31,7 @@ CREATE TABLE `mockset` (
   `summary` varchar(200) DEFAULT NULL COMMENT '简短描述',
   `isreg` varchar(10) DEFAULT NULL COMMENT '是否为正则表达式url',
   `description` varchar(10000) NOT NULL DEFAULT '' COMMENT '描述',
-  `result` text NOT NULL COMMENT '预设返回结果',
+  `result` longtext NOT NULL COMMENT '预设返回结果',
   `active` tinyint(1) DEFAULT NULL COMMENT '是否开启拦截',
   `dataHandler` varchar(11) DEFAULT NULL COMMENT 'over覆盖,overlying叠加，拦截类型',
   `createTime` timestamp NULL DEFAULT NULL COMMENT '创建时间',
