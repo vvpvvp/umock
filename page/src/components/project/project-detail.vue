@@ -208,6 +208,13 @@
     padding: 10px;
     background: #ffffff;
   }
+  .project-title {
+    i {
+      font-size: 20px;
+      vertical-align: -3px;
+      margin-left: 5px;
+    }
+  }
 }
 </style>
 <template>
@@ -217,6 +224,7 @@
       <div class="title">
         <span class="project-author">{{project.uniqueKey?project.uniqueKey.substr(0,1):''}}</span>
         <span class="project-title">{{project.name}} / {{project.uniqueKey}}</span>
+        <span class="project-title"><i class="link h-icon-setting" @click="editProject(project)"></i></span>
       </div>
       <div class="search-input">
         <Search v-model="searchText" trigger-type="input" placeholder="查询接口"></Search>
@@ -229,45 +237,47 @@
       <div class="path-tags-container">
         <ul class="path-tags-list" key="swagger" v-if="nowTab == 'swagger'">
           <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">All
-            <span>{{paths.length}}</span>
+            <span class="primary-color" style="font-weight: bold">{{paths.length}}</span>
           </li>
           <li v-for="tag of swagger.tags" :key="tag" class="text-hover" :class="{'tab-selected': $route.query.tab == tag.name}" @click="changeTab(tag.name)">
             <span class="tag-name">{{tag.name}}</span>
-            <span>{{counts[tag.name]}}</span>
+            <span class="primary-color" style="font-weight: bold">{{counts[tag.name]}}</span>
           </li>
         </ul>
         <ul class="path-tags-list" key="defined" v-else>
           <li><Button color="primary" class="add-path-button" @click="EditMockset()">新增接口模拟</Button></li>
           <li class="text-hover" @click="changeTab(null)" :class="{'tab-selected': $route.query.tab == null}">
             All
-            <span>{{mocksets.length}}</span>
+            <span class="primary-color" style="font-weight: bold">{{mocksets.length}}</span>
           </li>
           <li v-for="m of mocksetObj.menus" :key="m" class="text-hover" :class="{'tab-selected': $route.query.tab == m}" @click="changeTab(m)">
             <span class="tag-name">{{m}}</span>
-            <span>{{mocksetObj.objects[m].length}}</span>
+            <span class="primary-color" style="font-weight: bold">{{mocksetObj.objects[m].length}}</span>
           </li>
         </ul>
       </div>
       <div class="path-list-container">
         <ul class="path-list" key="swagger" v-if="nowTab == 'swagger'">
-          <li v-for="path of computedPaths" :key="path" class="path-li" :class="`path-li-${path.info.deprecated?'deprecated':path.method}`">
+          <Loading :loading="loadingSwagger"></Loading>
+          <div class="empty-div" v-if="!loadingSwagger && this.paths.length == 0">暂无数据</div>
+          <li v-for="path of pagePaths" :key="path" class="path-li" :class="`path-li-${path.deprecated?'deprecated':path.method}`">
             <div class="path-head" @click="changeShowUrl(path.totalUrl)">
               <span class="path-method">{{path.method}}</span>
               <span class="path-name">{{path.path}} <span class="h-icon-link text-hover" theme="white" v-tooltip @click.stop="copy(path.path)" content="复制链接"></span></span>
-              <span class="path-description text-ellipsis">{{path.info.summary}}</span>
-              <span class="middle-right"><span class="h-tag path-tag" v-for="tag of path.info.tags" :key="tag">{{tag}}</span></span>
+              <span class="path-description text-ellipsis">{{path.summary}}</span>
+              <span class="middle-right"><span class="h-tag path-tag" v-for="tag of path.tags" :key="tag">{{tag}}</span></span>
             </div>
             <div class="path-info" :class="{'path-info-show': path.totalUrl == showPath}" v-if="path.totalUrl == showPath">
               <div>
                 <p>
-                  <Button color="primary" v-if="mocksetObjs[path.totalUrl]" @click="EditMockset(mocksetObjs[path.totalUrl])">编辑数据模拟</Button>
-                  <Button color="primary" v-else @click="CreateMockset(path)">开启数据模拟</Button>
+                  <!-- <Button color="primary" v-if="mocksetObjs[path.totalUrl]" @click="EditMockset(mocksetObjs[path.totalUrl])">编辑数据模拟</Button> -->
+                  <Button color="primary" @click="CreateMockset(path)">开启数据模拟</Button>
                 </p>
-                <h3 v-if="path.info.description">Description</h3>
-                <pre>{{path.info.description}}</pre>
+                <h3 v-if="path.description">Description</h3>
+                <pre>{{path.description}}</pre>
                 <h3>Parameters</h3>
                 <p>
-                  <span v-if="path.info.consumes">content-type:{{path.info.consumes.join(',')}}</span>
+                  <span v-if="path.consumes">content-type:{{path.consumes.join(',')}}</span>
                 </p>
                 <template v-if="path.parameters.query.length">
                   <h4>Query</h4>
@@ -276,7 +286,7 @@
                   </ul>
                 </template>
                 <template v-if="path.parameters.path.length">
-                  <h4>Mockset</h4>
+                  <h4>Path</h4>
                   <ul>
                     <paramView v-for="path of path.parameters.path" :param="path" :key="path"></paramView>
                   </ul>
@@ -297,7 +307,7 @@
                 <template v-if="path.responses">
                   <h3>Responses</h3>
                   <p>
-                    <span v-if="path.info.produces">content-type:{{path.info.produces.join(',')}}</span>
+                    <span v-if="path.produces">content-type:{{path.produces.join(',')}}</span>
                   </p>
                   <h4>Body</h4>
                   <p><Button size="xs" color="primary" @click="CreateData(path.responses)">生成模拟数据</Button></p>
@@ -308,8 +318,11 @@
               </div>
             </div>
           </li>
+          <Pagination v-if="computedPaths.length > pagination.size" :size="pagination.size" align="right" :cur="pagination.page" :total="computedPaths.length" @change="changePage" />
         </ul>
         <ul class="path-list" key="defined" v-else>
+          <Loading :loading="loadingMock"></Loading>
+          <div class="empty-div" v-if="!loadingMock && this.mocksets.length == 0">暂无数据</div>
           <li v-for="path of computedMocksets" :key="path" class="path-li" :class="`path-li-${path.active ? path.type : 'deprecated'}`">
             <div class="path-head" @click="changeShowUrl(path.totalUrl)">
               <span class="path-method">{{path.type}}</span>
@@ -338,7 +351,7 @@
       </div>
     </div>
     <span class="copy-path" :data-clipboard-text="nowPath"></span>
-    <BackTop :target="getTarget" :bottom="40" :right="40"></BackTop>
+    <BackTop :target="getTarget" :bottom="100" :right="40"></BackTop>
   </div>
 </template>
 <script>
@@ -351,6 +364,7 @@ import EditMockset from 'components/common/edit-mockset';
 import showMockData from 'components/common/show-mock-data';
 
 import mockData from 'js/common/mockData'
+import ProjectEdit from './project-edit';
 // import AceEditor from 'components/common/Ace.component';
 
 import Clipboard from 'clipboard';
@@ -358,7 +372,6 @@ export default {
   data() {
     return {
       project: Project.parse({}),
-      loading: true,
       swagger: {},
       paths: [],
       models: {},
@@ -369,6 +382,11 @@ export default {
         menus: [],
         objects: []
       },
+      pagination: {
+        page: 1,
+        size: 20,
+        total: 0
+      },
       showPath: this.$route.query.url,
       nowPath: "",
       nowTab: this.$route.query.classify || 'swagger',
@@ -377,16 +395,36 @@ export default {
         defined: '数据模拟'
       },
       swaggerVersion: "2.0",
+      loadingSwagger: false,
+      loadingMock: false,
     }
   },
   mounted() {
-    this.$Loading("加载中");
     this.getData();
     this.$nextTick(() => {
       var clipboard = new Clipboard('.copy-path');
     })
   },
   methods: {
+    editProject(data) {
+      this.$Modal({
+        component: {
+          vue: ProjectEdit,
+          data: {
+            project: data
+          }
+        },
+        events: {
+          refresh:(modal, data) => {
+            if (data) {
+              this.project = data;
+            } else {
+              this.$router.push({name: 'index'});
+            }
+          }
+        }
+      })
+    },
     goBack() {
       this.$router.push('/');
     },
@@ -404,6 +442,10 @@ export default {
         }
       })
     },
+    changePage(page) {
+      this.pagination.page = page.cur;
+      this.pagination.size = page.size;
+    },
     CreateMockset(path) {
       let data = mockData.generate(path.responses, this.swagger.definitions);
       this.$Modal({
@@ -412,10 +454,10 @@ export default {
           data: {
             mockset: {
               result: JSON.stringify(data, null, 2),
-              url: `${this.project.rewritePath}${path.path}`,
+              url: `${this.project.rewritePath || ''}${path.path}`,
               type: path.method,
-              summary: path.info.summary,
-              tags: path.info.tags.length ? path.info.tags[0] : null,
+              summary: path.summary,
+              tags: path.tags.length ? path.tags[0] : null,
               dataHandler: 'over',
               projectId: this.project.id
             },
@@ -423,8 +465,13 @@ export default {
           }
         },
         events: {
-          success: ()=>{
+          success: (modal, data)=>{
             this.getList();
+            let url = `${data.type}${data.url}`
+            this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {classify: 'defined', url}});
+            this.showPath = url;
+            this.nowTab = 'defined';
+            this.scrollToPath();
           }
         }
       })
@@ -469,14 +516,14 @@ export default {
       } else {
         this.showPath = url;
         this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {classify: this.$route.query.classify, tab: this.$route.query.tab, url: url}});
-        this.scrollToPath();
+        // this.scrollToPath();
       }
     },
     copyMock(path) {
-      this.copy(`${window.location.origin}${path.url}?_umock=${this.project.uniqueKey}`)
+      this.copy(`${window.location.origin}${path.url}?_umock_project=${this.project.uniqueKey}&_umock_proxy=${this.project.proxy}`)
     },
     goTest(path) {
-      window.open(`${window.location.origin}${path.url}?_umock=${this.project.uniqueKey}`);
+      window.open(`${window.location.origin}${path.url}?_umock_project=${this.project.uniqueKey}&_umock_proxy=${this.project.proxy}`);
     },
     copy(path) {
       this.nowPath = path;
@@ -489,12 +536,14 @@ export default {
       return document.querySelector('.path-list-container');
     },
     changeClassify(tab) {
+      this.pagination.page = 1;
       this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {classify: tab.key}});
       this.scrollToTop();
     },
     changeTab(tab) {
       this.$router.push({name: 'detail', params: {id: this.$route.params.id}, query: {tab: tab, classify: this.$route.query.classify}});
       this.searchText = null;
+      this.pagination.page = 1;
       this.scrollToTop();
     },
     deleteMockset(path) {
@@ -508,7 +557,6 @@ export default {
       });
     },
     getData() {
-      this.loading = true;
       R.Project.getProject(this.$route.params.id).then(resp => {
         if (resp.result == 'ok') {
           this.project = Project.parse(resp.content);
@@ -518,7 +566,9 @@ export default {
       });
     },
     getList() {
+      this.loadingMock = true;
       R.Project.pathList(this.$route.params.id).then(resp => {
+        this.loadingMock = false;
         if (resp.result == 'ok') {
           for(let c of resp.content) {
             c.type = (c.type || 'get').toLowerCase();
@@ -543,8 +593,9 @@ export default {
     },
     getSwagger() {
       if (this.project.swagger) {
+        this.loadingSwagger = true;
         R.Project.swagger(this.project.swagger).then(resp => {
-          
+          this.loadingSwagger = false;
           if(!resp){
             return;
           }
@@ -617,7 +668,7 @@ export default {
                   }
                 }
               }
-              paths.push({ totalUrl: `${method}${path}`,path, method, info, parameters, responses, show: false });
+              paths.push(Utils.extend({tags: []}, info, { totalUrl: `${method}${path}`,path, method, parameters, responses, show: false }));
             }
           }
           // log(tags)
@@ -629,7 +680,6 @@ export default {
       } else {
         this.scrollToPath();
       }
-      this.$Loading.close();
     },
     updateActive(id, active) {
       R.Mockset.updateActive(id, active).then((resp) => {
@@ -656,18 +706,22 @@ export default {
     mocksetObjs() {
       return Utils.toObject(this.mocksets, 'totalUrl');
     },
+    pagePaths() {
+      let start = (this.pagination.page - 1) * this.pagination.size;
+      return [...this.computedPaths].splice(start, this.pagination.size);
+    },
     computedPaths() {
       if(this.searchText){
         return this.paths.filter((path) => {
-          return path.path.indexOf(this.searchText) > -1 || (path.info.summary||'').indexOf(this.searchText) > -1;
+          return path.path.indexOf(this.searchText) > -1 || (path.summary||'').indexOf(this.searchText) > -1;
         });
       }
       if(this.$route.query.tab){
         return this.paths.filter((path) => {
-          if(!path.info.tags){
+          if(!path.tags){
             return false;
           }
-          return path.info.tags.indexOf(this.$route.query.tab) > -1;
+          return path.tags.indexOf(this.$route.query.tab) > -1;
         });
       }
       return this.paths;

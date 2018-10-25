@@ -9,7 +9,6 @@ export default new Model({
     default: "get"
   },
   summary: '',
-  isreg: { type: Model.BOOLEAN, default: false },
   tags: '',
   projectId: '',
   active: {

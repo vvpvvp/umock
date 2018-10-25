@@ -200,7 +200,9 @@
       this.editor.getSession().selection.on('changeSelection', this.selectionChange);
       this.editor.getSession().selection.on('changeCursor', this.cursorChange);
       this.editor.getSession().foldAll();
-      this.editor.getSession().toggleFold(true);
+      if(this.defaultValue) {
+        this.editor.getSession().toggleFold(true);
+      }
       if (onValidate) {
         this.editor.getSession().on('changeAnnotation', () => {
           const annotations = this.editor.getSession().getAnnotations();

@@ -29,8 +29,6 @@ CREATE TABLE `mockset` (
   `type` varchar(10) DEFAULT NULL COMMENT 'url 类型',
   `tags` varchar(10) DEFAULT NULL COMMENT '标签',
   `summary` varchar(200) DEFAULT NULL COMMENT '简短描述',
-  `isreg` varchar(10) DEFAULT NULL COMMENT '是否为正则表达式url',
-  `description` varchar(10000) NOT NULL DEFAULT '' COMMENT '描述',
   `result` longtext NOT NULL COMMENT '预设返回结果',
   `active` tinyint(1) DEFAULT NULL COMMENT '是否开启拦截',
   `dataHandler` varchar(11) DEFAULT NULL COMMENT 'over覆盖,overlying叠加，拦截类型',
@@ -56,13 +54,13 @@ CREATE TABLE `project` (
   `uniqueKey` varchar(100) NOT NULL DEFAULT '' COMMENT '唯一标识',
   `identification` varchar(10) DEFAULT '0' COMMENT '1:URL前缀, 0: HEAD参数',
   `rewritePath` varchar(100) DEFAULT NULL COMMENT '删除的前缀',
-  `description` varchar(100) DEFAULT NULL COMMENT '描述',
+  `summary` varchar(100) DEFAULT NULL COMMENT '描述',
   `proxy` varchar(100) DEFAULT NULL COMMENT '反向代理地址',
   `swagger` varchar(100) DEFAULT NULL COMMENT 'swagger url',
-  `private` int(11) DEFAULT '1' COMMENT 'public: 公共 private: 私有',
   `modifyTime` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `proxys` varchar(5000) DEFAULT NULL COMMENT '反向代理地址列表',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8;
 
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -105,7 +105,7 @@ export default {
       R.Mockset.edit(mockset).then((resp) => {
         if(resp.ok) {
           this.$Message('保存成功');
-          this.$emit('event', 'success');
+          this.$emit('event', 'success', mockset);
           this.$emit('close');
         }
       })

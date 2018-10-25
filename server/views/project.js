@@ -1,13 +1,9 @@
 'use strict';
 var app = global.app;
 var Result = require("../utils/result");
-var Util = require("../utils/util");
-var urlencoded = require('body-parser').urlencoded({ limit: '50mb', extended: true });
 
 var view = function (mockServer, db) {
 
-
-  const config = global.config;
   var reInitProjects = function () {};
 
   let getOne = function (id, res) {
@@ -92,6 +88,15 @@ var view = function (mockServer, db) {
         listId = {};
       rows.forEach((n, i) => {
         // if (listO[n.uniqueKey] == undefined) listO[n.uniqueKey] = {};
+        let proxys = []
+        try {
+          proxys = JSON.parse(n.proxys || '[]');
+        } catch (error) {}
+        let proxysObj = {};
+        for(let p of proxys) {
+          proxysObj[p.uniqueKey] = p;
+        }
+        n.proxys = proxysObj;
         listO[n.uniqueKey] = n;
         listId[n.id] = n;
       });
@@ -111,13 +116,13 @@ var view = function (mockServer, db) {
   let getProjectModel = (body) => {
     var data = {};
     if (body.name != undefined) data.name = body.name;
-    if (body.description != undefined) data.description = body.description;
+    if (body.summary != undefined) data.summary = body.summary;
     if (body.rewritePath != undefined) data.rewritePath = body.rewritePath;
     if (body.identification != undefined) data.identification = body.identification;
     if (body.uniqueKey != undefined) data.uniqueKey = body.uniqueKey;
     if (body.swagger != undefined) data.swagger = body.swagger;
-    if (body.private != undefined) data.private = body.private;
     if (body.proxy != undefined) data.proxy = body.proxy;
+    if (body.proxys != undefined) data.proxys = body.proxys;
     return data;
   };
 

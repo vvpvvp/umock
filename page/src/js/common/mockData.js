@@ -2,7 +2,10 @@ import {Random, Mock} from 'mockjs';
 
 module.exports = {
   generate(path, definitions) {
-    let level = 6;
+    if (!path) {
+      return null;
+    }
+    let level = 4;
     let model = this.getModel(path, definitions, level);
     return this.initData(model)
   },
@@ -47,7 +50,7 @@ module.exports = {
     }
   },
   getModel(schema, definitions, level) {
-    if (level == 0) {
+    if (level == 0 || schema == null) {
       return null;
     }
     if (schema.type == 'array') {
