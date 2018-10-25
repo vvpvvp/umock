@@ -109,18 +109,6 @@ export default {
           }
         }
       })
-    },
-    analysis(p) {
-      R.Project.getLocation().then((resp) => {
-        let port = '';
-        if (p.proxy) {
-          let matchs = p.proxy.match(/\:(\d+)/);
-          if(matchs && matchs.index){
-            port = `:${matchs[1]}`;
-          }
-        }
-        p.proxy= `http://${resp.ip}${port}`;
-      });
     }
   },
   computed: {
