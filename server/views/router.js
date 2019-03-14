@@ -86,8 +86,8 @@ mockServer.returnFunc = function (req, res, next) {
   let url = decodeURI(req.baseUrl);
   let hasUrl = false;
 
-  let projectKey = getKey(req, '_umock_project');
-  let uniqueKey = getKey(req, '_umock_proxy');
+  let projectKey = getKey(req, 'umock_project');
+  let uniqueKey = getKey(req, 'umock_proxy');
 
   // console.log(projectKey)
   // console.log(uniqueKey)

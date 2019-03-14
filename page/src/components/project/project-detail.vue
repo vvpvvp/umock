@@ -520,10 +520,10 @@ export default {
       }
     },
     copyMock(path) {
-      this.copy(`${window.location.origin}${path.url}?_umock_project=${this.project.uniqueKey}&_umock_proxy=${this.project.proxy}`)
+      this.copy(`${window.location.origin}${path.url}?umock_project=${this.project.uniqueKey}&_umock_proxy=${this.project.proxy}`)
     },
     goTest(path) {
-      window.open(`${window.location.origin}${path.url}?_umock_project=${this.project.uniqueKey}&_umock_proxy=${this.project.proxy}`);
+      window.open(`${window.location.origin}${path.url}?umock_project=${this.project.uniqueKey}&_umock_proxy=${this.project.proxy}`);
     },
     copy(path) {
       this.nowPath = path;
