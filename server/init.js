@@ -24,7 +24,7 @@ var main = {
 
     customRoute: function() {
         var argv = this.argv;
-        var home = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'PWD'];
+        var home = process.cwd();
         var defautImitatorFile = path.resolve(home, 'umock.js');
         var imitatorFile;
 
